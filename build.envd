@@ -1,0 +1,29 @@
+git_config(name="Codex Agent", email="codex@ma7.dev", editor="vim")
+
+
+def build():
+    # dev=True enabling the dev env will add lots of development related libraries like envd-sshd, vim, git, shell prompt, vscode extensions, etc.
+    base(dev=True)
+
+    # Core languages
+    install.python(version="3.11")
+    install.nodejs(version="20.18.1")
+    
+    # Package managers / tools
+    install.uv()
+    
+    # Configure npm to use user-local global directory (avoids permission issues)
+    run(commands=[
+        "mkdir -p /home/envd/.npm-global",
+        "npm config set prefix /home/envd/.npm-global",
+        "npm install -g npm@latest",
+        "npm install -g @openai/codex"
+    ])
+    
+    # Add npm-global bin to PATH
+    runtime.environ(env={}, extra_path=["/home/envd/.npm-global/bin"])
+    
+    # Codex auth mount
+    runtime.mount(host_path="~/.codex", envd_path="~/.codex")
+
+    shell("zsh")

@@ -1,0 +1,397 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": "1",
+        "title": "Initialize Astro 5.x Project with pnpm",
+        "description": "Set up the base Astro project structure with TypeScript strict mode and required dependencies.",
+        "details": "Run `pnpm create astro@latest . -- --template minimal --typescript strict`; Add dependencies: `pnpm add astro@^5.0.0 @astrojs/sitemap @tailwindcss/vite tailwindcss@^4.0.0 typescript`; Create package.json scripts: 'dev': 'astro dev', 'build': 'astro build', 'preview': 'astro preview'; Initialize git repo.",
+        "testStrategy": "Run `pnpm install` and `pnpm dev` to verify server starts without errors; Check TypeScript compilation with `pnpm build`.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.891Z"
+      },
+      {
+        "id": "2",
+        "title": "Configure astro.config.ts with Site and Integrations",
+        "description": "Set up Astro configuration with site URL, sitemap integration, and TailwindCSS Vite plugin.",
+        "details": "Create astro.config.ts: import { defineConfig } from 'astro/config'; import sitemap from '@astrojs/sitemap'; import tailwind from '@tailwindcss/vite'; export default defineConfig({ site: 'https://cursorsaudi.com', integrations: [sitemap()], vite: { plugins: [tailwind()] } });",
+        "testStrategy": "Run `pnpm dev` and verify config loads without errors; Check build generates sitemap.xml.",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.897Z"
+      },
+      {
+        "id": "3",
+        "title": "Setup TypeScript Strict Configuration",
+        "description": "Configure tsconfig.json with strict mode and path aliases.",
+        "details": "Create tsconfig.json extending 'astro/tsconfigs/strict': { 'extends': 'astro/tsconfigs/strict', 'compilerOptions': { 'baseUrl': '.', 'paths': { '@/*': ['./src/*'] } }, 'include': ['src'], 'exclude': ['node_modules', 'dist'] }; Create src/env.d.ts with Astro types.",
+        "testStrategy": "Run `pnpm build` to ensure TypeScript strict mode passes; Verify path alias @/ works in editor.",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.898Z"
+      },
+      {
+        "id": "4",
+        "title": "Create Site Configuration Module",
+        "description": "Define src/config.ts as single source of truth for metadata and social links.",
+        "details": "export const config = { title: 'Cursor Saudi', description: 'Cursor Saudi Community', author: 'Cursor Saudi', social: { luma: 'https://lu.ma/...', twitter: 'https://x.com/cursorsaudi' } } as const;",
+        "testStrategy": "Import config in a test .astro file and verify IntelliSense/type checking works.",
+        "priority": "medium",
+        "dependencies": [
+          "3"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.899Z"
+      },
+      {
+        "id": "5",
+        "title": "Configure Tailwind CSS v4 Global Styles",
+        "description": "Setup Tailwind CSS v4 with dark-mode-only theme and custom colors/fonts.",
+        "details": "Create src/styles/global.css: @import 'tailwindcss'; :root { --bg: #0d1117; --surface: #161b22; --border: #30363d; --text-primary: #e6edf3; --text-secondary: #8b949e; --accent: #58a6ff; --accent-hover: #79c0ff; } @font-face { font-family: 'Noto Kufi Arabic'; } @font-face { font-family: 'Inter'; }",
+        "testStrategy": "Apply Tailwind classes in a test component and verify custom colors/fonts render correctly.",
+        "priority": "high",
+        "dependencies": [
+          "2"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.900Z"
+      },
+      {
+        "id": "6",
+        "title": "Implement i18n Translation System",
+        "description": "Create Arabic/English translation files and getTranslation utility.",
+        "details": "Create src/i18n/ar.json and en.json with keys: hero.title, hero.description, events.upcoming, events.past, etc.; Create src/i18n/index.ts: export function getTranslation(lang: 'ar' | 'en', key: string) { return i18n[lang]?.[key] || key; }",
+        "testStrategy": "Create test component using getTranslation() and verify both languages return correct strings.",
+        "priority": "high",
+        "dependencies": [
+          "3"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.901Z"
+      },
+      {
+        "id": "7",
+        "title": "Create Language Detection Script",
+        "description": "Implement public/toggle-lang.js to prevent FOUC and set html lang/dir from localStorage.",
+        "details": "Create public/toggle-lang.js: (function() { const lang = localStorage.getItem('lang') || 'ar'; const html = document.documentElement; html.lang = lang; html.dir = lang === 'ar' ? 'rtl' : 'ltr'; html.classList.add('dark'); })();",
+        "testStrategy": "Load page, check localStorage 'lang', verify html lang/dir attributes match; Test persistence across refreshes.",
+        "priority": "high",
+        "dependencies": [
+          "6"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.902Z"
+      },
+      {
+        "id": "8",
+        "title": "Define Events Content Collection Schema",
+        "description": "Setup Zod-validated events collection with required frontmatter schema.",
+        "details": "Create src/content.config.ts: import { z, defineCollection } from 'astro:content'; const events = defineCollection({ schema: z.object({ title: z.string(), titleAr: z.string(), date: z.date(), location: z.string(), locationAr: z.string(), attendees: z.number().optional(), host: z.string().optional(), lumaUrl: z.string().optional(), description: z.string(), descriptionAr: z.string(), isPast: z.boolean() }) }); export const collections = { events };",
+        "testStrategy": "Create sample .md file in src/content/events/ and verify schema validation passes/fails correctly.",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.904Z"
+      },
+      {
+        "id": "9",
+        "title": "Create Event Utility Functions",
+        "description": "Implement getSortedEvents, getUpcomingEvents, getPastEvents helpers.",
+        "details": "Create src/utils/events.ts: import { getCollection } from 'astro:content'; export async function getSortedEvents() { const events = await getCollection('events'); return events.sort((a,b) => a.data.date.getTime() - b.data.date.getTime()); } export async function getUpcomingEvents() { return (await getSortedEvents()).filter(e => !e.data.isPast); } export async function getPastEvents() { return (await getSortedEvents()).filter(e => e.data.isPast).reverse(); }",
+        "testStrategy": "Create test page importing utils and verify returns correct filtered/sorted arrays.",
+        "priority": "medium",
+        "dependencies": [
+          "8"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.905Z"
+      },
+      {
+        "id": "10",
+        "title": "Create Sample Event Content Files",
+        "description": "Add 2 sample Markdown event files in src/content/events/.",
+        "details": "Create src/content/events/event1.md and event2.md with frontmatter matching schema: one upcoming (isPast: false), one past (isPast: true) with attendees/host data.",
+        "testStrategy": "Verify both files validate against schema and utils return them in correct sections.",
+        "priority": "medium",
+        "dependencies": [
+          "8"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.906Z"
+      },
+      {
+        "id": "11",
+        "title": "Build Base Layout Component",
+        "description": "Create Layout.astro with meta tags, Google Fonts, toggle-lang.js, and dynamic lang/dir.",
+        "details": "Create src/layouts/Layout.astro with <html dir={lang === 'ar' ? 'rtl' : 'ltr'} lang={lang} class='dark'>; Include Google Fonts: Noto Kufi Arabic & Inter; Inline toggle-lang.js script; Import global.css; Standard meta/OG tags from config.",
+        "testStrategy": "Use layout in test page, verify fonts load, lang/dir switch, no FOUC.",
+        "priority": "high",
+        "dependencies": [
+          "4",
+          "5",
+          "7"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.906Z"
+      },
+      {
+        "id": "12",
+        "title": "Develop Header Component",
+        "description": "Create responsive Header.astro with bilingual branding and LangToggle.",
+        "details": "Create src/components/Header.astro: Logo 'Cursor Saudi | المجتمع'; Include LangToggle; Sticky positioning; Responsive mobile hamburger if needed.",
+        "testStrategy": "Test header renders in both languages, responsive breakpoints work.",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.907Z"
+      },
+      {
+        "id": "13",
+        "title": "Build Language Toggle Component",
+        "description": "Create client-side LangToggle.astro with localStorage persistence.",
+        "details": "Create src/components/LangToggle.astro: Button shows current lang (AR/EN); onclick: toggle localStorage 'lang', window.location.reload(); Visual active state.",
+        "testStrategy": "Click toggle, verify localStorage updates, page reloads with new lang/dir.",
+        "priority": "high",
+        "dependencies": [
+          "6",
+          "7"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.908Z"
+      },
+      {
+        "id": "14",
+        "title": "Create Reusable EventCard Component",
+        "description": "Build EventCard.astro accepting event props with conditional rendering.",
+        "details": "Create src/components/EventCard.astro: Props interface EventData; Conditional: if !isPast show lumaUrl button, else show attendees/host; Use surface #161b22 bg, #30363d border; Responsive grid card.",
+        "testStrategy": "Test with upcoming and past event props, verify conditional content renders.",
+        "priority": "medium",
+        "dependencies": [
+          "8"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.909Z"
+      },
+      {
+        "id": "15",
+        "title": "Implement Hero Section",
+        "description": "Create Hero.astro with bilingual community tagline and CTA.",
+        "details": "Create src/components/Hero.astro: Use getTranslation for tagline/description; CTA links to first upcoming event lumaUrl or scrolls to upcoming section; Prominent accent colors.",
+        "testStrategy": "Verify bilingual text switches, CTA links correctly to event or section.",
+        "priority": "medium",
+        "dependencies": [
+          "6",
+          "9"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.910Z"
+      },
+      {
+        "id": "16",
+        "title": "Build Events Sections and Homepage",
+        "description": "Create UpcomingEvents.astro, PastEvents.astro, Footer.astro, and assemble index.astro.",
+        "details": "UpcomingEvents: getUpcomingEvents(), map EventCard or 'No events'; PastEvents: getPastEvents(), map EventCard; Footer: social links from config, © 2026 bilingual; index.astro: Layout > Header > Hero > Upcoming > Past > Footer.",
+        "testStrategy": "Load homepage, verify all sections render with sample data, bilingual switching works.",
+        "priority": "high",
+        "dependencies": [
+          "9",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "15"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.910Z"
+      },
+      {
+        "id": "17",
+        "title": "Setup Static Assets and Public Files",
+        "description": "Create public/ files: .nojekyll, CNAME, favicon.svg.",
+        "details": "public/.nojekyll (empty); public/CNAME with 'cursorsaudi.com'; public/favicon.svg with simple Cursor Saudi icon.",
+        "testStrategy": "Build site, verify files appear in dist/, favicon loads in browser.",
+        "priority": "medium",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.911Z"
+      },
+      {
+        "id": "18",
+        "title": "Configure GitHub Actions Deployment",
+        "description": "Create .github/workflows/deploy.yml for GitHub Pages.",
+        "details": "Standard GH Pages workflow: on: [push, workflow_dispatch]; permissions; jobs: build (pnpm install/build, upload artifact), deploy (actions/deploy-pages@v4); Node v20, pnpm v9 cache.",
+        "testStrategy": "Run workflow manually, verify deploys to gh-pages branch successfully.",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.912Z"
+      },
+      {
+        "id": "19",
+        "title": "Final Verification and Polish",
+        "description": "Comprehensive testing of build, RTL/LTR, events, toggle, responsive design.",
+        "details": "Run `pnpm build && pnpm preview`; Test Arabic RTL vs English LTR; Verify event filtering/sorting; Language toggle persistence; Mobile responsiveness (375px-1920px); Lighthouse audit.",
+        "testStrategy": "Checklist: build succeeds, no console errors, all interactive elements work, bilingual content correct, responsive across devices.",
+        "priority": "high",
+        "dependencies": [
+          "2",
+          "3",
+          "5",
+          "7",
+          "11",
+          "13",
+          "16",
+          "17",
+          "18"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:45:50.913Z"
+      },
+      {
+        "id": "20",
+        "title": "Update Event Content Collection Schema",
+        "description": "Modify src/content.config.ts to match Notion CSV fields: add type, speakers, slides, place; remove isPast, attendees, host; make titleAr, locationAr, descriptionAr optional.",
+        "details": "In src/content.config.ts, update the events schema using Zod: add `type: z.enum(['meetup', 'hackathon', 'workshop'])`, `speakers: z.array(z.string()).optional()`, `slides: z.array(z.string()).optional()`, `place: z.string().optional()`. Remove `isPast`, `attendees`, `host`. Change `titleAr`, `locationAr`, `descriptionAr` to `.optional()`. Keep `title`, `date`, `location`, `description` required, `lumaUrl` optional. Ensure schema validates correctly.",
+        "testStrategy": "Run `pnpm dev` and verify no schema validation errors on existing sample files. Manually create a test event MD with new fields and confirm it loads without errors.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:59:09.351Z"
+      },
+      {
+        "id": "21",
+        "title": "Update Event Utility Functions",
+        "description": "Update src/utils/events.ts to remove isPast filtering and implement getUpcomingEvents() and getPastEvents() using current date at build time.",
+        "details": "In src/utils/events.ts, remove any `isPast` references. Implement `getUpcomingEvents()`: filter events where `event.data.date >= new Date()`, sort by date ascending. `getPastEvents()`: filter `event.data.date < new Date()`, sort descending. Use `new Date()` for build-time comparison. Export both functions.",
+        "testStrategy": "Add console.log to verify filtering logic with sample dates. Run `pnpm build` and check console output shows correct past/upcoming split based on current date (Feb 10, 2026).",
+        "priority": "high",
+        "dependencies": [
+          "20"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:59:09.352Z"
+      },
+      {
+        "id": "22",
+        "title": "Add Ambassadors to Site Config",
+        "description": "Add ambassadors array to src/config.ts with the two specified ambassadors.",
+        "details": "In src/config.ts, add: `ambassadors: [{ name: \"Mazen Alotaibi\", city: \"Riyadh\", cityAr: \"الرياض\", twitter: \"https://x.com/ma7dev\" }, { name: \"Abdulhakeem Almidan\", city: \"Khobar\", cityAr: \"الخبر\", twitter: \"https://x.com/abdulhakeem_mdn\" }]` as an exported property.",
+        "testStrategy": "Import and log config.ambassadors in a test page, verify array contains exactly 2 objects with correct data.",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:59:09.353Z"
+      },
+      {
+        "id": "23",
+        "title": "Create Markdown Files for 7 Past Events",
+        "description": "Convert first 7 past events from CSV description to MD files in src/data/events/ with proper frontmatter.",
+        "details": "Create files like `2025-05-28-kickoff-riyadh.md` with frontmatter: title, date (ISO format), location, description (from PRD or CSV), type, speakers array, slides array (full URLs), place if available. Use slugify for filenames: `${date}-${slug(title)}-${city}.md`. Ensure YAML frontmatter validates against updated schema.",
+        "testStrategy": "Verify 7 files exist with correct filenames. Load site and confirm past events section shows these 7 with speakers/slides rendering.",
+        "priority": "medium",
+        "dependencies": [
+          "20"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:59:09.355Z"
+      },
+      {
+        "id": "24",
+        "title": "Create Markdown Files for 10 Upcoming Events",
+        "description": "Convert 10 upcoming events from CSV description to MD files in src/data/events/.",
+        "details": "Create files for events 8-17 (Mar 2026-Nov 2026) following same format as task 23. Include lumaUrl if available from CSV. Use current date Feb 10, 2026 as cutoff - all these should be upcoming.",
+        "testStrategy": "Verify 10 files exist. Check upcoming events section shows exactly 10 events post-build.",
+        "priority": "medium",
+        "dependencies": [
+          "20",
+          "23"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:59:09.357Z"
+      },
+      {
+        "id": "25",
+        "title": "Update EventCard Component for New Fields",
+        "description": "Modify src/components/EventCard.astro to display type badge, speakers, slides; remove attendees/host.",
+        "details": "In EventCard.astro: Add type badge with colors (e.g., meetup:blue, hackathon:orange, workshop:green). If speakers, render as list. If slides and isPast, show 'Slides' links. Remove attendees/host references. Keep lumaUrl button for upcoming only. Use Astro slots or conditionals.",
+        "testStrategy": "Create test page with events having all new fields. Verify badges, speakers, slides render correctly; no errors for missing fields.",
+        "priority": "high",
+        "dependencies": [
+          "20",
+          "21",
+          "23",
+          "24"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:59:09.358Z"
+      },
+      {
+        "id": "26",
+        "title": "Clean Up Samples and Final Verification",
+        "description": "Delete sample events, verify all 17 real events load, run full build validation.",
+        "details": "Delete all existing sample MD files in src/data/events/. Ensure exactly 17 real event files present. Run `pnpm build` - verify no schema errors, upcoming shows 10 events, past shows 7. Test bilingual toggle, type badges, speakers, slides display.",
+        "testStrategy": "Post-build: Check console/build output clean. Visit /events - verify 10 upcoming + 7 past totals, all new fields render, Arabic toggle works (even if empty).",
+        "priority": "high",
+        "dependencies": [
+          "21",
+          "22",
+          "23",
+          "24",
+          "25"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:59:09.362Z"
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2026-02-10T14:59:09.362Z",
+      "taskCount": 26,
+      "completedCount": 26,
+      "tags": [
+        "master"
+      ]
+    }
+  }
+}

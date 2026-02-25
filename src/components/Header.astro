@@ -1,0 +1,134 @@
+---
+import LangToggle from "@/components/LangToggle.astro";
+---
+
+<nav class="fixed top-0 left-0 right-0 z-50 glass-nav h-[72px] flex items-center">
+  <div class="max-w-5xl mx-auto w-full px-6 md:px-10 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="#" class="flex items-center gap-3 group cursor-pointer" data-nav="home">
+      <svg width="22" height="25" viewBox="0 0 467 532" fill="none" class="logo-cursor" aria-hidden="true">
+        <path d="M457.43,125.94L244.42,2.96c-6.84-3.95-15.28-3.95-22.12,0L9.3,125.94c-5.75,3.32-9.3,9.46-9.3,16.11v247.99c0,6.65,3.55,12.79,9.3,16.11l213.01,122.98c6.84,3.95,15.28,3.95,22.12,0l213.01-122.98c5.75-3.32,9.3-9.46,9.3-16.11v-247.99c0-6.65-3.55-12.79-9.3-16.11h-.01ZM444.05,151.99l-205.63,356.16c-1.39,2.4-5.06,1.42-5.06-1.36v-233.21c0-4.66-2.49-8.97-6.53-11.31L24.87,145.67c-2.4-1.39-1.42-5.06,1.36-5.06h411.26c5.84,0,9.49,6.33,6.57,11.39h-.01Z" fill="#15803d"/>
+      </svg>
+      <span class="font-medium text-lg tracking-tight text-white group-hover:text-gray-300 transition-colors">Cursor Saudi</span>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+      <button class="nav-link active" data-nav="home" id="nav-home">
+        <span class="lang-ar">الرئيسية</span>
+        <span class="lang-en">Home</span>
+      </button>
+      <button class="nav-link" data-nav="events" id="nav-events">
+        <span class="lang-ar">الفعاليات</span>
+        <span class="lang-en">Events</span>
+      </button>
+      <button class="nav-link" data-nav="blog" id="nav-blog">
+        <span class="lang-ar">المدونة</span>
+        <span class="lang-en">Blog</span>
+      </button>
+      <button class="nav-link" data-nav="about" id="nav-about">
+        <span class="lang-ar">عن المجتمع</span>
+        <span class="lang-en">About</span>
+      </button>
+      <button class="nav-link" data-nav="thankyou" id="nav-thankyou">
+        <span class="lang-ar">شكراً</span>
+        <span class="lang-en">Thank You</span>
+      </button>
+    </div>
+
+    <!-- Right side actions -->
+    <div class="flex items-center gap-3">
+      <LangToggle />
+      <a href="https://discord.gg/WXxuwVMNUD" target="_blank" rel="noreferrer" class="hidden sm:block btn-primary px-5 py-2 rounded-full text-sm font-medium">
+        <span class="lang-ar">انضم للمجتمع</span>
+        <span class="lang-en">Join Community</span>
+      </a>
+
+      <!-- Mobile hamburger -->
+      <button
+        id="mobile-menu-btn"
+        class="md:hidden flex items-center justify-center w-9 h-9 rounded-lg border border-white/10 bg-white/5 text-white hover:bg-white/10 transition-colors"
+        type="button"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
+      >
+        <svg id="menu-icon-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg id="menu-icon-close" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="hidden"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile menu overlay -->
+<div id="mobile-menu" class="fixed inset-0 z-40 hidden" aria-hidden="true">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="mobile-menu-backdrop"></div>
+  <div class="absolute top-[72px] left-0 right-0 bg-[#0F0F0F] border-b border-[#252525] shadow-2xl">
+    <div class="flex flex-col p-6 gap-1">
+      <button class="mobile-nav-link nav-link active text-start py-3 px-4 rounded-xl text-base font-medium text-white hover:bg-white/5 transition-colors" data-nav="home">
+        <span class="lang-ar">الرئيسية</span>
+        <span class="lang-en">Home</span>
+      </button>
+      <button class="mobile-nav-link nav-link text-start py-3 px-4 rounded-xl text-base font-medium text-[#999999] hover:text-white hover:bg-white/5 transition-colors" data-nav="events">
+        <span class="lang-ar">الفعاليات</span>
+        <span class="lang-en">Events</span>
+      </button>
+      <button class="mobile-nav-link nav-link text-start py-3 px-4 rounded-xl text-base font-medium text-[#999999] hover:text-white hover:bg-white/5 transition-colors" data-nav="blog">
+        <span class="lang-ar">المدونة</span>
+        <span class="lang-en">Blog</span>
+      </button>
+      <button class="mobile-nav-link nav-link text-start py-3 px-4 rounded-xl text-base font-medium text-[#999999] hover:text-white hover:bg-white/5 transition-colors" data-nav="about">
+        <span class="lang-ar">عن المجتمع</span>
+        <span class="lang-en">About</span>
+      </button>
+      <button class="mobile-nav-link nav-link text-start py-3 px-4 rounded-xl text-base font-medium text-[#999999] hover:text-white hover:bg-white/5 transition-colors" data-nav="thankyou">
+        <span class="lang-ar">شكراً</span>
+        <span class="lang-en">Thank You</span>
+      </button>
+      <div class="border-t border-[#252525] mt-3 pt-4">
+        <a href="https://discord.gg/WXxuwVMNUD" target="_blank" rel="noreferrer" class="btn-primary w-full px-5 py-3 rounded-full text-sm font-medium text-center">
+          <span class="lang-ar">انضم للمجتمع</span>
+          <span class="lang-en">Join Community</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    var btn = document.getElementById('mobile-menu-btn');
+    var menu = document.getElementById('mobile-menu');
+    var backdrop = document.getElementById('mobile-menu-backdrop');
+    var iconOpen = document.getElementById('menu-icon-open');
+    var iconClose = document.getElementById('menu-icon-close');
+    if (!btn || !menu) return;
+
+    function toggle() {
+      var isOpen = !menu.classList.contains('hidden');
+      if (isOpen) {
+        menu.classList.add('hidden');
+        menu.setAttribute('aria-hidden', 'true');
+        btn.setAttribute('aria-expanded', 'false');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        document.body.style.overflow = '';
+      } else {
+        menu.classList.remove('hidden');
+        menu.setAttribute('aria-hidden', 'false');
+        btn.setAttribute('aria-expanded', 'true');
+        iconOpen.classList.add('hidden');
+        iconClose.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    btn.addEventListener('click', toggle);
+    if (backdrop) backdrop.addEventListener('click', toggle);
+
+    menu.querySelectorAll('.mobile-nav-link').forEach(function (link) {
+      link.addEventListener('click', function () {
+        if (!menu.classList.contains('hidden')) toggle();
+      });
+    });
+  })();
+</script>

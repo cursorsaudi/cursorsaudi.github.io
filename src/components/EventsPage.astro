@@ -1,0 +1,156 @@
+---
+import { getUpcomingEvents, getPastEvents } from "@/utils/events";
+
+const upcoming = await getUpcomingEvents();
+const past = await getPastEvents();
+
+function formatMonth(date: Date) {
+  return date.toLocaleDateString("en-US", { month: "short" });
+}
+
+function formatDay(date: Date) {
+  return date.getDate().toString().padStart(2, "0");
+}
+
+function typeLabel(type: string) {
+  const labels: Record<string, string> = {
+    meetup: "Meetup",
+    hackathon: "Hackathon",
+    workshop: "Workshop",
+  };
+  return labels[type] ?? type;
+}
+---
+
+<section id="events" class="page-content">
+  <div class="max-w-5xl mx-auto px-6 md:px-10 py-12 md:py-20">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 border-b border-[#252525] pb-8">
+      <div>
+        <h1 class="text-4xl md:text-5xl font-semibold text-white mb-4">
+          <span class="lang-en">Events</span>
+          <span class="lang-ar">الفعاليات</span>
+        </h1>
+        <p class="text-[#999999] text-lg max-w-xl">
+          <span class="lang-en">Meetups, hackathons, and workshops focused on AI-native development with Cursor.</span>
+          <span class="lang-ar">لقاءات وهاكاثونات وورش عمل تركز على التطوير بالذكاء الاصطناعي مع Cursor.</span>
+        </p>
+      </div>
+      <div class="flex gap-2 mt-6 md:mt-0" role="tablist" aria-label="Filter events">
+        <button class="event-filter-btn active px-4 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer" data-filter="upcoming" role="tab" aria-selected="true">
+          <span class="lang-en">Upcoming ({upcoming.length})</span>
+          <span class="lang-ar">القادمة ({upcoming.length})</span>
+        </button>
+        <button class="event-filter-btn px-4 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer" data-filter="past" role="tab" aria-selected="false">
+          <span class="lang-en">Past ({past.length})</span>
+          <span class="lang-ar">السابقة ({past.length})</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6" id="events-grid">
+      {upcoming.map((event) => (
+        <div class="event-card bg-[#171717] border border-[#252525] rounded-2xl p-6 hover:border-white/20 transition-all group flex flex-col h-full" data-event-time="upcoming">
+          <div class="flex justify-between items-start mb-6">
+            <div class="bg-[#1F1F1F] rounded-lg px-3 py-1 border border-[#252525] text-center min-w-[60px]">
+              <div class="text-[10px] text-[#999999] uppercase font-bold">{formatMonth(event.data.date)}</div>
+              <div class="text-xl font-bold text-white">{formatDay(event.data.date)}</div>
+            </div>
+            <span class="px-2 py-1 rounded-full bg-white/5 text-[10px] font-medium tracking-wide uppercase text-[#999999] border border-white/5">{typeLabel(event.data.type)}</span>
+          </div>
+          <h3 class="text-xl font-semibold text-white mb-2 group-hover:text-white transition-colors">{event.data.title}</h3>
+          {event.data.speakers && event.data.speakers.length > 0 && (
+            <div class="flex items-center gap-2 text-xs text-[#6E6E6E] mb-3">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke-linecap="round"/></svg>
+              {event.data.speakers.join(", ")}
+            </div>
+          )}
+          <p class="text-sm text-[#999999] mb-6 flex-grow">{event.data.description}</p>
+          <div class="flex items-center justify-between pt-4 border-t border-[#252525]">
+            <div class="flex items-center gap-2 text-xs text-[#999999]">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              {event.data.location}{event.data.place && <span class="text-[#6E6E6E]"> · {event.data.place}</span>}
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {past.map((event) => (
+        <div class="event-card bg-[#171717] border border-[#252525] rounded-2xl p-6 hover:border-white/20 transition-all group flex flex-col h-full" data-event-time="past">
+          <div class="flex justify-between items-start mb-6">
+            <div class="bg-[#1F1F1F] rounded-lg px-3 py-1 border border-[#252525] text-center min-w-[60px] opacity-50">
+              <div class="text-[10px] text-[#999999] uppercase font-bold">{formatMonth(event.data.date)}</div>
+              <div class="text-xl font-bold text-white">{formatDay(event.data.date)}</div>
+            </div>
+            <span class="px-2 py-1 rounded-full bg-white/5 text-[10px] font-medium tracking-wide uppercase text-[#999999] border border-white/5">{typeLabel(event.data.type)}</span>
+          </div>
+          <h3 class="text-xl font-semibold text-[#999999] mb-2">{event.data.title}</h3>
+          {event.data.speakers && event.data.speakers.length > 0 && (
+            <div class="flex items-center gap-2 text-xs text-[#6E6E6E] mb-3">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke-linecap="round"/></svg>
+              {event.data.speakers.join(", ")}
+            </div>
+          )}
+          <p class="text-sm text-[#999999] mb-6 flex-grow">{event.data.description}</p>
+          <div class="flex items-center justify-between pt-4 border-t border-[#252525]">
+            <div class="flex items-center gap-2 text-xs text-[#999999]">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              {event.data.location}{event.data.place && <span class="text-[#6E6E6E]"> · {event.data.place}</span>}
+            </div>
+            {event.data.slides && event.data.slides.length > 0 && (
+              <a href={event.data.slides[0]} target="_blank" rel="noreferrer" class="text-[10px] text-[#999999] hover:text-white hover:underline transition-colors">
+                <span class="lang-en">Slides</span><span class="lang-ar">العرض</span>
+              </a>
+            )}
+          </div>
+        </div>
+      ))}
+
+      <!-- Empty state -->
+      <div id="events-empty" class="hidden col-span-full py-16 text-center">
+        <p class="text-[#999999] text-lg">
+          <span class="lang-en">No events in this category yet.</span>
+          <span class="lang-ar">لا توجد فعاليات في هذه الفئة بعد.</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    var filterBtns = document.querySelectorAll('.event-filter-btn');
+    var cards = document.querySelectorAll('.event-card');
+    var emptyState = document.getElementById('events-empty');
+
+    function applyFilter(filter) {
+      var visibleCount = 0;
+      cards.forEach(function (card) {
+        var time = card.getAttribute('data-event-time');
+        if (filter === 'all' || time === filter) {
+          card.style.display = '';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      if (emptyState) {
+        emptyState.classList.toggle('hidden', visibleCount > 0);
+      }
+    }
+
+    filterBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var filter = this.getAttribute('data-filter');
+        filterBtns.forEach(function (b) {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        this.classList.add('active');
+        this.setAttribute('aria-selected', 'true');
+        applyFilter(filter);
+      });
+    });
+
+    applyFilter('upcoming');
+  })();
+</script>

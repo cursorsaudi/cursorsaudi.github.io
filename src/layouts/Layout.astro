@@ -1,0 +1,69 @@
+---
+import { config } from "@/config";
+import "@/styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = config.title, description = config.description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ar" dir="rtl" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={config.author} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={config.social.luma} />
+    <meta name="theme-color" content="#0F0F0F" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Kufi+Arabic:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Prevent FOUC: set language before render -->
+    <script is:inline>
+      (function () {
+        var lang = localStorage.getItem("lang") || "ar";
+        var html = document.documentElement;
+        html.lang = lang;
+        html.dir = lang === "ar" ? "rtl" : "ltr";
+        html.classList.add("dark");
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen flex flex-col relative">
+    <!-- Grid background -->
+    <div class="grid-bg" aria-hidden="true"></div>
+
+    <slot />
+
+    <!-- Scroll animation observer -->
+    <script is:inline>
+      (function () {
+        var observer = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+              }
+            });
+          },
+          { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+        );
+        document.querySelectorAll(".animate-on-scroll").forEach(function (el) {
+          observer.observe(el);
+        });
+      })();
+    </script>
+  </body>
+</html>

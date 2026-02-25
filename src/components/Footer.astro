@@ -1,0 +1,29 @@
+---
+import { config } from "@/config";
+---
+
+<footer class="border-t border-[#252525] bg-[#0A0A0A] relative z-20">
+  <div class="max-w-5xl mx-auto px-6 md:px-10 py-12">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+      <div class="flex items-center gap-2">
+        <svg width="16" height="18" viewBox="0 0 467 532" fill="none" class="opacity-40" aria-hidden="true">
+          <path d="M457.43,125.94L244.42,2.96c-6.84-3.95-15.28-3.95-22.12,0L9.3,125.94c-5.75,3.32-9.3,9.46-9.3,16.11v247.99c0,6.65,3.55,12.79,9.3,16.11l213.01,122.98c6.84,3.95,15.28,3.95,22.12,0l213.01-122.98c5.75-3.32,9.3-9.46,9.3-16.11v-247.99c0-6.65-3.55-12.79-9.3-16.11h-.01ZM444.05,151.99l-205.63,356.16c-1.39,2.4-5.06,1.42-5.06-1.36v-233.21c0-4.66-2.49-8.97-6.53-11.31L24.87,145.67c-2.4-1.39-1.42-5.06,1.36-5.06h411.26c5.84,0,9.49,6.33,6.57,11.39h-.01Z" fill="#EDECEC"/>
+        </svg>
+        <span class="text-sm text-[#999999]">
+          <span class="lang-en">&copy; 2026 Cursor Saudi Community</span>
+          <span class="lang-ar">&copy; 2026 مجتمع Cursor السعودي</span>
+        </span>
+      </div>
+
+      <div class="flex flex-wrap gap-8 text-sm text-[#999999]">
+        <a href={config.social.twitter} target="_blank" rel="noreferrer" class="hover:text-white transition-colors">Twitter</a>
+        <a href={config.social.discord} target="_blank" rel="noreferrer" class="hover:text-white transition-colors">Discord</a>
+        <a href={config.social.github} target="_blank" rel="noreferrer" class="hover:text-white transition-colors">GitHub</a>
+        <a href={`mailto:${config.social.email}`} class="hover:text-white transition-colors">
+          <span class="lang-en">Contact</span>
+          <span class="lang-ar">تواصل معنا</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>

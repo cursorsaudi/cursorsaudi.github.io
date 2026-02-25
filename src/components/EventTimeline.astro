@@ -1,0 +1,184 @@
+---
+import EventCard from "@/components/EventCard.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  upcomingEvents: CollectionEntry<"events">[];
+  pastEvents: CollectionEntry<"events">[];
+}
+
+const { upcomingEvents, pastEvents } = Astro.props;
+
+// Next upcoming = first in upcoming (already sorted ascending by date)
+const nextEvent = upcomingEvents[0] ?? null;
+// Latest past = first in past (already sorted descending by date)
+const latestEvent = pastEvents[0] ?? null;
+
+// Remaining events (exclude the two highlighted ones)
+const nextEventId = nextEvent?.id;
+const latestEventId = latestEvent?.id;
+
+const remainingUpcoming = upcomingEvents.filter((e) => e.id !== nextEventId);
+const remainingPast = pastEvents.filter((e) => e.id !== latestEventId);
+---
+
+<section id="events" class="timeline-section">
+  <div class="container">
+    <!-- Featured events -->
+    {(nextEvent || latestEvent) && (
+      <div class="featured-row animate-on-scroll">
+        {nextEvent && (
+          <div class="featured-slot">
+            <div class="featured-label featured-label-next">
+              <span class="featured-dot featured-dot-next"></span>
+              <span class="lang-ar">الفعالية القادمة</span>
+              <span class="lang-en">Next Event</span>
+            </div>
+            <EventCard event={nextEvent.data} />
+          </div>
+        )}
+        {latestEvent && (
+          <div class="featured-slot">
+            <div class="featured-label featured-label-latest">
+              <span class="featured-dot featured-dot-latest"></span>
+              <span class="lang-ar">آخر فعالية</span>
+              <span class="lang-en">Latest Event</span>
+            </div>
+            <EventCard event={latestEvent.data} />
+          </div>
+        )}
+      </div>
+    )}
+
+    <!-- All other events -->
+    {(remainingUpcoming.length > 0 || remainingPast.length > 0) && (
+      <div class="timeline-rest">
+        <div class="animate-on-scroll">
+          <h2 class="section-heading">
+            <span class="lang-ar">جميع الفعاليات</span>
+            <span class="lang-en">All Events</span>
+          </h2>
+        </div>
+
+        {remainingUpcoming.length > 0 && (
+          <>
+            <p class="timeline-group-label animate-on-scroll">
+              <span class="lang-ar">القادمة</span>
+              <span class="lang-en">Upcoming</span>
+            </p>
+            <div class="events-grid stagger-children">
+              {remainingUpcoming.map((event) => (
+                <EventCard event={event.data} />
+              ))}
+            </div>
+          </>
+        )}
+
+        {remainingPast.length > 0 && (
+          <>
+            <p class="timeline-group-label animate-on-scroll">
+              <span class="lang-ar">السابقة</span>
+              <span class="lang-en">Past</span>
+            </p>
+            <div class="events-grid stagger-children">
+              {remainingPast.map((event) => (
+                <EventCard event={event.data} />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .timeline-section {
+    padding: 2rem 0 4rem;
+  }
+
+  /* ── Featured row ── */
+  .featured-row {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    margin-bottom: 3rem;
+  }
+
+  .featured-slot {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .featured-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .featured-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .featured-label-next {
+    color: #4ade80;
+  }
+
+  .featured-dot-next {
+    background: #4ade80;
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+  }
+
+  .featured-label-latest {
+    color: #7da8c9;
+  }
+
+  .featured-dot-latest {
+    background: #7da8c9;
+    box-shadow: 0 0 10px rgba(125, 168, 201, 0.4);
+  }
+
+  /* Make cards in featured row stretch to fill */
+  .featured-slot :global(.event-card) {
+    flex: 1;
+  }
+
+  /* ── Rest of timeline ── */
+  .timeline-rest {
+    /* spacing between featured and rest is handled by margin-bottom on featured-row */
+  }
+
+  .timeline-group-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    margin: 0 0 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .timeline-group-label:first-of-type {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  /* Space between groups */
+  .events-grid + .timeline-group-label {
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .featured-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

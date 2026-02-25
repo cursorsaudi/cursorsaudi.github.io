@@ -1,0 +1,172 @@
+---
+import { config } from "@/config";
+import { getUpcomingEvents, getPastEvents, getSortedEvents } from "@/utils/events";
+import type { CollectionEntry } from "astro:content";
+
+type EventEntry = CollectionEntry<"events">;
+
+const upcoming = await getUpcomingEvents();
+const past = await getPastEvents();
+const allEvents = await getSortedEvents();
+const nextEvent = upcoming[0];
+const citiesCount = new Set(allEvents.map((e: EventEntry) => e.data.location)).size;
+
+function formatShortDate(date: Date) {
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+---
+
+<section id="home" class="page-content active">
+  <div class="max-w-5xl mx-auto px-6 md:px-10 relative">
+    <div class="glow-bg opacity-40 top-0"></div>
+
+    <!-- Hero: title left, map right -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center pt-24 md:pt-32 pb-16 relative z-10">
+      <!-- Left: text content -->
+      <div class="flex flex-col items-start text-start">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm mb-8 transition-transform hover:scale-105 cursor-default">
+          <span class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse-slow"></span>
+          <span class="text-xs text-[#8A8A8A] font-medium tracking-wide">
+            <span class="lang-ar">مجتمع مطورين نشط في السعودية</span>
+            <span class="lang-en">Active developer community in Saudi Arabia</span>
+          </span>
+        </div>
+
+        <h1 class="text-5xl md:text-7xl font-semibold tracking-tighter mb-6 leading-[1.1] text-white">
+          <span class="lang-en">The AI-Native<br><span class="text-[#8A8A8A]">Saudi Community.</span></span>
+          <span class="lang-ar">المجتمع السعودي<br><span class="text-[#8A8A8A]">للذكاء الاصطناعي.</span></span>
+        </h1>
+
+        <p class="text-lg text-[#8A8A8A] leading-relaxed mb-8 max-w-lg">
+          <span class="lang-en">Hands-on technical events focused on shipping faster with AI-native developer tools. Built by the community, for the community.</span>
+          <span class="lang-ar">فعاليات تقنية عملية لبناء منتجات أسرع باستخدام أدوات الذكاء الاصطناعي. من المجتمع، للمجتمع.</span>
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-start gap-4 w-full sm:w-auto">
+          <a href={config.social.discord} target="_blank" rel="noreferrer" class="w-full sm:w-auto btn-primary px-8 py-3.5 rounded-full font-medium text-sm flex items-center justify-center gap-2">
+            <span class="lang-en">Join Community</span>
+            <span class="lang-ar">انضم للمجتمع</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <button class="w-full sm:w-auto btn-secondary px-8 py-3.5 rounded-full font-medium text-sm" data-nav="about">
+            <span class="lang-en">About Us</span>
+            <span class="lang-ar">عن المجتمع</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Saudi Arabia Map -->
+      <div class="relative w-full rounded-2xl border border-[#2A2A2A] bg-[#0F0F0F] overflow-hidden" style="aspect-ratio: 7/5;">
+        <div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(to right, #444 1px, transparent 1px), linear-gradient(to bottom, #444 1px, transparent 1px); background-size: 40px 40px;"></div>
+        <svg viewBox="0 0 700 500" class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" aria-label="Map of Saudi Arabia showing chapter locations">
+          <path d="M287.0,460.0 L283.6,448.7 L275.6,440.7 L273.5,430.1 L259.8,420.6 L245.7,398.3 L238.2,376.6 L219.8,358.4 L208.0,354.0 L190.4,328.7 L187.3,310.2 L188.4,294.5 L173.2,265.0 L160.7,254.7 L146.4,249.2 L137.7,234.0 L139.1,228.0 L131.7,214.2 L124.0,208.3 L113.6,188.5 L97.4,167.1 L83.9,148.8 L70.7,149.0 L74.8,134.4 L76.0,125.1 L79.3,114.5 L108.8,118.7 L120.3,110.5 L126.7,101.0 L146.9,97.3 L151.3,88.4 L160.1,83.9 L133.6,57.3 L186.8,44.0 L191.9,40.0 L223.9,47.2 L263.4,65.8 L338.3,119.2 L387.7,121.3 L411.4,123.9 L418.0,136.5 L436.8,135.9 L447.2,158.8 L460.2,164.8 L464.8,174.2 L482.9,185.3 L484.5,196.3 L481.8,205.1 L485.2,214.0 L492.8,221.5 L496.4,230.2 L500.3,236.7 L508.4,242.0 L515.7,240.1 L520.8,250.2 L521.8,256.4 L532.0,283.3 L611.8,296.7 L617.2,291.1 L629.3,309.9 L611.6,363.0 L532.0,389.6 L455.4,399.7 L430.6,411.7 L411.5,439.6 L399.1,444.0 L392.5,435.2 L382.3,436.5 L356.7,433.8 L351.8,431.2 L321.1,431.8 L313.9,434.2 L303.0,427.3 L296.0,440.3 L298.7,451.5 L287.0,460.0 Z"
+                fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>
+
+          <!-- Riyadh -->
+          <g>
+            <circle cx="392" cy="240" r="18" fill="rgba(255,255,255,0.06)" class="animate-ping" style="animation-duration:3s"/>
+            <circle cx="392" cy="240" r="7" fill="white" stroke="#000" stroke-width="2"/>
+            <circle cx="392" cy="240" r="2.5" fill="#040404"/>
+          </g>
+          <!-- Khobar -->
+          <g>
+            <circle cx="484" cy="196" r="16" fill="rgba(255,255,255,0.05)" class="animate-ping" style="animation-duration:3.5s"/>
+            <circle cx="484" cy="196" r="6" fill="white" stroke="#000" stroke-width="2"/>
+            <circle cx="484" cy="196" r="2" fill="#040404"/>
+          </g>
+          <!-- Mecca -->
+          <g>
+            <circle cx="255" cy="310" r="14" fill="rgba(255,255,255,0.04)" class="animate-ping" style="animation-duration:4s"/>
+            <circle cx="255" cy="310" r="5" fill="#8A8A8A" stroke="#000" stroke-width="2"/>
+            <circle cx="255" cy="310" r="1.5" fill="#040404"/>
+          </g>
+
+          <line x1="392" y1="240" x2="484" y2="196" stroke="#333" stroke-width="1" stroke-dasharray="4 4"/>
+          <line x1="392" y1="240" x2="255" y2="310" stroke="#333" stroke-width="1" stroke-dasharray="4 4"/>
+
+          <text x="392" y="266" text-anchor="middle" fill="#ededed" font-size="11" font-family="Inter, sans-serif" font-weight="600">Riyadh</text>
+          <text x="484" y="220" text-anchor="middle" fill="#ededed" font-size="11" font-family="Inter, sans-serif" font-weight="600">Khobar</text>
+          <text x="255" y="335" text-anchor="middle" fill="#8A8A8A" font-size="10" font-family="Inter, sans-serif" font-weight="500">Mecca</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-[#2A2A2A] rounded-2xl overflow-hidden border border-[#2A2A2A] mb-16">
+      <div class="bg-[#0F0F0F] p-8 text-center hover:bg-[#161616] transition-colors">
+        <div class="text-3xl font-bold text-white mb-1">{allEvents.length}</div>
+        <div class="text-xs text-[#8A8A8A] uppercase tracking-widest font-medium"><span class="lang-en">Events</span><span class="lang-ar">فعالية</span></div>
+      </div>
+      <div class="bg-[#0F0F0F] p-8 text-center hover:bg-[#161616] transition-colors">
+        <div class="text-3xl font-bold text-white mb-1">{past.length}</div>
+        <div class="text-xs text-[#8A8A8A] uppercase tracking-widest font-medium"><span class="lang-en">Completed</span><span class="lang-ar">مكتملة</span></div>
+      </div>
+      <div class="bg-[#0F0F0F] p-8 text-center hover:bg-[#161616] transition-colors">
+        <div class="text-3xl font-bold text-white mb-1">{upcoming.length}</div>
+        <div class="text-xs text-[#8A8A8A] uppercase tracking-widest font-medium"><span class="lang-en">Upcoming</span><span class="lang-ar">قادمة</span></div>
+      </div>
+      <div class="bg-[#0F0F0F] p-8 text-center hover:bg-[#161616] transition-colors">
+        <div class="text-3xl font-bold text-white mb-1">{citiesCount}</div>
+        <div class="text-xs text-[#8A8A8A] uppercase tracking-widest font-medium"><span class="lang-en">Cities</span><span class="lang-ar">مدينة</span></div>
+      </div>
+    </div>
+
+    <!-- Featured Cards: Next Event + Latest Completed -->
+    <div class="grid md:grid-cols-2 gap-6 mb-16">
+      {nextEvent && (
+        <div class="group relative bg-[#0F0F0F] border border-[#2A2A2A] rounded-2xl p-8 hover:border-[#444] transition-all cursor-pointer overflow-hidden" data-nav="events">
+          <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="relative z-10 flex flex-col h-full">
+            <div class="flex items-center justify-between mb-8">
+              <span class="text-xs font-mono text-white bg-white/10 px-2 py-1 rounded border border-white/5"><span class="lang-en">NEXT EVENT</span><span class="lang-ar">الفعالية القادمة</span></span>
+              <span class="text-xs text-[#8A8A8A]">{formatShortDate(nextEvent.data.date)} · {nextEvent.data.location}</span>
+            </div>
+            <h3 class="text-2xl md:text-3xl font-semibold mb-3 text-white">{nextEvent.data.title}</h3>
+            <p class="text-[#8A8A8A] mb-8 text-sm">{nextEvent.data.description}</p>
+            <div class="mt-auto flex items-center text-sm font-medium text-white group-hover:underline decoration-1 underline-offset-4">
+              <span class="lang-en">View Events</span><span class="lang-ar">عرض الفعاليات</span><span class="ms-2">&rarr;</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {past.length > 0 && (
+        <div class="group relative bg-[#0F0F0F] border border-[#2A2A2A] rounded-2xl p-8 hover:border-[#444] transition-all cursor-pointer overflow-hidden" data-nav="events">
+          <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="relative z-10 flex flex-col h-full">
+            <div class="flex items-center justify-between mb-8">
+              <span class="text-xs font-mono text-blue-400 bg-blue-500/10 px-2 py-1 rounded border border-blue-500/20"><span class="lang-en">LATEST COMPLETED</span><span class="lang-ar">آخر فعالية</span></span>
+              <span class="text-xs text-[#8A8A8A]">{formatShortDate(past[0].data.date)} · {past[0].data.location}</span>
+            </div>
+            <h3 class="text-2xl md:text-3xl font-semibold mb-3 text-white">{past[0].data.title}</h3>
+            <p class="text-[#8A8A8A] mb-8 text-sm">{past[0].data.description}</p>
+            <div class="mt-auto flex items-center text-sm font-medium text-white group-hover:underline decoration-1 underline-offset-4">
+              <span class="lang-en">View All Events</span><span class="lang-ar">عرض جميع الفعاليات</span><span class="ms-2">&rarr;</span>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+
+    <!-- Supported By -->
+    <div class="border-t border-b border-[#2A2A2A] py-10 pb-12 mb-10">
+      <div class="text-center mb-8">
+        <span class="text-[10px] font-mono text-[#4A4A4A] uppercase tracking-[0.2em]">
+          <span class="lang-en">Supported By</span>
+          <span class="lang-ar">بدعم من</span>
+        </span>
+      </div>
+      <div class="flex flex-wrap items-center justify-center gap-x-16 gap-y-8">
+        {config.partners.map((partner) => (
+          <a href={partner.url} target="_blank" rel="noreferrer" class="group flex flex-col items-center gap-3 opacity-60 hover:opacity-100 transition-opacity" title={partner.name}>
+            <img src={partner.logo} alt={partner.name} class="h-16 max-w-[120px] object-contain" loading="lazy" />
+            <span class="text-sm font-semibold text-white/80 group-hover:text-white transition-colors tracking-tight">
+              <span class="lang-en">{partner.name}</span>
+              <span class="lang-ar">{partner.nameAr}</span>
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

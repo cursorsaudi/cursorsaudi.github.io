@@ -1,0 +1,316 @@
+---
+import { config } from "@/config";
+import { getUpcomingEvents, getPastEvents } from "@/utils/events";
+import type { CollectionEntry } from "astro:content";
+
+type EventEntry = CollectionEntry<"events">;
+
+interface Ambassador {
+  name: string;
+  role: string;
+  roleAr: string;
+  city: string;
+  cityAr: string;
+  twitter?: string;
+  linkedin?: string;
+}
+
+const ambassadors = config.ambassadors as readonly Ambassador[];
+
+const upcoming = await getUpcomingEvents();
+const past = await getPastEvents();
+
+const riyadhPast = past.filter((e: EventEntry) => e.data.location === "Riyadh").length;
+const riyadhUpcoming = upcoming.filter((e: EventEntry) => e.data.location === "Riyadh").length;
+const khobarPast = past.filter((e: EventEntry) => e.data.location === "Khobar").length;
+const khobarUpcoming = upcoming.filter((e: EventEntry) => e.data.location === "Khobar").length;
+const meccaPast = past.filter((e: EventEntry) => e.data.location === "Mecca").length;
+const meccaUpcoming = upcoming.filter((e: EventEntry) => e.data.location === "Mecca").length;
+
+const nextRiyadh = upcoming.find((e: EventEntry) => e.data.location === "Riyadh");
+const nextKhobar = upcoming.find((e: EventEntry) => e.data.location === "Khobar");
+const nextMecca = upcoming.find((e: EventEntry) => e.data.location === "Mecca");
+
+const riyadhAmbassador = ambassadors.find((a) => a.city === "Riyadh")!;
+const khobarAmbassador = ambassadors.find((a) => a.city === "Khobar")!;
+const meccaAmbassador = ambassadors.find((a) => a.city === "Mecca")!;
+
+const riyadhPartners = config.partners.filter((p) => (p.cities as readonly string[]).includes("Riyadh") && p.role !== "past-community-partner");
+const khobarPartners = config.partners.filter((p) => (p.cities as readonly string[]).includes("Khobar"));
+const meccaPartners = config.partners.filter((p) => (p.cities as readonly string[]).includes("Mecca"));
+
+function formatShortDate(date: Date) {
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+---
+
+<section id="about" class="page-content">
+  <div class="max-w-5xl mx-auto px-6 md:px-10 py-12 md:py-20">
+    <!-- Mission Statement -->
+    <div class="max-w-3xl mx-auto text-center mb-20">
+      <h1 class="text-4xl md:text-5xl font-semibold text-white mb-8">
+        <span class="lang-en">Empowering the Kingdom's<br>Next Generation of Builders.</span>
+        <span class="lang-ar">تمكين الجيل القادم<br>من البناة في المملكة.</span>
+      </h1>
+      <p class="text-xl text-[#999999] leading-relaxed">
+        <span class="lang-en">Cursor Saudi is a community-led initiative dedicated to accelerating the adoption of AI-native development tools across Saudi Arabia. We believe the future of software is collaborative, intelligent, and open.</span>
+        <span class="lang-ar">Cursor Saudi هي مبادرة مجتمعية مكرسة لتسريع تبني أدوات التطوير المدعومة بالذكاء الاصطناعي في المملكة العربية السعودية. نؤمن بأن مستقبل البرمجيات تعاوني وذكي ومفتوح.</span>
+      </p>
+    </div>
+
+    <!-- Chapters Section -->
+    <div class="mb-24">
+      <div class="text-center mb-12">
+        <span class="text-xs font-mono text-[#999999] uppercase tracking-widest">
+          <span class="lang-en">Our Chapters</span>
+          <span class="lang-ar">فروعنا</span>
+        </span>
+        <h2 class="text-3xl font-semibold text-white mt-3">
+          <span class="lang-en">Active Across the Kingdom</span>
+          <span class="lang-ar">نشطون في أنحاء المملكة</span>
+        </h2>
+      </div>
+
+      <div class="space-y-6">
+        <!-- Riyadh Chapter -->
+        <div id="riyadh-chapter" class="bg-[#171717] border border-[#252525] rounded-2xl p-8">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]"></span>
+              <h3 class="text-xl font-semibold text-white"><span class="lang-en">Riyadh Chapter</span><span class="lang-ar">فرع الرياض</span></h3>
+            </div>
+            <span class="text-xs font-mono text-[#999999] border border-[#252525] rounded px-2 py-1">EST. 2025</span>
+          </div>
+          <p class="text-sm text-[#999999] mb-4"><span class="lang-en">The flagship chapter — home to the largest community of Cursor developers in the Kingdom. Regular meetups, workshops, and build sprints covering AI-native development, MCP servers, prompt engineering, and more.</span><span class="lang-ar">الفرع الرئيسي — موطن أكبر مجتمع مطورين لـ Cursor في المملكة. لقاءات وورش عمل وسباقات بناء منتظمة تغطي التطوير بالذكاء الاصطناعي وخوادم MCP وهندسة البرومبت والمزيد.</span></p>
+          <div class="flex items-center gap-2 text-xs text-[#999999] mb-4">
+            <span class="lang-en">{riyadhAmbassador.role}:</span><span class="lang-ar">{riyadhAmbassador.roleAr}:</span>
+            <div class="flex items-center gap-2">
+              <span class="text-white font-medium">{riyadhAmbassador.name}</span>
+              {riyadhAmbassador.twitter && (
+                <a href={riyadhAmbassador.twitter} target="_blank" rel="noreferrer" class="text-[#6E6E6E] hover:text-white transition-colors" title="X / Twitter">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </a>
+              )}
+              {riyadhAmbassador.linkedin && (
+                <a href={riyadhAmbassador.linkedin} target="_blank" rel="noreferrer" class="text-[#6E6E6E] hover:text-white transition-colors" title="LinkedIn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                </a>
+              )}
+            </div>
+          </div>
+          <div class="flex gap-4 mb-6">
+            <div><div class="text-xl font-bold text-white">{riyadhPast}</div><div class="text-[10px] text-[#999999] uppercase tracking-wider"><span class="lang-en">Completed</span><span class="lang-ar">مكتملة</span></div></div>
+            <div><div class="text-xl font-bold text-white">{riyadhUpcoming}</div><div class="text-[10px] text-[#999999] uppercase tracking-wider"><span class="lang-en">Upcoming</span><span class="lang-ar">قادمة</span></div></div>
+          </div>
+          {nextRiyadh && (
+            <div class="border-t border-[#252525] pt-4">
+              <div class="text-[9px] text-[#6E6E6E] uppercase tracking-widest mb-1"><span class="lang-en">Next Event</span><span class="lang-ar">الفعالية القادمة</span></div>
+              <div class="text-xs text-white font-medium">{nextRiyadh.data.title}</div>
+              <div class="text-[10px] text-[#999999] mt-0.5">{formatShortDate(nextRiyadh.data.date)}</div>
+            </div>
+          )}
+          {riyadhPartners.length > 0 && (
+            <div class="border-t border-[#252525] pt-5 mt-5">
+              <div class="text-[10px] uppercase tracking-widest text-[#6E6E6E] font-medium mb-4"><span class="lang-en">Chapter Partners</span><span class="lang-ar">شركاء الفرع</span></div>
+              <div class="flex flex-wrap gap-3">
+                {riyadhPartners.map((partner) => (
+                  <a href={partner.url} target="_blank" rel="noreferrer" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#252525] bg-[#1F1F1F] text-sm text-[#999999] hover:text-white hover:border-white/20 transition-all">
+                    <img src={partner.logo} alt={partner.name} class="h-5 w-5 rounded object-cover" loading="lazy" />
+                    <span class="lang-en">{partner.name}</span>
+                    <span class="lang-ar">{partner.nameAr}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <!-- Khobar Chapter -->
+        <div id="khobar-chapter" class="bg-[#171717] border border-[#252525] rounded-2xl p-8">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]"></span>
+              <h3 class="text-xl font-semibold text-white"><span class="lang-en">Khobar Chapter</span><span class="lang-ar">فرع الخبر</span></h3>
+            </div>
+            <span class="text-xs font-mono text-[#999999] border border-[#252525] rounded px-2 py-1">EST. 2025</span>
+          </div>
+          <p class="text-sm text-[#999999] mb-4"><span class="lang-en">Serving the Eastern Province tech ecosystem, connecting engineers across Khobar, Dammam, and Dhahran with a focus on AI-powered development workflows.</span><span class="lang-ar">نخدم منظومة التقنية في المنطقة الشرقية، ونربط المهندسين في الخبر والدمام والظهران مع التركيز على سير عمل التطوير المدعوم بالذكاء الاصطناعي.</span></p>
+          <div class="flex items-center gap-2 text-xs text-[#999999] mb-4">
+            <span class="lang-en">{khobarAmbassador.role}:</span><span class="lang-ar">{khobarAmbassador.roleAr}:</span>
+            <div class="flex items-center gap-2">
+              <span class="text-white font-medium">{khobarAmbassador.name}</span>
+              {khobarAmbassador.twitter && (
+                <a href={khobarAmbassador.twitter} target="_blank" rel="noreferrer" class="text-[#6E6E6E] hover:text-white transition-colors" title="X / Twitter">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </a>
+              )}
+              {khobarAmbassador.linkedin && (
+                <a href={khobarAmbassador.linkedin} target="_blank" rel="noreferrer" class="text-[#6E6E6E] hover:text-white transition-colors" title="LinkedIn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                </a>
+              )}
+            </div>
+          </div>
+          <div class="flex gap-4 mb-6">
+            <div><div class="text-xl font-bold text-white">{khobarPast}</div><div class="text-[10px] text-[#999999] uppercase tracking-wider"><span class="lang-en">Completed</span><span class="lang-ar">مكتملة</span></div></div>
+            <div><div class="text-xl font-bold text-white">{khobarUpcoming}</div><div class="text-[10px] text-[#999999] uppercase tracking-wider"><span class="lang-en">Upcoming</span><span class="lang-ar">قادمة</span></div></div>
+          </div>
+          {nextKhobar && (
+            <div class="border-t border-[#252525] pt-4">
+              <div class="text-[9px] text-[#6E6E6E] uppercase tracking-widest mb-1"><span class="lang-en">Next Event</span><span class="lang-ar">الفعالية القادمة</span></div>
+              <div class="text-xs text-white font-medium">{nextKhobar.data.title}</div>
+              <div class="text-[10px] text-[#999999] mt-0.5">{formatShortDate(nextKhobar.data.date)}</div>
+            </div>
+          )}
+          {khobarPartners.length > 0 && (
+            <div class="border-t border-[#252525] pt-5 mt-5">
+              <div class="text-[10px] uppercase tracking-widest text-[#6E6E6E] font-medium mb-4"><span class="lang-en">Chapter Partners</span><span class="lang-ar">شركاء الفرع</span></div>
+              <div class="flex flex-wrap gap-3">
+                {khobarPartners.map((partner) => (
+                  <a href={partner.url} target="_blank" rel="noreferrer" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#252525] bg-[#1F1F1F] text-sm text-[#999999] hover:text-white hover:border-white/20 transition-all">
+                    <img src={partner.logo} alt={partner.name} class="h-5 w-5 rounded object-cover" loading="lazy" />
+                    <span class="lang-en">{partner.name}</span>
+                    <span class="lang-ar">{partner.nameAr}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <!-- Mecca Chapter -->
+        <div id="mecca-chapter" class="bg-[#171717] border border-[#252525] rounded-2xl p-8 relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent pointer-events-none"></div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center gap-3">
+                <span class="w-2.5 h-2.5 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(192,132,252,0.6)]"></span>
+                <h3 class="text-xl font-semibold text-white"><span class="lang-en">Mecca Chapter</span><span class="lang-ar">فرع مكة المكرمة</span></h3>
+              </div>
+              <span class="text-xs font-mono text-purple-400 border border-purple-500/30 bg-purple-500/10 rounded px-2 py-1">
+                <span class="lang-en">COMING SOON</span>
+                <span class="lang-ar">قريباً</span>
+              </span>
+            </div>
+            <p class="text-sm text-[#999999] mb-4"><span class="lang-en">Expanding to the Holy City to serve the growing tech community in the Mecca region. Stay tuned for our first events.</span><span class="lang-ar">نتوسع إلى مكة المكرمة لخدمة مجتمع التقنية المتنامي في منطقة مكة. ترقبوا فعالياتنا الأولى.</span></p>
+            <div class="flex items-center gap-2 text-xs text-[#999999] mb-4">
+              <span class="lang-en">{meccaAmbassador.role}:</span><span class="lang-ar">{meccaAmbassador.roleAr}:</span>
+              <div class="flex items-center gap-2">
+                <span class="text-white font-medium">{meccaAmbassador.name}</span>
+                {meccaAmbassador.twitter && (
+                  <a href={meccaAmbassador.twitter} target="_blank" rel="noreferrer" class="text-[#6E6E6E] hover:text-white transition-colors" title="X / Twitter">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                  </a>
+                )}
+                {meccaAmbassador.linkedin && (
+                  <a href={meccaAmbassador.linkedin} target="_blank" rel="noreferrer" class="text-[#6E6E6E] hover:text-white transition-colors" title="LinkedIn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                  </a>
+                )}
+              </div>
+            </div>
+            {(meccaPast > 0 || meccaUpcoming > 0) && (
+              <div class="flex gap-4 mb-6">
+                <div><div class="text-xl font-bold text-white">{meccaPast}</div><div class="text-[10px] text-[#999999] uppercase tracking-wider"><span class="lang-en">Completed</span><span class="lang-ar">مكتملة</span></div></div>
+                <div><div class="text-xl font-bold text-white">{meccaUpcoming}</div><div class="text-[10px] text-[#999999] uppercase tracking-wider"><span class="lang-en">Upcoming</span><span class="lang-ar">قادمة</span></div></div>
+              </div>
+            )}
+            {nextMecca && (
+              <div class="border-t border-[#252525] pt-4">
+                <div class="text-[9px] text-[#6E6E6E] uppercase tracking-widest mb-1"><span class="lang-en">Next Event</span><span class="lang-ar">الفعالية القادمة</span></div>
+                <div class="text-xs text-white font-medium">{nextMecca.data.title}</div>
+                <div class="text-[10px] text-[#999999] mt-0.5">{formatShortDate(nextMecca.data.date)}</div>
+              </div>
+            )}
+            {meccaPartners.length > 0 && (
+              <div class="border-t border-[#252525] pt-5 mt-5">
+                <div class="text-[10px] uppercase tracking-widest text-[#6E6E6E] font-medium mb-4"><span class="lang-en">Chapter Partners</span><span class="lang-ar">شركاء الفرع</span></div>
+                <div class="flex flex-wrap gap-3">
+                  {meccaPartners.map((partner) => (
+                    <a href={partner.url} target="_blank" rel="noreferrer" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#252525] bg-[#1F1F1F] text-sm text-[#999999] hover:text-white hover:border-white/20 transition-all">
+                      <img src={partner.logo} alt={partner.name} class="h-5 w-5 rounded object-cover" loading="lazy" />
+                      <span class="lang-en">{partner.name}</span>
+                      <span class="lang-ar">{partner.nameAr}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ambassadors + Mission Pillars -->
+    <div class="grid md:grid-cols-2 gap-12 items-start mb-24">
+      <div class="space-y-6">
+        {ambassadors.map((ambassador) => (
+          <div class="bg-[#171717] border border-[#252525] rounded-2xl p-8 relative overflow-hidden">
+            <div class="relative z-10">
+              <div class="text-xs font-mono text-green-500 mb-1">
+                <span class="lang-en">{ambassador.role} · {ambassador.city}</span>
+                <span class="lang-ar">{ambassador.roleAr} · {ambassador.cityAr}</span>
+              </div>
+              <h2 class="text-2xl font-bold text-white mb-4">{ambassador.name}</h2>
+              <div class="flex gap-4">
+                {ambassador.twitter && (
+                  <a href={ambassador.twitter} target="_blank" rel="noreferrer" class="text-[#999999] hover:text-white transition-colors text-sm flex items-center gap-1.5">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    X / Twitter
+                  </a>
+                )}
+                {ambassador.linkedin && (
+                  <a href={ambassador.linkedin} target="_blank" rel="noreferrer" class="text-[#999999] hover:text-white transition-colors text-sm flex items-center gap-1.5">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    LinkedIn
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="space-y-8">
+        <div>
+          <h3 class="text-xl font-bold text-white mb-2">
+            <span class="lang-en">Learn Together</span>
+            <span class="lang-ar">نتعلم معاً</span>
+          </h3>
+          <p class="text-[#999999] text-sm leading-relaxed">
+            <span class="lang-en">Regular meetups, workshops, and build sprints covering Cursor workflows, MCP servers, prompt engineering, and AI-native development patterns.</span>
+            <span class="lang-ar">لقاءات وورش عمل وسباقات بناء منتظمة تغطي سير عمل Cursor وخوادم MCP وهندسة البرومبت وأنماط التطوير بالذكاء الاصطناعي.</span>
+          </p>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-white mb-2">
+            <span class="lang-en">Build Locally</span>
+            <span class="lang-ar">نبني محلياً</span>
+          </h3>
+          <p class="text-[#999999] text-sm leading-relaxed">
+            <span class="lang-en">From fintech MVPs to open-source contributions, our hackathons and build sprints tackle real challenges facing Saudi developers.</span>
+            <span class="lang-ar">من منتجات التقنية المالية إلى المساهمات مفتوحة المصدر، تتصدى هاكاثوناتنا وسباقات البناء للتحديات الحقيقية التي يواجهها المطورون السعوديون.</span>
+          </p>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-white mb-2">
+            <span class="lang-en">Connect Globally</span>
+            <span class="lang-ar">نتواصل عالمياً</span>
+          </h3>
+          <p class="text-[#999999] text-sm leading-relaxed">
+            <span class="lang-en">Bridging the gap between Saudi developers and the global Cursor community through events, contributions, and direct collaboration with the Cursor team.</span>
+            <span class="lang-ar">سد الفجوة بين المطورين السعوديين ومجتمع Cursor العالمي من خلال الفعاليات والمساهمات والتعاون المباشر مع فريق Cursor.</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Social Links -->
+    <div class="text-center">
+      <div class="inline-flex gap-6 text-sm">
+        <a href={config.social.luma} target="_blank" rel="noreferrer" class="text-[#999999] hover:text-white transition-colors">Luma</a>
+        <a href={config.social.twitter} target="_blank" rel="noreferrer" class="text-[#999999] hover:text-white transition-colors">Twitter / X</a>
+      </div>
+    </div>
+  </div>
+</section>

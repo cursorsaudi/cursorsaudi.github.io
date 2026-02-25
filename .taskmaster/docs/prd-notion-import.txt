@@ -1,0 +1,101 @@
+# Notion Event Data Import — Supplemental PRD
+
+## Context
+
+All 19 original tasks are complete. The project now has a working Astro site with events rendered from sample Markdown files. A Notion export was provided containing the real event data for Cursor Saudi — 17 events spanning May 2025 through November 2026.
+
+The event content collection schema needs to be updated to match the actual Notion CSV fields, and all 17 events need to be converted from CSV into Markdown content files.
+
+Source CSV: `ExportBlock-f616ed77-905b-4068-9702-1263e7bca7eb-Part-1/Cursor Community in 🇸🇦/Events 27d321ff1409804880b6de61fa1c6336.csv`
+
+## Requirements
+
+### 1. Update Event Content Collection Schema
+
+Update `src/content.config.ts` to match the real Notion data fields:
+
+**Add these new required/optional fields:**
+- `type`: z.enum(["meetup", "hackathon", "workshop"]) — required, every event has a type
+- `speakers`: z.array(z.string()).optional() — speaker names, some events have multiple
+- `slides`: z.array(z.string()).optional() — slide URLs, some events have multiple URLs
+- `place`: z.string().optional() — venue name (mostly empty in current data)
+
+**Remove these fields:**
+- `isPast` — no longer stored; computed at build time from `date < new Date()`
+- `attendees` — not present in Notion data
+- `host` — not present in Notion data
+
+**Make these fields optional (Arabic translations not yet available):**
+- `titleAr`: z.string().optional() — was required, make optional
+- `locationAr`: z.string().optional() — was required, make optional
+- `descriptionAr`: z.string().optional() — was required, make optional
+
+Keep `title`, `date`, `location`, `description` as required. Keep `lumaUrl` as optional.
+
+### 2. Update Event Utility Functions
+
+Update `src/utils/events.ts`:
+- Remove any filtering based on `isPast` frontmatter field
+- `getUpcomingEvents()`: filter events where `date >= new Date()`, sort ascending by date
+- `getPastEvents()`: filter events where `date < new Date()`, sort descending by date
+- Both functions should use the current date at build time for comparison
+
+### 3. Update config.ts with Ambassadors
+
+Add ambassadors array to the site configuration in `src/config.ts`:
+```
+ambassadors: [
+  { name: "Mazen Alotaibi", city: "Riyadh", cityAr: "الرياض", twitter: "https://x.com/ma7dev" },
+  { name: "Abdulhakeem Almidan", city: "Khobar", cityAr: "الخبر", twitter: "https://x.com/abdulhakeem_mdn" },
+]
+```
+
+### 4. Convert 17 Notion CSV Events to Markdown Files
+
+Parse the CSV and create one Markdown file per event in `src/data/events/`. Use slugified filenames like `YYYY-MM-DD-event-name.md`.
+
+The 17 events from the CSV (Events 27d321ff1409804880b6de61fa1c6336.csv) are:
+
+Past events (date < Feb 10, 2026):
+1. Kickoff — May 28, 2025 — Riyadh — meetup — Speakers: Abdullah Mosaibah, Dan (Cursor), Mazen Alotaibi — Slides: 2025-05-riyadh-meetup.pdf
+2. Build your MVP with AI! — Jul 30, 2025 — Riyadh — workshop — Speakers: Faris Hijazi, Mazen Alotaibi — Slides: 2025-07-riyadh-workshop.pdf
+3. Introduction to Cursor — Aug 5, 2025 — Khobar — meetup — Speaker: Abdulhakeem Almidan — Slides: notion.so link
+4. Introduction to Cursor — Oct 24, 2025 — Riyadh — meetup — Speaker: Mazen Alotaibi — Slides: 2025-10-riyadh-hackathon.pdf
+5. Introduction to AI Tools for Game Developers — Nov 11, 2025 — Riyadh — meetup — Speaker: Mazen Alotaibi — Slides: 2025-11-riyadh-ai-game.pdf
+6. Contributing to Open Source with Cursor — Dec 25, 2025 — Riyadh — meetup — Speakers: Mazen Alotaibi, Mohammed Usman — Slides: 2025-12-riyadh-meetup.pdf, 2025-12-riyadh-meetup-guest-speaker.pdf
+7. The AI Dev Stack with Cursor — Jan 10, 2026 — Riyadh — meetup — Speaker: Mazen Alotaibi — No slides
+
+Upcoming events (date >= Feb 10, 2026):
+8. Cursor Deep Dive: How Cursor Thinks (Guest: Cursor Engineer) — Mar 7, 2026 — Riyadh — meetup
+9. Cursor For Everyone: Workflows Without Coding — Apr 4, 2026 — Riyadh — meetup
+10. Cursor Build Sprint: Fintech MVPs — Apr 4, 2026 — Riyadh — hackathon
+11. Cursor Playbook: From Idea to PR in One Hour — May 2, 2026 — Riyadh — meetup
+12. Cursor Build Sprint: Tech for Good — Jun 6, 2026 — Riyadh — hackathon
+13. MCPs, Tools, and Real Integrations — Jul 4, 2026 — Riyadh — meetup
+14. Cursor Build Sprint: Media and Entertainment Products — Aug 1, 2026 — Riyadh — hackathon
+15. Cursor for Product Teams: PRDs, QA, and Shipping Rituals — Sep 5, 2026 — Riyadh — meetup
+16. Cursor Builders: Build a Tiny MCP Server (Demo) — Oct 3, 2026 — Riyadh — meetup
+17. Cursor Build Sprint: Industry Challenge — Nov 7, 2026 — Riyadh — hackathon
+
+### 5. Update EventCard Component
+
+Update `src/components/EventCard.astro` to display the new fields:
+- Show event type as a badge/tag (meetup, hackathon, workshop) with distinct colors
+- Show speakers list if available
+- Show slides links if available (for past events)
+- Remove attendees/host display (no longer in schema)
+- Keep lumaUrl "Register" button for upcoming events
+
+### 6. Remove Old Sample Events and Verify Real Data
+
+- Delete any sample/placeholder event Markdown files that were created during initial setup
+- Ensure all 17 real event files are present and valid
+- Verify content collection loads without schema errors
+
+### 7. Final Verification with Real Data
+
+- Run `pnpm build` to verify no schema validation errors
+- Check that upcoming events section shows 10 future events
+- Check that past events section shows 7 past events
+- Verify bilingual toggle still works
+- Verify event type badges, speakers, and slides render correctly

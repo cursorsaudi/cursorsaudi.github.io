@@ -1,0 +1,149 @@
+---
+alwaysApply: true
+---
+
+# CursorSaudi.com — Project Rules
+
+## Project Overview
+
+Community website for Cursor Saudi (cursorsaudi.com), inspired by [CursorThailand.com](https://cursorthailand.com). Single-page site with hero, upcoming events, past events, and footer.
+
+## Stack
+
+- **Framework**: Astro 5.x (static site generation)
+- **Styling**: Tailwind CSS v4 via `@tailwindcss/vite`
+- **Language**: TypeScript (strict)
+- **Package manager**: pnpm
+- **Deployment**: GitHub Pages via GitHub Actions
+- **Domain**: cursorsaudi.com (CNAME in `public/`)
+
+## Key Constraints
+
+- **Bilingual**: Arabic (default, RTL) + English (LTR) with client-side toggle stored in `localStorage`
+- **Dark mode only**: No theme toggle. Single dark color scheme.
+- **Minimal scope**: Hero, upcoming events, past events, footer. No blog, search, or RSS.
+- **Content collections**: Events managed as Markdown files in `src/data/events/` with Zod-validated frontmatter.
+- **Community links**: Luma (event registration) + X/Twitter
+
+## Project Structure
+
+```
+cursorsaudi.com/
+├── .github/workflows/deploy.yml    # GitHub Pages deployment
+├── astro.config.ts                  # site: "https://cursorsaudi.com", Tailwind v4, sitemap
+├── package.json
+├── tsconfig.json                    # base: astro/tsconfigs/strict, paths: @/* -> ./src/*
+├── public/
+│   ├── .nojekyll
+│   ├── CNAME                        # cursorsaudi.com
+│   ├── favicon.svg
+│   └── toggle-lang.js              # Language toggle script (runs before hydration)
+└── src/
+    ├── components/
+    │   ├── Header.astro             # Logo + LangToggle
+    │   ├── Hero.astro               # Tagline, description, CTA
+    │   ├── EventCard.astro          # Reusable card for upcoming/past events
+    │   ├── UpcomingEvents.astro     # Future events list
+    │   ├── PastEvents.astro         # Past events with speakers, slides
+    │   ├── Footer.astro             # Social links (Luma, X), copyright
+    │   └── LangToggle.astro         # AR/EN switcher
+    ├── config.ts                    # Site-wide constants (title, description, socials, ambassadors)
+    ├── content.config.ts            # Event collection schema (Zod)
+    ├── data/
+    │   └── events/                  # Markdown event files
+    ├── i18n/
+    │   ├── ar.json                  # Arabic UI strings
+    │   ├── en.json                  # English UI strings
+    │   └── index.ts                 # getTranslation(lang, key) utility
+    ├── layouts/
+    │   └── Layout.astro             # Base HTML: dark mode, RTL/LTR dir, meta, OG
+    ├── pages/
+    │   └── index.astro              # Homepage assembling all sections
+    ├── styles/
+    │   └── global.css               # Tailwind imports, dark theme CSS variables
+    └── utils/
+        └── events.ts               # getSortedEvents, getUpcoming, getPast (computed from date)
+```
+
+## Event Content Collection Schema
+
+Each Markdown file in `src/data/events/` uses this frontmatter. The `isPast` status is **computed at build time** from `date < today` — not stored in frontmatter.
+
+```yaml
+title: "Kickoff"                          # Event name (English, required)
+titleAr: "الانطلاقة"                       # Arabic name (optional, for future)
+date: 2025-05-28                           # Event date (required)
+type: "meetup"                             # "meetup" | "hackathon" | "workshop" (required)
+location: "Riyadh"                         # City (required)
+locationAr: "الرياض"                        # Arabic city (optional)
+speakers:                                  # Speaker list (optional)
+  - "Mazen Alotaibi"
+  - "Dan (Cursor)"
+slides:                                    # Slide URLs (optional)
+  - "https://github.com/cursor-sa/events-slides/blob/main/..."
+place: ""                                  # Venue name (optional)
+lumaUrl: "https://lu.ma/..."              # Registration link (optional)
+description: "Community kickoff event"     # English description (required)
+descriptionAr: ""                          # Arabic description (optional)
+```
+
+### Data Source
+
+Event data was imported from a Notion export (`ExportBlock-f616ed77-905b-4068-9702-1263e7bca7eb-Part-1/Cursor Community in 🇸🇦/Events 27d321ff1409804880b6de61fa1c6336.csv`). 17 events total (7 past, 10 upcoming as of Feb 2026).
+
+## i18n Approach
+
+- JSON files (`ar.json`, `en.json`) hold UI string translations (hero text, section headings, button labels, footer text).
+- `toggle-lang.js` in `public/` reads `localStorage` before page render to set `<html dir="rtl" lang="ar">` or `<html dir="ltr" lang="en">`, preventing layout flash.
+- Components use `getTranslation(lang, key)` to resolve strings.
+- Arabic font stack: `"Noto Kufi Arabic", "IBM Plex Arabic", system-ui`
+- English font stack: `Inter, system-ui, sans-serif`
+
+## Visual Design (Dark Mode Only)
+
+- **Background**: `#0d1117` (deep dark)
+- **Surface/Cards**: `#161b22` with `1px solid #30363d` border
+- **Primary text**: `#e6edf3`
+- **Secondary text**: `#8b949e`
+- **Accent**: `#58a6ff` (links, CTAs)
+- **Accent hover**: `#79c0ff`
+- RTL layout: mirrored padding, alignment, and flow direction
+
+## GitHub Actions Deployment
+
+Trigger on push to `main`. Steps: checkout → setup pnpm v9 → setup Node 20 → `pnpm install --frozen-lockfile` → `pnpm run build` → upload pages artifact → deploy pages.
+
+## Site Configuration (`src/config.ts`)
+
+Single source of truth for site metadata, social links, and ambassadors:
+
+```typescript
+export const SITE = {
+  title: "Cursor Saudi",
+  titleAr: "كيرسر السعودية",
+  description: "Cursor Saudi Community",
+  descriptionAr: "مجتمع كيرسر السعودية",
+  author: "Cursor Saudi",
+  social: {
+    luma: "https://lu.ma/...",
+    twitter: "https://x.com/cursorsaudi",
+  },
+  ambassadors: [
+    { name: "Mazen Alotaibi", city: "Riyadh", cityAr: "الرياض", twitter: "https://x.com/ma7dev" },
+    { name: "Abdulhakeem Almidan", city: "Khobar", cityAr: "الخبر", twitter: "https://x.com/abdulhakeem_mdn" },
+  ],
+} as const;
+```
+
+## Coding Conventions
+
+- All `.ts` files use type hints and JSDoc/docstrings.
+- Prefer stateless, pure functions in `utils/`.
+- Components are black-box: props in, HTML out. No side effects.
+- Content collection access only through utility functions in `src/utils/events.ts`.
+- Keep `config.ts` as the single source of truth for site metadata.
+
+## Reference Projects
+
+- **CursorThailand.com**: Design/UX inspiration (hero, events, community feel)
+- **ma7.dev** (`/Users/ma7dev/Projects/ma7.dev`): Astro + Tailwind v4 + GitHub Pages deployment reference
