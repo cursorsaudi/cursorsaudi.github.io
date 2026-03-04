@@ -1,10 +1,10 @@
 ---
 title: "Cursor for Product Teams: PRDs, QA, and Shipping Rituals"
 date: 2026-09-05
-location: "Riyadh"
+location: Riyadh
 description: "Operational workflows for product teams across PRDs, QA, and release rituals."
-type: "meetup"
-status: "planned"
+type: meetup
+status: planned
 ---
 
 Product-team workflow meetup.

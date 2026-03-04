@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "node scripts/sync-vault-events.mjs --vault-path ~/Vault && astro dev",
+    "sync-events": "node scripts/sync-vault-events.mjs --vault-path ~/Vault",
     "build": "astro build",
     "preview": "astro preview"
   },
@@ -12,8 +13,8 @@
     "@astrojs/sitemap": "^3.2.1",
     "@tailwindcss/vite": "^4.1.11",
     "astro": "^5.0.0",
+    "gray-matter": "^4.0.3",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.8.0"
   }
 }
-
