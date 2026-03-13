@@ -62,7 +62,7 @@ export const config = {
     },
   ],
   social: {
-    luma: "https://lu.ma/cursorsaudi",
+    luma: "https://lu.ma/cursor-saudi",
     discord: "https://discord.gg/KpsKtegvz4",
     twitter: "https://x.com/cursorsaudi",
     email: "cursorsaudi@gmail.com",
