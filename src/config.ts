@@ -47,7 +47,9 @@ export const config = {
       roleAr: "قائد المجتمع في السعودية",
       city: "Riyadh",
       cityAr: "الرياض",
+      email: "mazen.ota@gmail.com",
       twitter: "https://x.com/ma7dev",
+      twitterHandle: "ma7dev",
       linkedin: "https://www.linkedin.com/in/ma7dev/",
     },
     {
@@ -59,6 +61,7 @@ export const config = {
       cityAr: "الخبر",
       twitter: "https://x.com/abdulhakeem_mdn",
       linkedin: "https://www.linkedin.com/in/abdulhakeem-almidan/",
+      status: "retired",
     },
   ],
   social: {
@@ -97,7 +100,7 @@ export const config = {
       name: "Mozn",
       nameAr: "مزن",
       role: "venue-host",
-      logo: "/logos/mozn.png",
+      logo: "/logos/mozn.svg",
       url: "https://mozn.ai",
       description:
         "Saudi AI company building enterprise AI products for the Arabic-first market, including NLP, risk, and compliance solutions.",
@@ -109,7 +112,7 @@ export const config = {
       name: "CODE",
       nameAr: "مركز ريادة الأعمال الرقمية",
       role: "venue-host",
-      logo: "/logos/code.png",
+      logo: "/logos/code.svg",
       url: "https://code.mcit.gov.sa/en",
       description:
         "Center of Digital Entrepreneurship by MCIT — coworking spaces, business services, and acceleration programs supporting digital startups.",
@@ -121,7 +124,7 @@ export const config = {
       name: "Monshaat",
       nameAr: "منشآت",
       role: "venue-host",
-      logo: "/logos/monshaat.png",
+      logo: "/logos/monshaat-dark.svg",
       url: "https://www.monshaat.gov.sa/ar/ssc",
       description:
         "SME support centers by Monshaat — providing training, mentorship, consulting, and coworking spaces for entrepreneurs across Saudi Arabia.",
@@ -133,7 +136,7 @@ export const config = {
       name: "Nauatech",
       nameAr: "نواتك",
       role: "past-community-partner",
-      logo: "/logos/nauatech.png",
+      logo: "/logos/nauatech.svg",
       url: "https://naua.tech/",
       description:
         "A Saudi tech community that partnered with Cursor Saudi for early events in Riyadh.",

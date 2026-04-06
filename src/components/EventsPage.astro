@@ -1,5 +1,5 @@
 ---
-import { getUpcomingEvents, getPastEvents } from "@/utils/events";
+import { getUpcomingEvents, getPastEvents, getEventThumbnailUrl } from "@/utils/events";
 import { getEventIdsWithBlog, eventBlogSlug } from "@/utils/blog";
 
 const allUpcoming = await getUpcomingEvents();
@@ -7,6 +7,9 @@ const upcoming = allUpcoming.filter((e) => e.data.status !== "backlog");
 const backlog = allUpcoming.filter((e) => e.data.status === "backlog");
 const past = await getPastEvents();
 const blogEventIds = await getEventIdsWithBlog();
+
+/** Shown when an event has no `coverPhoto` / photo assets for the card strip. */
+const eventCardPlaceholder = "/placeholders/event-card.svg";
 
 function formatMonth(date: Date) {
   return date.toLocaleDateString("en-US", { month: "short" });
@@ -37,80 +40,35 @@ function typeLabel(type: string): { en: string; ar: string } {
 
 <section id="events" class="page-content">
   <div class="max-w-7xl mx-auto px-6 md:px-10 py-12 md:py-20">
-    <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 border-b border-[#252525] pb-8">
-      <div>
-        <h1 class="text-4xl md:text-5xl font-semibold text-white mb-4">
-          <span class="lang-en">Events</span>
-          <span class="lang-ar">الفعاليات</span>
-        </h1>
-        <p class="text-[#999999] text-lg max-w-xl">
-          <span class="lang-en">Meetups, hackathons, and workshops focused on AI-native development with Cursor.</span>
-          <span class="lang-ar">لقاءات وهاكاثونات وورش عمل تركز على التطوير بالذكاء الاصطناعي مع Cursor.</span>
-        </p>
-      </div>
-      <div class="flex gap-2 mt-6 md:mt-0" role="tablist" aria-label="Filter events">
-        <button class="event-filter-btn active px-4 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer" data-filter="upcoming" role="tab" aria-selected="true">
-          <span class="lang-en">Upcoming ({upcoming.length})</span>
-          <span class="lang-ar">القادمة ({upcoming.length.toLocaleString("ar-SA")})</span>
-        </button>
-        <button class="event-filter-btn px-4 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer" data-filter="past" role="tab" aria-selected="false">
-          <span class="lang-en">Past ({past.length})</span>
-          <span class="lang-ar">السابقة ({past.length.toLocaleString("ar-SA")})</span>
-        </button>
-      </div>
+    <div class="mb-16 border-b border-[#252525] pb-8">
+      <h1 class="text-4xl md:text-5xl font-semibold text-white mb-4">
+        <span class="lang-en">Events</span>
+        <span class="lang-ar">الفعاليات</span>
+      </h1>
+      <p class="text-[#999999] text-lg w-full max-w-none">
+        <span class="lang-en">
+          Meetups, hackathons, and workshops focused on AI-native development with Cursor. Past events include written recaps you can
+          open like blog posts.
+        </span>
+        <span class="lang-ar">
+          لقاءات وهاكاثونات وورش عمل تركز على التطوير بالذكاء الاصطناعي مع Cursor. للفعاليات السابقة ننشر تدوينات ملخصة يمكنك فتحها
+          كمقالات.
+        </span>
+      </p>
     </div>
 
-    <div class="grid md:grid-cols-3 gap-6" id="events-grid">
-      {upcoming.map((event) => (
-        <div class="event-card bg-[#171717] border border-[#252525] rounded-2xl p-6 hover:border-white/20 transition-all group flex flex-col h-full" data-event-time="upcoming">
-          <div class="flex justify-between items-start mb-6">
-            <div class="bg-[#1F1F1F] rounded-lg px-3 py-1 border border-[#252525] text-center min-w-[60px]">
-              <div class="text-[10px] text-[#999999] uppercase font-bold">
-                <span class="lang-en">{formatMonth(event.data.date)}</span>
-                <span class="lang-ar">{formatMonthAr(event.data.date)}</span>
-              </div>
-              <div class="text-xl font-bold text-white">
-                <span class="lang-en">{formatDay(event.data.date)}</span>
-                <span class="lang-ar">{formatDayAr(event.data.date)}</span>
-              </div>
-            </div>
-            <span class="px-2 py-1 rounded-full bg-white/5 text-[10px] font-medium tracking-wide uppercase text-[#999999] border border-white/5">
-              <span class="lang-en">{typeLabel(event.data.type).en}</span>
-              <span class="lang-ar">{typeLabel(event.data.type).ar}</span>
-            </span>
-          </div>
-          <h3 class="text-xl font-semibold text-white mb-2 group-hover:text-white transition-colors">
-            <span class="lang-en">{event.data.title}</span>
-            <span class="lang-ar">{event.data.titleAr || event.data.title}</span>
-          </h3>
-          {event.data.speakers && event.data.speakers.length > 0 && (
-            <div class="flex items-center gap-2 text-xs text-[#6E6E6E] mb-3">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke-linecap="round"/></svg>
-              <span class="lang-en">{event.data.speakers.join(", ")}</span>
-              <span class="lang-ar">{event.data.speakers.join("، ")}</span>
-            </div>
-          )}
-          <p class="text-sm text-[#999999] mb-6 flex-grow">
-            <span class="lang-en">{event.data.description}</span>
-            <span class="lang-ar">{event.data.descriptionAr || event.data.description}</span>
-          </p>
-          <div class="flex items-center justify-between pt-4 border-t border-[#252525]">
-            <div class="flex items-center gap-2 text-xs text-[#999999]">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              <span class="lang-en">{event.data.location}{event.data.venue && <span class="text-[#6E6E6E]"> · {event.data.venue}</span>}</span>
-              <span class="lang-ar">{event.data.locationAr || event.data.location}{event.data.venue && <span class="text-[#6E6E6E]"> · {event.data.venue}</span>}</span>
-            </div>
-          </div>
-        </div>
-      ))}
-
+    <div id="events-sections">
       {backlog.length > 0 && (
-        <div class="col-span-full" data-event-time="upcoming">
+        <div class="mb-14">
+          <h2 class="text-xs font-mono text-[#6E6E6E] uppercase tracking-widest mb-4">
+            <span class="lang-en">Planned dates</span>
+            <span class="lang-ar">تواريخ مخطط لها</span>
+          </h2>
           <div class="border border-dashed border-[#252525] rounded-2xl p-6">
-            <h4 class="text-sm font-semibold text-[#6E6E6E] uppercase tracking-wide mb-4">
-              <span class="lang-en">Planned Dates</span>
-              <span class="lang-ar">تواريخ مخطط لها</span>
-            </h4>
+            <p class="text-sm text-[#6E6E6E] mb-4">
+              <span class="lang-en">Tentative slots — details and registration will be announced later.</span>
+              <span class="lang-ar">مواعيد تقريبية — التفاصيل والتسجيل يُعلَنان لاحقاً.</span>
+            </p>
             <div class="flex flex-wrap gap-3">
               {backlog.map((event) => {
                 const mEn = event.data.date.toLocaleDateString("en-US", { month: "short" });
@@ -118,14 +76,18 @@ function typeLabel(type: string): { en: string; ar: string } {
                 const mAr = event.data.date.toLocaleDateString("ar-SA", { month: "short" });
                 const dAr = event.data.date.getDate().toLocaleString("ar-SA");
                 return (
-                  <div class="bg-[#1F1F1F] rounded-lg px-4 py-2 border border-[#252525] text-center min-w-[60px]">
+                  <div class="bg-[#1F1F1F] rounded-lg px-4 py-2.5 border border-[#252525] text-center min-w-[72px] max-w-[140px]">
                     <div class="text-[10px] text-[#6E6E6E] uppercase font-bold">
                       <span class="lang-en">{mEn}</span>
                       <span class="lang-ar">{mAr}</span>
                     </div>
-                    <div class="text-lg font-bold text-[#6E6E6E]">
+                    <div class="text-lg font-bold text-[#6E6E6E] leading-tight">
                       <span class="lang-en">{dEn}</span>
                       <span class="lang-ar">{dAr}</span>
+                    </div>
+                    <div class="text-[10px] text-[#8b949e] mt-1.5 leading-snug border-t border-[#252525]/80 pt-1.5">
+                      <span class="lang-en">{event.data.location}</span>
+                      <span class="lang-ar">{event.data.locationAr || event.data.location}</span>
                     </div>
                   </div>
                 );
@@ -135,108 +97,190 @@ function typeLabel(type: string): { en: string; ar: string } {
         </div>
       )}
 
-      {past.map((event) => (
-        <div class="event-card bg-[#171717] border border-[#252525] rounded-2xl p-6 hover:border-white/20 transition-all group flex flex-col h-full" data-event-time="past">
-          <div class="flex justify-between items-start mb-6">
-            <div class="bg-[#1F1F1F] rounded-lg px-3 py-1 border border-[#252525] text-center min-w-[60px] opacity-50">
-              <div class="text-[10px] text-[#999999] uppercase font-bold">
-                <span class="lang-en">{formatMonth(event.data.date)}</span>
-                <span class="lang-ar">{formatMonthAr(event.data.date)}</span>
+      <div class="mb-14">
+        <h2 class="text-xs font-mono text-[#6E6E6E] uppercase tracking-widest mb-4">
+          <span class="lang-en">Upcoming</span>
+          <span class="lang-ar">القادمة</span>
+        </h2>
+        <div class="grid md:grid-cols-3 gap-6">
+          {upcoming.map((event) => {
+            const thumbUrl = getEventThumbnailUrl(event);
+            return (
+            <div class="event-card bg-[#171717] border border-[#252525] rounded-2xl overflow-hidden hover:border-white/20 transition-all group flex flex-col h-full">
+              <div class="relative aspect-[16/10] w-full shrink-0 bg-[#0d1117] border-b border-[#252525]">
+                <img
+                  src={thumbUrl ?? eventCardPlaceholder}
+                  alt={thumbUrl ? event.data.title : ""}
+                  class="absolute inset-0 w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
-              <div class="text-xl font-bold text-white">
-                <span class="lang-en">{formatDay(event.data.date)}</span>
-                <span class="lang-ar">{formatDayAr(event.data.date)}</span>
+              <div class="p-6 flex flex-col flex-grow min-h-0">
+              <div class="flex justify-between items-start mb-6">
+                <div class="bg-[#1F1F1F] rounded-lg px-3 py-1 border border-[#252525] text-center min-w-[60px]">
+                  <div class="text-[10px] text-[#999999] uppercase font-bold">
+                    <span class="lang-en">{formatMonth(event.data.date)}</span>
+                    <span class="lang-ar">{formatMonthAr(event.data.date)}</span>
+                  </div>
+                  <div class="text-xl font-bold text-white">
+                    <span class="lang-en">{formatDay(event.data.date)}</span>
+                    <span class="lang-ar">{formatDayAr(event.data.date)}</span>
+                  </div>
+                </div>
+                <span class="px-2 py-1 rounded-full bg-white/5 text-[10px] font-medium tracking-wide uppercase text-[#999999] border border-white/5">
+                  <span class="lang-en">{typeLabel(event.data.type).en}</span>
+                  <span class="lang-ar">{typeLabel(event.data.type).ar}</span>
+                </span>
+              </div>
+              <h3 class="text-xl font-semibold text-white mb-2 group-hover:text-white transition-colors">
+                <span class="lang-en">{event.data.title}</span>
+                <span class="lang-ar">{event.data.titleAr || event.data.title}</span>
+              </h3>
+              {event.data.speakers && event.data.speakers.length > 0 && (
+                <div class="flex items-center gap-2 text-xs text-[#6E6E6E] mb-3">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke-linecap="round"/></svg>
+                  <span class="lang-en">{event.data.speakers.join(", ")}</span>
+                  <span class="lang-ar">{event.data.speakers.join("، ")}</span>
+                </div>
+              )}
+              <p class="text-sm text-[#999999] mb-6 flex-grow">
+                <span class="lang-en">{event.data.description}</span>
+                <span class="lang-ar">{event.data.descriptionAr || event.data.description}</span>
+              </p>
+              <div class="flex items-center justify-between pt-4 border-t border-[#252525] mt-auto">
+                <div class="flex items-center gap-2 text-xs text-[#999999]">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span class="lang-en">{event.data.location}{event.data.venue && <span class="text-[#6E6E6E]"> · {event.data.venue}</span>}</span>
+                  <span class="lang-ar">{event.data.locationAr || event.data.location}{event.data.venue && <span class="text-[#6E6E6E]"> · {event.data.venue}</span>}</span>
+                </div>
+              </div>
               </div>
             </div>
-            <span class="px-2 py-1 rounded-full bg-white/5 text-[10px] font-medium tracking-wide uppercase text-[#999999] border border-white/5">
-              <span class="lang-en">{typeLabel(event.data.type).en}</span>
-              <span class="lang-ar">{typeLabel(event.data.type).ar}</span>
-            </span>
-          </div>
-          <h3 class="text-xl font-semibold text-[#999999] mb-2">
-            <span class="lang-en">{event.data.title}</span>
-            <span class="lang-ar">{event.data.titleAr || event.data.title}</span>
-          </h3>
-          {event.data.speakers && event.data.speakers.length > 0 && (
-            <div class="flex items-center gap-2 text-xs text-[#6E6E6E] mb-3">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke-linecap="round"/></svg>
-              <span class="lang-en">{event.data.speakers.join(", ")}</span>
-              <span class="lang-ar">{event.data.speakers.join("، ")}</span>
+            );
+          })}
+          {upcoming.length === 0 && (
+            <div class="col-span-full py-12 text-center">
+              <p class="text-[#999999] text-lg">
+                {backlog.length > 0 ? (
+                  <>
+                    <span class="lang-en">No confirmed upcoming events with full details yet — see planned dates above.</span>
+                    <span class="lang-ar">لا توجد فعاليات قادمة مؤكدة بالتفاصيل بعد — راجع التواريخ المخطط لها أعلاه.</span>
+                  </>
+                ) : (
+                  <>
+                    <span class="lang-en">No upcoming events listed yet.</span>
+                    <span class="lang-ar">لا توجد فعاليات قادمة مدرجة بعد.</span>
+                  </>
+                )}
+              </p>
             </div>
           )}
-          <p class="text-sm text-[#999999] mb-6 flex-grow">
-            <span class="lang-en">{event.data.description}</span>
-            <span class="lang-ar">{event.data.descriptionAr || event.data.description}</span>
-          </p>
-          <div class="flex items-center justify-between pt-4 border-t border-[#252525]">
-            <div class="flex items-center gap-2 text-xs text-[#999999]">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              <span class="lang-en">{event.data.location}{event.data.venue && <span class="text-[#6E6E6E]"> · {event.data.venue}</span>}</span>
-              <span class="lang-ar">{event.data.locationAr || event.data.location}{event.data.venue && <span class="text-[#6E6E6E]"> · {event.data.venue}</span>}</span>
-            </div>
-            <div class="flex items-center gap-3">
-              {event.data.slides && event.data.slides.length > 0 && (
-                <a href={event.data.slides[0]} target="_blank" rel="noreferrer" class="text-[10px] text-[#999999] hover:text-white hover:underline transition-colors">
-                  <span class="lang-en">Slides</span><span class="lang-ar">العرض</span>
-                </a>
-              )}
-              {blogEventIds.has(event.id) && (
-                <a href={`/blog/${eventBlogSlug(event.id)}`} class="text-[10px] text-[#999999] hover:text-white hover:underline transition-colors flex items-center gap-1">
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h12M2 8h8M2 12h10"/></svg>
-                  <span class="lang-en">Read Recap</span><span class="lang-ar">اقرأ الملخص</span>
-                </a>
-              )}
-            </div>
-          </div>
         </div>
-      ))}
+      </div>
 
-      <!-- Empty state -->
-      <div id="events-empty" class="hidden col-span-full py-16 text-center">
-        <p class="text-[#999999] text-lg">
-          <span class="lang-en">No events in this category yet.</span>
-          <span class="lang-ar">لا توجد فعاليات في هذه الفئة بعد.</span>
+      <div>
+        <h2 class="text-xs font-mono text-[#6E6E6E] uppercase tracking-widest mb-2">
+          <span class="lang-en">Past</span>
+          <span class="lang-ar">السابقة</span>
+        </h2>
+        <p class="text-sm text-[#6E6E6E] mb-6 max-w-2xl">
+          <span class="lang-en">Each recap is a full post with photos, takeaways, and links. Open “Read recap” to view it.</span>
+          <span class="lang-ar">كل ملخص تدوينة كاملة مع صور ونقاط وروابط. اضغط «اقرأ الملخص» لعرضها.</span>
         </p>
+        <div class="grid md:grid-cols-3 gap-6">
+          {past.map((event) => {
+            const hasRecap = blogEventIds.has(event.id);
+            const thumbUrl = getEventThumbnailUrl(event);
+            return (
+              <div class="event-card bg-[#171717] border border-[#252525] rounded-2xl overflow-hidden hover:border-white/20 transition-all group flex flex-col h-full">
+                <div class="relative aspect-[16/10] w-full shrink-0 bg-[#0d1117] border-b border-[#252525]">
+                  <img
+                    src={thumbUrl ?? eventCardPlaceholder}
+                    alt={thumbUrl ? event.data.title : ""}
+                    class="absolute inset-0 w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <div class="p-6 flex flex-col flex-grow min-h-0">
+                <div class="flex justify-between items-start mb-6">
+                  <div class="bg-[#1F1F1F] rounded-lg px-3 py-1 border border-[#252525] text-center min-w-[60px] opacity-50">
+                    <div class="text-[10px] text-[#999999] uppercase font-bold">
+                      <span class="lang-en">{formatMonth(event.data.date)}</span>
+                      <span class="lang-ar">{formatMonthAr(event.data.date)}</span>
+                    </div>
+                    <div class="text-xl font-bold text-white">
+                      <span class="lang-en">{formatDay(event.data.date)}</span>
+                      <span class="lang-ar">{formatDayAr(event.data.date)}</span>
+                    </div>
+                  </div>
+                  <span class="px-2 py-1 rounded-full bg-white/5 text-[10px] font-medium tracking-wide uppercase text-[#999999] border border-white/5">
+                    <span class="lang-en">{typeLabel(event.data.type).en}</span>
+                    <span class="lang-ar">{typeLabel(event.data.type).ar}</span>
+                  </span>
+                </div>
+                <h3 class="text-xl font-semibold text-[#999999] mb-2">
+                  <span class="lang-en">{event.data.title}</span>
+                  <span class="lang-ar">{event.data.titleAr || event.data.title}</span>
+                </h3>
+                {event.data.speakers && event.data.speakers.length > 0 && (
+                  <div class="flex items-center gap-2 text-xs text-[#6E6E6E] mb-3">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke-linecap="round"/></svg>
+                    <span class="lang-en">{event.data.speakers.join(", ")}</span>
+                    <span class="lang-ar">{event.data.speakers.join("، ")}</span>
+                  </div>
+                )}
+                <p class="text-sm text-[#999999] mb-6 flex-grow">
+                  <span class="lang-en">{event.data.description}</span>
+                  <span class="lang-ar">{event.data.descriptionAr || event.data.description}</span>
+                </p>
+                <div class="mt-auto flex flex-col gap-3 pt-4 border-t border-[#252525]">
+                  <div class="flex items-center gap-2 text-xs text-[#999999]">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span class="lang-en">{event.data.location}{event.data.venue && <span class="text-[#6E6E6E]"> · {event.data.venue}</span>}</span>
+                    <span class="lang-ar">{event.data.locationAr || event.data.location}{event.data.venue && <span class="text-[#6E6E6E]"> · {event.data.venue}</span>}</span>
+                  </div>
+                  {hasRecap ? (
+                    <a
+                      href={`/blog/${eventBlogSlug(event.id)}`}
+                      class="btn-primary w-full text-center py-2.5 rounded-full text-sm font-medium inline-flex items-center justify-center gap-2"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h12M2 8h8M2 12h10"/></svg>
+                      <span class="lang-en">Read recap post</span>
+                      <span class="lang-ar">اقرأ تدوينة الملخص</span>
+                    </a>
+                  ) : (
+                    <p class="text-xs text-[#5c5c5c]">
+                      <span class="lang-en">Written recap not published yet.</span>
+                      <span class="lang-ar">لم يُنشر ملخص مكتوب بعد.</span>
+                    </p>
+                  )}
+                  {event.data.slides && event.data.slides.length > 0 && (
+                    <div class="flex flex-wrap gap-2">
+                      {event.data.slides.map((url, i) => (
+                        <a href={url} target="_blank" rel="noreferrer" class="text-xs text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">
+                          <span class="lang-en">{event.data.slides.length > 1 ? `Slide ${i + 1}` : "Slides"}</span>
+                          <span class="lang-ar">{event.data.slides.length > 1 ? `عرض ${i + 1}` : "الشرائح"}</span>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                </div>
+              </div>
+            );
+          })}
+          {past.length === 0 && (
+            <div class="col-span-full py-12 text-center">
+              <p class="text-[#999999] text-lg">
+                <span class="lang-en">No past events to show yet.</span>
+                <span class="lang-ar">لا توجد فعاليات سابقة بعد.</span>
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   </div>
 </section>
-
-<script is:inline>
-  (function () {
-    var filterBtns = document.querySelectorAll('.event-filter-btn');
-    var cards = document.querySelectorAll('.event-card');
-    var emptyState = document.getElementById('events-empty');
-
-    function applyFilter(filter) {
-      var visibleCount = 0;
-      cards.forEach(function (card) {
-        var time = card.getAttribute('data-event-time');
-        if (filter === 'all' || time === filter) {
-          card.style.display = '';
-          visibleCount++;
-        } else {
-          card.style.display = 'none';
-        }
-      });
-      if (emptyState) {
-        emptyState.classList.toggle('hidden', visibleCount > 0);
-      }
-    }
-
-    filterBtns.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var filter = this.getAttribute('data-filter');
-        filterBtns.forEach(function (b) {
-          b.classList.remove('active');
-          b.setAttribute('aria-selected', 'false');
-        });
-        this.classList.add('active');
-        this.setAttribute('aria-selected', 'true');
-        applyFilter(filter);
-      });
-    });
-
-    applyFilter('upcoming');
-  })();
-</script>

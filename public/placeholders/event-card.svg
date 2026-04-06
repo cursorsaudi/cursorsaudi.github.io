@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" fill="none">
+  <rect width="320" height="200" fill="#0d1117"/>
+  <rect x="0.5" y="0.5" width="319" height="199" stroke="#252525" stroke-width="1" rx="0"/>
+  <g opacity="0.35" stroke="#484f58" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="88" y="56" width="144" height="88" rx="6" fill="#161b22"/>
+    <path d="M100 132l28-32 22 24 18-20 32 36H100v-8z"/>
+    <circle cx="118" cy="84" r="10"/>
+  </g>
+  <text x="160" y="168" text-anchor="middle" fill="#484f58" font-family="ui-monospace, monospace" font-size="10" letter-spacing="0.2em">EVENT</text>
+</svg>

@@ -12,8 +12,12 @@ interface Ambassador {
   roleAr: string;
   city: string;
   cityAr: string;
+  email?: string;
   twitter?: string;
+  /** Display handle for X (without @). */
+  twitterHandle?: string;
   linkedin?: string;
+  status?: "active" | "retired";
 }
 
 const ambassadors = config.ambassadors as readonly Ambassador[];
@@ -72,9 +76,9 @@ function formatShortDate(date: Date) {
         </h2>
       </div>
 
-      <div class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 items-stretch">
         <!-- Riyadh Chapter -->
-        <div id="riyadh-chapter" class="bg-[#171717] border border-[#252525] rounded-2xl p-8">
+        <div id="riyadh-chapter" class="bg-[#171717] border border-[#252525] rounded-2xl p-8 h-full flex flex-col">
           <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">
               <span class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]"></span>
@@ -112,14 +116,22 @@ function formatShortDate(date: Date) {
             </div>
           )}
           {riyadhPartners.length > 0 && (
-            <div class="border-t border-[#252525] pt-5 mt-5">
-              <div class="text-[10px] uppercase tracking-widest text-[#6E6E6E] font-medium mb-4"><span class="lang-en">Chapter Partners</span><span class="lang-ar">شركاء الفرع</span></div>
-              <div class="flex flex-wrap gap-3">
+            <div class="border-t border-[#252525] pt-4 mt-4">
+              <div class="text-[10px] uppercase tracking-widest text-[#6E6E6E] font-medium mb-3"><span class="lang-en">Chapter Partners</span><span class="lang-ar">شركاء الفرع</span></div>
+              <div class="grid w-full min-w-0 grid-cols-2 gap-2 sm:grid-cols-3">
                 {riyadhPartners.map((partner) => (
-                  <a href={partner.url} target="_blank" rel="noreferrer" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#252525] bg-[#1F1F1F] text-sm text-[#999999] hover:text-white hover:border-white/20 transition-all">
-                    <img src={partner.logo} alt={partner.name} class="h-5 w-5 rounded object-cover" loading="lazy" />
-                    <span class="lang-en">{partner.name}</span>
-                    <span class="lang-ar">{partner.nameAr}</span>
+                  <a
+                    href={partner.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    class="flex min-h-[2.75rem] min-w-0 items-center justify-center rounded-lg border border-[#252525] bg-[#1F1F1F] px-2 py-2 transition-colors hover:border-white/25"
+                  >
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      class="h-7 max-h-7 w-full max-w-[6.5rem] object-contain object-center"
+                      loading="lazy"
+                    />
                   </a>
                 ))}
               </div>
@@ -128,7 +140,7 @@ function formatShortDate(date: Date) {
         </div>
 
         <!-- Khobar Chapter -->
-        <div id="khobar-chapter" class="bg-[#171717] border border-[#252525] rounded-2xl p-8">
+        <div id="khobar-chapter" class="bg-[#171717] border border-[#252525] rounded-2xl p-8 h-full flex flex-col">
           <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">
               <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]"></span>
@@ -136,22 +148,46 @@ function formatShortDate(date: Date) {
             </div>
             <span class="text-xs font-mono text-[#999999] border border-[#252525] rounded px-2 py-1">EST. 2025</span>
           </div>
-          <p class="text-sm text-[#999999] mb-4"><span class="lang-en">Serving the Eastern Province tech ecosystem, connecting engineers across Khobar, Dammam, and Dhahran with a focus on AI-powered development workflows.</span><span class="lang-ar">نخدم منظومة التقنية في المنطقة الشرقية، ونربط المهندسين في الخبر والدمام والظهران مع التركيز على سير عمل التطوير المدعوم بالذكاء الاصطناعي.</span></p>
-          <div class="flex items-center gap-2 text-xs text-[#999999] mb-4">
-            <span class="lang-en">{khobarAmbassador.role}:</span><span class="lang-ar">{khobarAmbassador.roleAr}:</span>
-            <div class="flex items-center gap-2">
-              <span class="lang-en text-white font-medium">{khobarAmbassador.name}</span>
-                <span class="lang-ar text-white font-medium">{khobarAmbassador.nameAr ?? khobarAmbassador.name}</span>
-              {khobarAmbassador.twitter && (
-                <a href={khobarAmbassador.twitter} target="_blank" rel="noreferrer" class="text-[#6E6E6E] hover:text-white transition-colors" title="X / Twitter">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                </a>
-              )}
-              {khobarAmbassador.linkedin && (
-                <a href={khobarAmbassador.linkedin} target="_blank" rel="noreferrer" class="text-[#6E6E6E] hover:text-white transition-colors" title="LinkedIn">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                </a>
-              )}
+          <p class="text-sm text-[#999999] mb-4"><span class="lang-en">Building the Khobar chapter and connecting engineers across Khobar, Dammam, and Dhahran with a focus on AI-powered development workflows.</span><span class="lang-ar">نبني فرع الخبر ونربط المهندسين في الخبر والدمام والظهران مع التركيز على سير عمل التطوير المدعوم بالذكاء الاصطناعي.</span></p>
+          <div class="space-y-4 mb-4 text-xs text-[#999999]">
+            <div>
+              <div class="text-[10px] uppercase tracking-widest text-amber-500/90 font-medium mb-1">
+                <span class="lang-en">Former ambassador · Retired</span>
+                <span class="lang-ar">سفير سابق · متقاعد</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 text-[#999999]">
+                <span class="lang-en line-through decoration-white/25 text-white/70 font-medium">{khobarAmbassador.name}</span>
+                <span class="lang-ar line-through decoration-white/25 text-white/70 font-medium">{khobarAmbassador.nameAr ?? khobarAmbassador.name}</span>
+                {khobarAmbassador.twitter && (
+                  <a href={khobarAmbassador.twitter} target="_blank" rel="noreferrer" class="text-[#6E6E6E] hover:text-white transition-colors" title="X / Twitter">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                  </a>
+                )}
+                {khobarAmbassador.linkedin && (
+                  <a href={khobarAmbassador.linkedin} target="_blank" rel="noreferrer" class="text-[#6E6E6E] hover:text-white transition-colors" title="LinkedIn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                  </a>
+                )}
+              </div>
+            </div>
+            <div class="border-t border-[#252525] pt-3">
+              <div class="text-[10px] uppercase tracking-widest text-green-500/90 font-medium mb-2">
+                <span class="lang-en">Looking for</span>
+                <span class="lang-ar">نبحث عن</span>
+              </div>
+              <p class="text-sm text-[#b0b0b0] leading-relaxed">
+                <span class="lang-en">
+                  We are looking for an ambassador to lead the <strong class="text-white/90 font-medium">Khobar chapter</strong> and grow
+                  meetups for builders in Khobar, Dhahran, and Dammam.
+                </span>
+                <span class="lang-ar">
+                  نبحث عن سفير يقود <strong class="text-white/90 font-medium">فرع الخبر</strong> وينمّي اللقاءات للمبدعين في الخبر والظهران والدمام.
+                </span>
+              </p>
+              <button type="button" data-nav="ambassadors" class="mt-3 text-xs font-medium text-[#58a6ff] hover:text-[#79c0ff] transition-colors">
+                <span class="lang-en">Ambassador program &amp; how to apply →</span>
+                <span class="lang-ar">برنامج السفراء وكيفية التقديم ←</span>
+              </button>
             </div>
           </div>
           <div class="flex gap-4 mb-6">
@@ -166,14 +202,22 @@ function formatShortDate(date: Date) {
             </div>
           )}
           {khobarPartners.length > 0 && (
-            <div class="border-t border-[#252525] pt-5 mt-5">
-              <div class="text-[10px] uppercase tracking-widest text-[#6E6E6E] font-medium mb-4"><span class="lang-en">Chapter Partners</span><span class="lang-ar">شركاء الفرع</span></div>
-              <div class="flex flex-wrap gap-3">
+            <div class="border-t border-[#252525] pt-4 mt-4">
+              <div class="text-[10px] uppercase tracking-widest text-[#6E6E6E] font-medium mb-3"><span class="lang-en">Chapter Partners</span><span class="lang-ar">شركاء الفرع</span></div>
+              <div class="grid w-full min-w-0 grid-cols-2 gap-2 sm:grid-cols-3">
                 {khobarPartners.map((partner) => (
-                  <a href={partner.url} target="_blank" rel="noreferrer" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#252525] bg-[#1F1F1F] text-sm text-[#999999] hover:text-white hover:border-white/20 transition-all">
-                    <img src={partner.logo} alt={partner.name} class="h-5 w-5 rounded object-cover" loading="lazy" />
-                    <span class="lang-en">{partner.name}</span>
-                    <span class="lang-ar">{partner.nameAr}</span>
+                  <a
+                    href={partner.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    class="flex min-h-[2.75rem] min-w-0 items-center justify-center rounded-lg border border-[#252525] bg-[#1F1F1F] px-2 py-2 transition-colors hover:border-white/25"
+                  >
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      class="h-7 max-h-7 w-full max-w-[6.5rem] object-contain object-center"
+                      loading="lazy"
+                    />
                   </a>
                 ))}
               </div>
@@ -182,12 +226,12 @@ function formatShortDate(date: Date) {
         </div>
 
         <!-- Mecca Chapter -->
-        <div id="mecca-chapter" class="bg-[#171717] border border-[#252525] rounded-2xl p-8 relative overflow-hidden">
+        <div id="mecca-chapter" class="bg-[#171717] border border-[#252525] rounded-2xl p-8 relative overflow-hidden h-full flex flex-col">
           <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent pointer-events-none"></div>
-          <div class="relative z-10">
+          <div class="relative z-10 flex flex-col flex-grow min-h-0">
             <div class="flex items-center justify-between mb-6">
-              <div class="flex items-center gap-3">
-                <span class="w-2.5 h-2.5 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(192,132,252,0.6)]"></span>
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="w-2.5 h-2.5 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(192,132,252,0.6)] shrink-0"></span>
                 <h3 class="text-xl font-semibold text-white"><span class="lang-en">Mecca Chapter</span><span class="lang-ar">فرع مكة المكرمة</span></h3>
               </div>
               <span class="text-xs font-mono text-purple-400 border border-purple-500/30 bg-purple-500/10 rounded px-2 py-1">
@@ -235,14 +279,22 @@ function formatShortDate(date: Date) {
               </div>
             )}
             {meccaPartners.length > 0 && (
-              <div class="border-t border-[#252525] pt-5 mt-5">
-                <div class="text-[10px] uppercase tracking-widest text-[#6E6E6E] font-medium mb-4"><span class="lang-en">Chapter Partners</span><span class="lang-ar">شركاء الفرع</span></div>
-                <div class="flex flex-wrap gap-3">
+              <div class="border-t border-[#252525] pt-4 mt-4">
+                <div class="text-[10px] uppercase tracking-widest text-[#6E6E6E] font-medium mb-3"><span class="lang-en">Chapter Partners</span><span class="lang-ar">شركاء الفرع</span></div>
+                <div class="grid w-full min-w-0 grid-cols-2 gap-2 sm:grid-cols-3">
                   {meccaPartners.map((partner) => (
-                    <a href={partner.url} target="_blank" rel="noreferrer" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#252525] bg-[#1F1F1F] text-sm text-[#999999] hover:text-white hover:border-white/20 transition-all">
-                      <img src={partner.logo} alt={partner.name} class="h-5 w-5 rounded object-cover" loading="lazy" />
-                      <span class="lang-en">{partner.name}</span>
-                      <span class="lang-ar">{partner.nameAr}</span>
+                    <a
+                      href={partner.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      class="flex min-h-[2.75rem] min-w-0 items-center justify-center rounded-lg border border-[#252525] bg-[#1F1F1F] px-2 py-2 transition-colors hover:border-white/25"
+                    >
+                      <img
+                        src={partner.logo}
+                        alt={partner.name}
+                        class="h-7 max-h-7 w-full max-w-[6.5rem] object-contain object-center"
+                        loading="lazy"
+                      />
                     </a>
                   ))}
                 </div>
@@ -257,21 +309,52 @@ function formatShortDate(date: Date) {
     <div class="grid md:grid-cols-2 gap-12 items-start mb-24">
       <div class="space-y-6">
         {ambassadors.map((ambassador) => (
-          <div class="bg-[#171717] border border-[#252525] rounded-2xl p-8 relative overflow-hidden">
+          <div
+            class:list={[
+              "rounded-2xl p-8 relative overflow-hidden",
+              ambassador.status === "retired"
+                ? "bg-[#171717] border border-amber-500/20"
+                : "bg-[#171717] border border-[#252525]",
+            ]}
+          >
             <div class="relative z-10">
-              <div class="text-xs font-mono text-green-500 mb-1">
-                <span class="lang-en">{ambassador.role} · {ambassador.city}</span>
-                <span class="lang-ar">{ambassador.roleAr} · {ambassador.cityAr}</span>
+              <div
+                class:list={[
+                  "text-xs font-mono mb-1",
+                  ambassador.status === "retired" ? "text-amber-500" : "text-green-500",
+                ]}
+              >
+                {ambassador.status === "retired" ? (
+                  <>
+                    <span class="lang-en">Retired · {ambassador.role} · {ambassador.city}</span>
+                    <span class="lang-ar">متقاعد · {ambassador.roleAr} · {ambassador.cityAr}</span>
+                  </>
+                ) : (
+                  <>
+                    <span class="lang-en">{ambassador.role} · {ambassador.city}</span>
+                    <span class="lang-ar">{ambassador.roleAr} · {ambassador.cityAr}</span>
+                  </>
+                )}
               </div>
-              <h2 class="text-2xl font-bold text-white mb-4">
+              <h2
+                class:list={[
+                  "text-2xl font-bold mb-4",
+                  ambassador.status === "retired" ? "text-white/75" : "text-white",
+                ]}
+              >
                 <span class="lang-en">{ambassador.name}</span>
                 <span class="lang-ar">{ambassador.nameAr ?? ambassador.name}</span>
               </h2>
-              <div class="flex gap-4">
+              <div class="flex flex-wrap gap-x-4 gap-y-2">
                 {ambassador.twitter && (
                   <a href={ambassador.twitter} target="_blank" rel="noreferrer" class="text-[#999999] hover:text-white transition-colors text-sm flex items-center gap-1.5">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                    X
+                    {ambassador.twitterHandle ? `@${ambassador.twitterHandle}` : "X"}
+                  </a>
+                )}
+                {ambassador.email && (
+                  <a href={`mailto:${ambassador.email}`} class="text-[#999999] hover:text-white transition-colors text-sm">
+                    {ambassador.email}
                   </a>
                 )}
                 {ambassador.linkedin && (
@@ -284,6 +367,46 @@ function formatShortDate(date: Date) {
             </div>
           </div>
         ))}
+        <div class="bg-[#171717] border border-dashed border-cyan-500/25 rounded-2xl p-8 relative overflow-hidden">
+          <div class="relative z-10">
+            <div class="text-xs font-mono text-cyan-500/90 mb-1">
+              <span class="lang-en">Open role · Khobar chapter</span>
+              <span class="lang-ar">دور مفتوح · فرع الخبر</span>
+            </div>
+            <h2 class="text-xl font-bold text-white mb-2">
+              <span class="lang-en">Ambassador wanted</span>
+              <span class="lang-ar">مطلوب سفير</span>
+            </h2>
+            <p class="text-[#999999] text-sm leading-relaxed mb-4">
+              <span class="lang-en">Khobar, Dhahran, or Dammam — lead the local chapter: meetups, mentorship, and partnerships on the ground.</span>
+              <span class="lang-ar">الخبر أو الدمام أو الظهران — قدّم الفرع محلياً: اللقاءات والإرشاد والشراكات.</span>
+            </p>
+            <button type="button" data-nav="ambassadors" class="text-sm font-medium text-[#58a6ff] hover:text-[#79c0ff] transition-colors">
+              <span class="lang-en">View application process →</span>
+              <span class="lang-ar">اطّلع على خطوات التقديم ←</span>
+            </button>
+          </div>
+        </div>
+        <div class="bg-[#171717] border border-dashed border-[#404040] rounded-2xl p-8 relative overflow-hidden">
+          <div class="relative z-10">
+            <div class="text-xs font-mono text-purple-400/90 mb-1">
+              <span class="lang-en">Open role · Makkah region</span>
+              <span class="lang-ar">دور مفتوح · منطقة مكة</span>
+            </div>
+            <h2 class="text-xl font-bold text-white mb-2">
+              <span class="lang-en">TBA</span>
+              <span class="lang-ar">قريباً</span>
+            </h2>
+            <p class="text-[#999999] text-sm leading-relaxed mb-4">
+              <span class="lang-en">Makkah-region ambassador details will be announced later. Follow our channels for updates.</span>
+              <span class="lang-ar">سنعلن لاحقاً عن تفاصيل سفير منطقة مكة. تابع قنواتنا للتحديثات.</span>
+            </p>
+            <button type="button" data-nav="ambassadors" class="text-sm font-medium text-[#58a6ff] hover:text-[#79c0ff] transition-colors">
+              <span class="lang-en">Ambassador program overview →</span>
+              <span class="lang-ar">نظرة على برنامج السفراء ←</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div class="space-y-8">

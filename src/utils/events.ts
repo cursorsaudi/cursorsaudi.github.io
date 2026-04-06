@@ -43,6 +43,19 @@ export function getEventCoverUrl(event: { id: string; data: { coverPhoto?: strin
   return filename ? `/events/${event.id}/${filename}` : null;
 }
 
+/**
+ * First image suitable for a card thumbnail (skips video filenames in coverPhoto / photos).
+ */
+export function getEventThumbnailUrl(event: { id: string; data: { coverPhoto?: string; photos?: string[] } }): string | null {
+  const ordered: string[] = [];
+  if (event.data.coverPhoto) ordered.push(event.data.coverPhoto);
+  for (const p of event.data.photos ?? []) ordered.push(p);
+  for (const filename of ordered) {
+    if (!isVideo(filename)) return `/events/${event.id}/${filename}`;
+  }
+  return null;
+}
+
 export function getEventImageUrl(eventId: string, filename: string) {
   return `/events/${eventId}/${filename}`;
 }

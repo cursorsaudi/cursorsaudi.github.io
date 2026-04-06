@@ -217,15 +217,19 @@ const avatarColors = [
                 ]}
               >
                 <div class="flex items-center gap-3.5">
-                  <img
-                    src={partner.logo}
-                    alt={partner.name}
+                  <div
                     class:list={[
-                      "rounded-[10px] object-cover flex-shrink-0",
-                      group.role === "official" ? "w-14 h-14" : "w-12 h-12",
+                      "flex shrink-0 items-center justify-center rounded-[10px] border border-[#252525] bg-[#141414] p-1.5",
+                      group.role === "official" ? "h-14 w-14" : "h-12 w-12",
                     ]}
-                    loading="lazy"
-                  />
+                  >
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      class="max-h-full max-w-full object-contain object-center"
+                      loading="lazy"
+                    />
+                  </div>
                   <div class="flex flex-col gap-1 min-w-0">
                     <span class="text-[1.05rem] font-bold">
                       <span class="lang-ar">{partner.nameAr}</span>

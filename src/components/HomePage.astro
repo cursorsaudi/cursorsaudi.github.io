@@ -212,7 +212,20 @@ function formatShortDate(date: Date): { en: string; ar: string } {
       <div class="flex flex-wrap items-center justify-center gap-x-16 gap-y-8">
         {config.partners.map((partner) => (
           <a href={partner.url} target="_blank" rel="noreferrer" class="group flex flex-col items-center gap-3 opacity-60 hover:opacity-100 transition-opacity" title={partner.name}>
-            <img src={partner.logo} alt={partner.name} class="h-16 max-w-[120px] object-contain" loading="lazy" />
+            <img
+              src={partner.logo}
+              alt={partner.name}
+              width={partner.logo === "/logos/dal.png" ? 399 : undefined}
+              height={partner.logo === "/logos/dal.png" ? 192 : undefined}
+              class:list={[
+                "object-contain",
+                partner.logo === "/logos/dal.png"
+                  ? "h-12 md:h-14 w-auto max-w-[min(100%,9rem)] md:max-w-[10rem]"
+                  : "h-16 max-w-[120px]",
+              ]}
+              loading="lazy"
+              decoding="async"
+            />
             <span class="text-sm font-semibold text-white/80 group-hover:text-white transition-colors tracking-tight">
               <span class="lang-en">{partner.name}</span>
               <span class="lang-ar">{partner.nameAr}</span>

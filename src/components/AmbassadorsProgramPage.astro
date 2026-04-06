@@ -1,0 +1,400 @@
+---
+import { config } from "@/config";
+
+const leader = config.ambassadors.find((a) => a.city === "Riyadh")!;
+const leaderX = leader.twitter ?? config.social.twitter;
+/** Lead direct contact (falls back to community inbox if unset). */
+const leadEmail =
+  "email" in leader && typeof (leader as { email?: string }).email === "string"
+    ? (leader as { email: string }).email
+    : config.social.email;
+const leadXHandle =
+  "twitterHandle" in leader && typeof (leader as { twitterHandle?: string }).twitterHandle === "string"
+    ? (leader as { twitterHandle: string }).twitterHandle
+    : "ma7dev";
+/** Official Cursor ambassador application (same flow Cursor documents globally). */
+const cursorAmbassadorsUrl = "https://cursor.com/ambassadors";
+/** Cursor program contact from official ambassadors FAQ. */
+const cursorAmbassadorProgramEmail = "blang@cursor.com";
+---
+
+<section id="ambassadors" class="page-content">
+  <div class="max-w-3xl mx-auto px-6 md:px-10 py-12 md:py-20">
+    <p class="text-xs font-mono text-[#6E6E6E] uppercase tracking-widest mb-4">
+      <span class="lang-en">Community</span>
+      <span class="lang-ar">المجتمع</span>
+    </p>
+    <h1 class="text-3xl md:text-4xl font-semibold text-white mb-6">
+      <span class="lang-en">Become a Cursor ambassador</span>
+      <span class="lang-ar">كن سفيراً لكيرسر</span>
+    </h1>
+    <p class="text-lg text-[#999999] leading-relaxed mb-6">
+      <span class="lang-en">
+        We are recruiting ambassadors across <strong class="text-white font-medium">Saudi Arabia</strong>. A top priority is a lead for the
+        <strong class="text-white font-medium">Khobar chapter</strong> (Khobar, Dhahran, Dammam). If you love Cursor and want to grow meetups,
+        mentorship, or partnerships in the Kingdom, follow the steps below — and read Cursor&apos;s global program on
+        <a href={cursorAmbassadorsUrl} target="_blank" rel="noopener noreferrer" class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">cursor.com/ambassadors</a>.
+      </span>
+      <span class="lang-ar">
+        نستقبل طلبات السفراء في أنحاء <strong class="text-white font-medium">المملكة</strong>. من أولوياتنا قائد لـ
+        <strong class="text-white font-medium">فرع الخبر</strong> (الخبر والظهران والدمام). إذا كنت شغوفاً بكيرسر وتريد دعم اللقاءات أو
+        الإرشاد أو الشراكات محلياً، اتبع الخطوات أدناه — واطلع على البرنامج العالمي على
+        <a href={cursorAmbassadorsUrl} target="_blank" rel="noopener noreferrer" class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">cursor.com/ambassadors</a>.
+      </span>
+    </p>
+
+    <div class="bg-[#171717] border border-[#58a6ff]/25 rounded-2xl p-6 md:p-8 mb-12">
+      <p class="text-[#b0b0b0] text-sm md:text-base leading-relaxed mb-4">
+        <span class="lang-en">
+          Cursor&apos;s ambassador program is about shaping the future of development: ambassadors empower a community that keeps the ecosystem
+          vibrant and collaborative — the same spirit we bring to <strong class="text-white/90 font-medium">Cursor Saudi</strong> meetups and chapters.
+        </span>
+        <span class="lang-ar">
+          برنامج سفراء كيرسر يهدف لصناعة مستقبل التطوير: السفراء يقوّون مجتمعاً يبقي النظام البيئي حياً وتعاونياً — وهذا هو روح
+          <strong class="text-white/90 font-medium">كيرسر السعودية</strong> في اللقاءات والفروع.
+        </span>
+      </p>
+      <a
+        href={cursorAmbassadorsUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-primary px-5 py-2.5 rounded-full text-sm font-medium inline-flex items-center justify-center gap-1.5"
+      >
+        <span class="lang-en">Apply to be an Ambassador on cursor.com ↗</span>
+        <span class="lang-ar">التقديم كسفير على cursor.com ↗</span>
+      </a>
+    </div>
+
+    <!-- How ambassadors contribute (aligned with cursor.com/ambassadors) -->
+    <div class="mb-12">
+      <h2 class="text-xl font-semibold text-white mb-4">
+        <span class="lang-en">How ambassadors contribute</span>
+        <span class="lang-ar">كيف يساهم السفراء</span>
+      </h2>
+      <p class="text-sm text-[#8b949e] mb-5 leading-relaxed">
+        <span class="lang-en">Ways Cursor highlights for ambassadors worldwide — a good fit for how we work in the Kingdom too.</span>
+        <span class="lang-ar">طرق يذكرها كيرسر للسفراء عالمياً — وتلائم عملنا في المملكة أيضاً.</span>
+      </p>
+      <ul class="space-y-3 text-sm text-[#b0b0b0] leading-relaxed list-none border border-[#252525] rounded-2xl bg-[#171717] p-6 md:p-8">
+        <li class="flex gap-3">
+          <span class="text-[#58a6ff] shrink-0" aria-hidden="true">·</span>
+          <span>
+            <span class="lang-en">Help fellow developers troubleshoot and get more from their Cursor workflow.</span>
+            <span class="lang-ar">مساعدة المطورين على حل المشكلات والاستفادة من سير عملهم في كيرسر.</span>
+          </span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[#58a6ff] shrink-0" aria-hidden="true">·</span>
+          <span>
+            <span class="lang-en">Host or co-host Cursor community meetups, hackathons, and workshops.</span>
+            <span class="lang-ar">استضافة أو المشاركة في تنظيم لقاءات وهاكاثونات وورش كيرسر المجتمعية.</span>
+          </span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[#58a6ff] shrink-0" aria-hidden="true">·</span>
+          <span>
+            <span class="lang-en">Share expertise and insights you have discovered in real projects.</span>
+            <span class="lang-ar">مشاركة الخبرة والرؤى التي اكتسبتها من مشاريع حقيقية.</span>
+          </span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[#58a6ff] shrink-0" aria-hidden="true">·</span>
+          <span>
+            <span class="lang-en">Shape Cursor&apos;s future by giving clear, constructive feedback to the team.</span>
+            <span class="lang-ar">المساهمة في مستقبل كيرسر بتقديم ملاحظات بنّاءة للفريق.</span>
+          </span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[#58a6ff] shrink-0" aria-hidden="true">·</span>
+          <span>
+            <span class="lang-en">Keep community spaces productive, welcoming, and respectful.</span>
+            <span class="lang-ar">الحفاظ على فضاءات المجتمع بنّاءة ومرحّبة ومحترمة.</span>
+          </span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[#58a6ff] shrink-0" aria-hidden="true">·</span>
+          <span>
+            <span class="lang-en">Contribute to documentation when you can.</span>
+            <span class="lang-ar">المساهمة في التوثيق عندما تتاح لك الفرصة.</span>
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Program benefits (from official Cursor page; may evolve) -->
+    <div class="mb-12">
+      <h2 class="text-xl font-semibold text-white mb-4">
+        <span class="lang-en">Program benefits</span>
+        <span class="lang-ar">مزايا البرنامج</span>
+      </h2>
+      <p class="text-sm text-[#8b949e] mb-5 leading-relaxed">
+        <span class="lang-en">
+          Cursor lists these for the global program on <a href={cursorAmbassadorsUrl} target="_blank" rel="noopener noreferrer" class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">cursor.com/ambassadors</a>
+          — details and eligibility can change; always check the official page.
+        </span>
+        <span class="lang-ar">
+          كيرسر يذكر هذه المزايا للبرنامج العالمي على
+          <a href={cursorAmbassadorsUrl} target="_blank" rel="noopener noreferrer" class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">cursor.com/ambassadors</a>
+          — قد تتغير التفاصيل والشروط؛ راجع الصفحة الرسمية دائماً.
+        </span>
+      </p>
+      <ul class="space-y-3 text-sm text-[#b0b0b0] leading-relaxed list-none border border-[#252525] rounded-2xl bg-[#171717] p-6 md:p-8">
+        <li class="flex gap-3">
+          <span class="text-[#58a6ff] shrink-0" aria-hidden="true">·</span>
+          <span>
+            <span class="lang-en">Early access to new Cursor features (including nightly builds).</span>
+            <span class="lang-ar">وصول مبكر لميزات كيرسر الجديدة (بما في ذلك البناءات الليلية).</span>
+          </span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[#58a6ff] shrink-0" aria-hidden="true">·</span>
+          <span>
+            <span class="lang-en">Free Cursor credits for personal usage.</span>
+            <span class="lang-ar">رصيد كيرسر مجاني للاستخدام الشخصي.</span>
+          </span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[#58a6ff] shrink-0" aria-hidden="true">·</span>
+          <span>
+            <span class="lang-en">Moderation tools in Cursor forums and a special ambassador badge.</span>
+            <span class="lang-ar">أدوات إشراف في منتديات كيرسر وشارة خاصة بالسفراء.</span>
+          </span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[#58a6ff] shrink-0" aria-hidden="true">·</span>
+          <span>
+            <span class="lang-en">Funding to help cover costs for community meetups (per program terms).</span>
+            <span class="lang-ar">دعم مالي لمساعدة تغطية تكاليف اللقاءات المجتمعية (حسب شروط البرنامج).</span>
+          </span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[#58a6ff] shrink-0" aria-hidden="true">·</span>
+          <span>
+            <span class="lang-en">Stickers for meetups and other perks as the program grows.</span>
+            <span class="lang-ar">ملصقات للقاءات ومزايا أخرى مع تطور البرنامج.</span>
+          </span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[#58a6ff] shrink-0" aria-hidden="true">·</span>
+          <span>
+            <span class="lang-en">Access to a Slack group with other ambassadors and members of the Cursor team.</span>
+            <span class="lang-ar">الانضمام لمجموعة Slack مع سفراء آخرين وأعضاء من فريق كيرسر.</span>
+          </span>
+        </li>
+      </ul>
+      <p class="text-xs text-[#6E6E6E] mt-4 leading-relaxed">
+        <span class="lang-en">Space in the program is limited. Cursor reviews applications regularly — see their site for current timelines.</span>
+        <span class="lang-ar">المقاعد محدودة. كيرسر يراجع الطلبات بانتظام — راجع موقعهم للمواعيد الحالية.</span>
+      </p>
+    </div>
+
+    <div class="bg-[#171717] border border-[#252525] rounded-2xl p-6 md:p-8 mb-10">
+      <h2 class="text-lg font-semibold text-white mb-6">
+        <span class="lang-en">How the process works (Saudi Arabia)</span>
+        <span class="lang-ar">كيف تسير العملية (السعودية)</span>
+      </h2>
+      <ol class="space-y-6 text-[#b0b0b0] text-sm md:text-base leading-relaxed list-decimal list-inside marker:text-[#58a6ff]">
+        <li class="pl-1">
+          <span class="lang-en">
+            <strong class="text-white">Contact the Saudi community lead</strong> — reach out to learn more about the program,
+            expectations, and time commitment: <a href={leaderX} class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">@{leadXHandle} on X</a>
+            or <a href={`mailto:${leadEmail}`} class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">{leadEmail}</a>.
+          </span>
+          <span class="lang-ar">
+            <strong class="text-white">تواصل مع قائد المجتمع في السعودية</strong> — لمعرفة البرنامج والالتزام والتوقعات:
+            <a href={leaderX} class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">@{leadXHandle} على X</a>
+            أو <a href={`mailto:${leadEmail}`} class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">{leadEmail}</a>.
+          </span>
+        </li>
+        <li class="pl-1">
+          <span class="lang-en">
+            If you are still interested, <strong class="text-white">apply through Cursor</strong> using the official
+            <a href={cursorAmbassadorsUrl} target="_blank" rel="noopener noreferrer" class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">Cursor Ambassadors</a>
+            page — that is how you move forward officially with the program.
+          </span>
+          <span class="lang-ar">
+            إذا رغبت بالمتابعة، <strong class="text-white">قدّم طلبك عبر Cursor</strong> من صفحة
+            <a href={cursorAmbassadorsUrl} target="_blank" rel="noopener noreferrer" class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">السفراء الرسمية</a>
+            — هذه هي الطريقة الرسمية للمتابعة مع البرنامج.
+          </span>
+        </li>
+        <li class="pl-1">
+          <span class="lang-en">
+            <strong class="text-white">Schedule a skills conversation</strong> with the community lead. They will assess fit,
+            take notes, and <strong class="text-white">share a recommendation with the Cursor team</strong>.
+          </span>
+          <span class="lang-ar">
+            <strong class="text-white">حدد موعداً للحديث عن مهاراتك</strong> مع قائد المجتمع؛ سيقيّم الملاءمة ويعد ملاحظاته و<strong class="text-white">يشاركها مع فريق Cursor</strong>.
+          </span>
+        </li>
+        <li class="pl-1">
+          <span class="lang-en">
+            If you pass that step, <strong class="text-white">the Cursor team will contact you</strong> for a follow-up interview.
+          </span>
+          <span class="lang-ar">
+            إذا نجحت في هذه المرحلة، <strong class="text-white">سيتواصل معك فريق Cursor</strong> لمقابلة إضافية.
+          </span>
+        </li>
+        <li class="pl-1">
+          <span class="lang-en">
+            If you pass that final interview, <strong class="text-white">you are part of the team</strong> — welcome aboard.
+          </span>
+          <span class="lang-ar">
+            إذا اجتزت المقابلة الأخيرة، <strong class="text-white">تكون ضمن الفريق</strong> — أهلاً بك.
+          </span>
+        </li>
+      </ol>
+    </div>
+
+    <!-- FAQ (summarized from cursor.com/ambassadors) -->
+    <div class="mb-12">
+      <h2 class="text-xl font-semibold text-white mb-4">
+        <span class="lang-en">Questions &amp; answers</span>
+        <span class="lang-ar">أسئلة وأجوبة</span>
+      </h2>
+      <p class="text-sm text-[#8b949e] mb-5 leading-relaxed">
+        <span class="lang-en">
+          Summarized from Cursor&apos;s official ambassadors FAQ — for the latest wording, see
+          <a href={cursorAmbassadorsUrl} target="_blank" rel="noopener noreferrer" class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">cursor.com/ambassadors</a>.
+        </span>
+        <span class="lang-ar">
+          ملخّص من الأسئلة الشائعة الرسمية لكيرسر — للنص الكامل راجع
+          <a href={cursorAmbassadorsUrl} target="_blank" rel="noopener noreferrer" class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">cursor.com/ambassadors</a>.
+        </span>
+      </p>
+      <div class="space-y-2">
+        <details class="group border border-[#252525] rounded-xl bg-[#171717] overflow-hidden">
+          <summary class="cursor-pointer list-none p-4 text-sm font-medium text-white hover:bg-white/[0.03] [&::-webkit-details-marker]:hidden flex flex-col gap-1">
+            <span class="lang-en">What are the criteria for acceptance?</span>
+            <span class="lang-ar">ما معايير القبول؟</span>
+          </summary>
+          <div class="px-4 pb-4 text-sm text-[#b0b0b0] leading-relaxed border-t border-[#252525] pt-3">
+            <span class="lang-en">
+              You must be at least 18, complete Cursor&apos;s application (including their Code of Conduct), and be able to commit to contributing
+              through things like forum moderation and hosting meetups or hackathons — Cursor looks for people who want the community to stay vibrant,
+              welcoming, and collaborative.
+            </span>
+            <span class="lang-ar">
+              يجب أن يكون عمرك 18 عاماً فأكثر، وأن تكمل طلب كيرسر (بما في ذلك مدونة السلوك)، وأن تلتزم بالمساهمة عبر الإشراف على المنتدى واستضافة اللقاءات
+              أو الهاكاثونات وغيرها — كيرسر يبحث عن من يريدون مجتمعاً حيوياً ومرحّباً وتعاونياً.
+            </span>
+          </div>
+        </details>
+        <details class="group border border-[#252525] rounded-xl bg-[#171717] overflow-hidden">
+          <summary class="cursor-pointer list-none p-4 text-sm font-medium text-white hover:bg-white/[0.03] [&::-webkit-details-marker]:hidden flex flex-col gap-1">
+            <span class="lang-en">When will I hear back?</span>
+            <span class="lang-ar">متى أتلقى رداً؟</span>
+          </summary>
+          <div class="px-4 pb-4 text-sm text-[#b0b0b0] leading-relaxed border-t border-[#252525] pt-3">
+            <span class="lang-en">
+              Cursor reviews applications on a rolling basis (about weekly) and aims to respond within roughly two to three weeks — check
+              <a href={cursorAmbassadorsUrl} target="_blank" rel="noopener noreferrer" class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">their page</a> for the latest.
+            </span>
+            <span class="lang-ar">
+              كيرسر يراجع الطلبات بشكل دوري (تقريباً أسبوعياً) ويهدف للرد خلال نحو أسبوعين إلى ثلاثة — راجع
+              <a href={cursorAmbassadorsUrl} target="_blank" rel="noopener noreferrer" class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">صفحتهم</a> لأحدث المعلومات.
+            </span>
+          </div>
+        </details>
+        <details class="group border border-[#252525] rounded-xl bg-[#171717] overflow-hidden">
+          <summary class="cursor-pointer list-none p-4 text-sm font-medium text-white hover:bg-white/[0.03] [&::-webkit-details-marker]:hidden flex flex-col gap-1">
+            <span class="lang-en">If I am accepted, what happens next?</span>
+            <span class="lang-ar">إذا قُبلت، ماذا بعد؟</span>
+          </summary>
+          <div class="px-4 pb-4 text-sm text-[#b0b0b0] leading-relaxed border-t border-[#252525] pt-3">
+            <span class="lang-en">
+              Expect an email from the Cursor team with next steps, an onboarding chat, and access to their Slack group for ambassadors.
+            </span>
+            <span class="lang-ar">
+              تتوقع بريداً من فريق كيرسر بخطوات لاحقة، وجلسة تعريف، والانضمام لمجموعة Slack الخاصة بالسفراء.
+            </span>
+          </div>
+        </details>
+        <details class="group border border-[#252525] rounded-xl bg-[#171717] overflow-hidden">
+          <summary class="cursor-pointer list-none p-4 text-sm font-medium text-white hover:bg-white/[0.03] [&::-webkit-details-marker]:hidden flex flex-col gap-1">
+            <span class="lang-en">How long is the commitment?</span>
+            <span class="lang-ar">ما مدة الالتزام؟</span>
+          </summary>
+          <div class="px-4 pb-4 text-sm text-[#b0b0b0] leading-relaxed border-t border-[#252525] pt-3">
+            <span class="lang-en">
+              Cursor describes it as flexible: you stay as long as it works for you, with an optional renewal after about a year. If participation
+              drops off, they may check in; you can always message them if you need to step back.
+            </span>
+            <span class="lang-ar">
+              كيرسر يصف الالتزاماً مرناً: تبقى ما دام يناسبك، مع تجديد اختياري بعد نحو سنة. إذا انخفضت المشاركة قد يتواصلون معك؛ ويمكنك مراسلتهم إذا احتجت للانسحاب.
+            </span>
+          </div>
+        </details>
+        <details class="group border border-[#252525] rounded-xl bg-[#171717] overflow-hidden">
+          <summary class="cursor-pointer list-none p-4 text-sm font-medium text-white hover:bg-white/[0.03] [&::-webkit-details-marker]:hidden flex flex-col gap-1">
+            <span class="lang-en">Can I join other advocacy programs at the same time?</span>
+            <span class="lang-ar">هل يمكنني الانضمام لبرامج دعوة أخرى في نفس الوقت؟</span>
+          </summary>
+          <div class="px-4 pb-4 text-sm text-[#b0b0b0] leading-relaxed border-t border-[#252525] pt-3">
+            <span class="lang-en">
+              Cursor&apos;s preference is that ambassadors not participate in other advocacy programs while in theirs — confirm on their official page.
+            </span>
+            <span class="lang-ar">
+              تفضيل كيرسر ألا يشارك السفراء في برامج دعوة أخرى أثناء انتمائهم لبرنامجهم — تأكد من صفحتهم الرسمية.
+            </span>
+          </div>
+        </details>
+        <details class="group border border-[#252525] rounded-xl bg-[#171717] overflow-hidden">
+          <summary class="cursor-pointer list-none p-4 text-sm font-medium text-white hover:bg-white/[0.03] [&::-webkit-details-marker]:hidden flex flex-col gap-1">
+            <span class="lang-en">Do I need fluent English?</span>
+            <span class="lang-ar">هل أحتاج إتقاناً كاملاً للإنجليزية؟</span>
+          </summary>
+          <div class="px-4 pb-4 text-sm text-[#b0b0b0] leading-relaxed border-t border-[#252525] pt-3">
+            <span class="lang-en">No — Cursor welcomes ambassadors who speak different languages.</span>
+            <span class="lang-ar">لا — كيرسر يرحّب بسفراء يتحدثون لغات مختلفة.</span>
+          </div>
+        </details>
+        <details class="group border border-[#252525] rounded-xl bg-[#171717] overflow-hidden">
+          <summary class="cursor-pointer list-none p-4 text-sm font-medium text-white hover:bg-white/[0.03] [&::-webkit-details-marker]:hidden flex flex-col gap-1">
+            <span class="lang-en">Who do I email for questions?</span>
+            <span class="lang-ar">من أراسل للأسئلة؟</span>
+          </summary>
+          <div class="px-4 pb-4 text-sm text-[#b0b0b0] leading-relaxed border-t border-[#252525] pt-3">
+            <span class="lang-en">
+              For the <strong class="text-white/90">global Cursor ambassador program</strong>, Cursor lists
+              <a href={`mailto:${cursorAmbassadorProgramEmail}`} class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">{cursorAmbassadorProgramEmail}</a>
+              on their FAQ. For <strong class="text-white/90">Cursor Saudi</strong> — chapters, meetups, and local expectations — contact
+              <a href={`mailto:${leadEmail}`} class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">{leadEmail}</a>
+              or <a href={leaderX} class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">@{leadXHandle} on X</a>.
+            </span>
+            <span class="lang-ar">
+              لـ <strong class="text-white/90">برنامج السفراء العالمي</strong>، كيرسر يذكر في الأسئلة الشائعة
+              <a href={`mailto:${cursorAmbassadorProgramEmail}`} class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">{cursorAmbassadorProgramEmail}</a>.
+              لـ <strong class="text-white/90">كيرسر السعودية</strong> — الفروع واللقاءات والتوقعات المحلية — راسل
+              <a href={`mailto:${leadEmail}`} class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">{leadEmail}</a>
+              أو <a href={leaderX} class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">@{leadXHandle} على X</a>.
+            </span>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-4">
+      <button type="button" data-nav="about" class="px-5 py-2.5 rounded-full border border-[#333] text-sm text-[#999999] hover:text-white hover:border-white/25 transition-colors">
+        <span class="lang-en">← Back to About</span>
+        <span class="lang-ar">العودة إلى عن المجتمع ←</span>
+      </button>
+      <a
+        href={cursorAmbassadorsUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-primary px-5 py-2.5 rounded-full text-sm font-medium inline-flex items-center justify-center gap-1.5"
+      >
+        <span class="lang-en">Apply on cursor.com ↗</span>
+        <span class="lang-ar">التقديم على cursor.com ↗</span>
+      </a>
+      <a
+        href={`mailto:${leadEmail}?subject=Cursor%20Saudi%20ambassador%20interest`}
+        class="px-5 py-2.5 rounded-full border border-[#333] text-sm font-medium text-[#b0b0b0] hover:text-white hover:border-white/25 transition-colors inline-flex items-center justify-center"
+      >
+        <span class="lang-en">Email Saudi lead ({leadEmail})</span>
+        <span class="lang-ar">راسل قائد السعودية ({leadEmail})</span>
+      </a>
+    </div>
+  </div>
+</section>
