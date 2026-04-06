@@ -44,7 +44,7 @@ body {
 }
 
 html[lang="ar"] body {
-  font-family: "Noto Kufi Arabic", ui-sans-serif, system-ui, sans-serif;
+  font-family: "Noto Sans Arabic", ui-sans-serif, system-ui, sans-serif;
 }
 
 a {
@@ -249,6 +249,11 @@ a:focus-visible {
 }
 
 /* ─── Language Toggle ─── */
+/* "عربي" sits in .lang-en when UI is English — use Arabic typeface, not mono */
+html[lang="en"] #lang-toggle .lang-en {
+  font-family: "Noto Sans Arabic", ui-sans-serif, system-ui, sans-serif;
+}
+
 .lang-en {
   display: none;
 }
@@ -280,7 +285,7 @@ html[lang="en"] svg text.lang-ar {
 
 html[lang="ar"] svg text.lang-ar {
   display: block;
-  font-family: "Noto Kufi Arabic", "IBM Plex Arabic", system-ui, sans-serif;
+  font-family: "Noto Sans Arabic", ui-sans-serif, system-ui, sans-serif;
 }
 
 /* ─── Cursor Logo Animation ─── */
