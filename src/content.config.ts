@@ -20,6 +20,7 @@ const events = defineCollection({
     photos: z.array(z.string()).optional(),
     videos: z.array(z.string()).optional(),
     coverPhoto: z.string().optional(),
+    photographers: z.array(z.string()).optional(),
   }),
 });
 

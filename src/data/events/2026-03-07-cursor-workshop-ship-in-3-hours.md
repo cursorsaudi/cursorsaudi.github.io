@@ -28,6 +28,9 @@ photos:
   - WhatsApp Image 2026-03-09 at 3.28.26 PM (1).jpeg
   - WhatsApp Image 2026-03-09 at 3.28.26 PM.jpeg
 coverPhoto: WhatsApp Image 2026-03-09 at 3.28.27 PM (2).jpeg
+photographers:
+  - Hanouf Almogri
+  - Raghad Alshathri
 ---
 
 ## Overview

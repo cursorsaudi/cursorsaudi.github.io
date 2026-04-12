@@ -26,6 +26,9 @@ photos:
   - 4 (2).png
   - 1 (3).png
 coverPhoto: 8 (2).png
+photographers:
+  - Hanouf Almogri
+  - Raghad Alshathri
 ---
 
 ## Overview

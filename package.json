@@ -7,7 +7,8 @@
     "sync-events": "node scripts/sync-events.mjs",
     "dev": "node scripts/sync-events.mjs --soft && astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "fetch-dal-photos": "node scripts/fetch-dal-contributor-photos.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",

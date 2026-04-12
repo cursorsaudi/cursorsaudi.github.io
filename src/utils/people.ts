@@ -1,6 +1,17 @@
+import fs from "node:fs";
+import path from "node:path";
 import { config } from "@/config";
 import { getSortedEvents } from "@/utils/events";
 import type { CollectionEntry } from "astro:content";
+
+const REPO_ROOT = process.cwd();
+
+/** True if `public/` contains the asset for this site-root URL (e.g. `/images/...`). */
+function publicAssetExists(siteUrlPath: string): boolean {
+  if (!siteUrlPath.startsWith("/")) return false;
+  const rel = siteUrlPath.slice(1);
+  return fs.existsSync(path.join(REPO_ROOT, "public", rel));
+}
 
 export type EventEntry = CollectionEntry<"events">;
 
@@ -18,6 +29,8 @@ export interface ConfigSpeaker {
   email?: string;
   /** Alternate names that may appear in event frontmatter (e.g. "Dan (Cursor)"). */
   aliases?: readonly string[];
+  /** Partner slug in `config.partners` (e.g. "cursor") for employer / affiliation badge. */
+  affiliationPartnerSlug?: string;
 }
 
 export interface Speaker {
@@ -36,6 +49,28 @@ export interface Speaker {
   isAmbassador: boolean;
   /** All event names this speaker has appeared in (deduped). */
   events: EventEntry[];
+  /** Resolved from config when set on the speaker entry. */
+  affiliationPartnerSlug?: string;
+}
+
+export interface PartnerParentCompany {
+  name: string;
+  nameAr: string;
+  url: string;
+}
+
+export interface PartnerContributor {
+  name: string;
+  nameAr?: string;
+  role: string;
+  roleAr?: string;
+  twitter?: string;
+  twitterHandle?: string;
+  linkedin?: string;
+  email?: string;
+  initials: string;
+  /** Avatar under `public/`; omitted at build time if the file is missing. */
+  photo?: string;
 }
 
 export interface PartnerWithEvents {
@@ -49,6 +84,32 @@ export interface PartnerWithEvents {
   descriptionAr: string;
   cities: readonly string[];
   events: EventEntry[];
+  /** When set, Thank You / partner page skip event counts and listings (e.g. official product backer). */
+  omitEventStats?: boolean;
+  /** Parent org (e.g. Anysphere for Cursor). */
+  parentCompany?: PartnerParentCompany;
+  /** Extra body copy for /partners/{slug}/ only. */
+  detailParagraphs?: { en: readonly string[]; ar: readonly string[] };
+  /** People from this partner who actively helped at events (photographers, organizers, etc.). */
+  contributors?: readonly PartnerContributor[];
+}
+
+export interface Supporter {
+  name: string;
+  nameAr?: string;
+  role: string;
+  roleAr?: string;
+  contribution: string;
+  contributionAr?: string;
+  twitter?: string;
+  twitterHandle?: string;
+  linkedin?: string;
+  email?: string;
+  /** Partner slug this supporter is affiliated with (e.g. "cursor"). */
+  affiliation?: string;
+  initials: string;
+  /** Avatar under `public/`; omitted at build time if the file is missing. */
+  photo?: string;
 }
 
 /** URL-safe slug from a display name. Handles parens, spaces, and case. */
@@ -147,6 +208,7 @@ export async function getAllSpeakers(): Promise<Speaker[]> {
       email: s.email,
       isAmbassador: ambassadorNames.has(s.name.toLowerCase().trim()),
       events: [],
+      affiliationPartnerSlug: s.affiliationPartnerSlug,
     };
     const amb = ambassadorByName.get(s.name.toLowerCase().trim());
     if (amb) applyAmbassadorEnrichment(entry, amb);
@@ -201,6 +263,18 @@ export async function getNonAmbassadorSpeakers(): Promise<Speaker[]> {
   );
 }
 
+interface ConfigPartnerContributor {
+  name: string;
+  nameAr?: string;
+  role: string;
+  roleAr?: string;
+  twitter?: string;
+  twitterHandle?: string;
+  linkedin?: string;
+  email?: string;
+  photo?: string;
+}
+
 const partnerCfg = config.partners as readonly {
   slug: string;
   name: string;
@@ -213,6 +287,10 @@ const partnerCfg = config.partners as readonly {
   cities: readonly string[];
   eventVenues: readonly string[];
   events: readonly string[];
+  omitEventStats?: boolean;
+  parentCompany?: PartnerParentCompany;
+  detailParagraphs?: { en: readonly string[]; ar: readonly string[] };
+  contributors?: readonly ConfigPartnerContributor[];
 }[];
 
 /**
@@ -235,9 +313,60 @@ async function resolvePartnerEvents(
   return matched.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 }
 
+function speakerToContributor(s: ConfigSpeaker): PartnerContributor {
+  return {
+    name: s.name,
+    nameAr: s.nameAr,
+    role: "Engineer",
+    roleAr: "مهندس",
+    twitter: s.twitter,
+    twitterHandle: s.twitterHandle,
+    linkedin: s.linkedin,
+    email: s.email,
+    initials: s.initials ?? getInitials(s.name),
+    photo: s.photo && publicAssetExists(s.photo) ? s.photo : undefined,
+  };
+}
+
+function supporterToContributor(s: ConfigSupporter): PartnerContributor {
+  return {
+    name: s.name,
+    nameAr: s.nameAr,
+    role: s.role,
+    roleAr: s.roleAr,
+    twitter: s.twitter,
+    twitterHandle: s.twitterHandle,
+    linkedin: s.linkedin,
+    email: s.email,
+    initials: getInitials(s.name),
+    photo: s.photo && publicAssetExists(s.photo) ? s.photo : undefined,
+  };
+}
+
 export async function getAllPartnersWithEvents(): Promise<PartnerWithEvents[]> {
   const out: PartnerWithEvents[] = [];
   for (const p of partnerCfg) {
+    const explicit = (p.contributors ?? []).map((c) => ({
+      ...c,
+      initials: getInitials(c.name),
+      photo: c.photo && publicAssetExists(c.photo) ? c.photo : undefined,
+    }));
+    const fromSpeakers = configSpeakers
+      .filter((s) => s.affiliationPartnerSlug === p.slug)
+      .map(speakerToContributor);
+    const fromSupporters = configSupporters
+      .filter((s) => s.affiliation === p.slug)
+      .map(supporterToContributor);
+
+    const seen = new Set<string>();
+    const merged: PartnerContributor[] = [];
+    for (const c of [...explicit, ...fromSpeakers, ...fromSupporters]) {
+      const key = c.name.trim().toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      merged.push(c);
+    }
+
     out.push({
       slug: p.slug,
       name: p.name,
@@ -249,9 +378,57 @@ export async function getAllPartnersWithEvents(): Promise<PartnerWithEvents[]> {
       descriptionAr: p.descriptionAr,
       cities: p.cities,
       events: await resolvePartnerEvents(p),
+      omitEventStats: p.omitEventStats,
+      parentCompany: p.parentCompany,
+      detailParagraphs: p.detailParagraphs,
+      contributors: merged.length > 0 ? merged : undefined,
     });
   }
   return out;
+}
+
+interface ConfigSupporter {
+  name: string;
+  nameAr?: string;
+  role: string;
+  roleAr?: string;
+  contribution: string;
+  contributionAr?: string;
+  twitter?: string;
+  twitterHandle?: string;
+  linkedin?: string;
+  email?: string;
+  affiliation?: string;
+  photo?: string;
+}
+
+const configSupporters = (config as { supporters?: readonly ConfigSupporter[] })
+  .supporters ?? [];
+
+/**
+ * Individuals (not orgs, not speakers, not ambassadors) who help make events
+ * happen — e.g. Cursor team members who send merch.
+ */
+export function getAllSupporters(): Supporter[] {
+  return configSupporters.map((s) => ({
+    ...s,
+    initials: getInitials(s.name),
+    photo: s.photo && publicAssetExists(s.photo) ? s.photo : undefined,
+  }));
+}
+
+/** Resolve logo + partner page link for a `config.partners` slug (e.g. speaker employer badge). */
+export function getAffiliationPartnerDisplay(partnerSlug: string):
+  | { logo: string; href: string; name: string; nameAr: string }
+  | undefined {
+  const p = config.partners.find((x) => x.slug === partnerSlug);
+  if (!p) return undefined;
+  return {
+    logo: p.logo,
+    href: `/partners/${p.slug}/`,
+    name: p.name,
+    nameAr: p.nameAr,
+  };
 }
 
 export async function getPartnerBySlug(

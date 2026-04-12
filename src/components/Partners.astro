@@ -63,11 +63,14 @@ const grouped = roleOrder
           "stagger-children",
           group.role === "official" ? "partners-grid partners-grid--official" : "partners-grid",
         ]}>
-          {group.partners.map((partner) => (
+          {group.partners.map((partner) => {
+            const cardIsInternal = partner.slug === "cursor";
+            const cardHref = cardIsInternal ? `/partners/${partner.slug}/` : partner.url;
+            return (
             <a
-              href={partner.url}
-              target="_blank"
-              rel="noreferrer"
+              href={cardHref}
+              target={cardIsInternal ? undefined : "_blank"}
+              rel={cardIsInternal ? undefined : "noreferrer"}
               class:list={[
                 "partner-card card animate-on-scroll",
                 { "partner-card--official": group.role === "official" },
@@ -108,7 +111,8 @@ const grouped = roleOrder
                 <path d="M4 12l8-8m0 0H5m7 0v7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </a>
-          ))}
+          );
+          })}
         </div>
       </div>
     ))}

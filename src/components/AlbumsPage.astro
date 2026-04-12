@@ -1,7 +1,34 @@
 ---
 import { getEventsWithAlbums, getEventCoverUrl, getEventImageUrl, isVideo } from "@/utils/events";
+import { config } from "@/config";
 
 const albums = await getEventsWithAlbums();
+
+type PersonLookup = { nameAr: string; href: string | null };
+const personLookup = new Map<string, PersonLookup>();
+
+for (const speaker of (config as { speakers?: { slug: string; name: string; nameAr?: string; aliases?: string[] }[] }).speakers ?? []) {
+  const entry: PersonLookup = {
+    nameAr: speaker.nameAr ?? speaker.name,
+    href: `/speakers/${speaker.slug}`,
+  };
+  personLookup.set(speaker.name, entry);
+  for (const alias of speaker.aliases ?? []) personLookup.set(alias, entry);
+}
+
+for (const partner of config.partners as { slug: string; contributors?: { name: string; nameAr?: string }[] }[]) {
+  for (const c of partner.contributors ?? []) {
+    if (personLookup.has(c.name)) continue;
+    personLookup.set(c.name, {
+      nameAr: c.nameAr ?? c.name,
+      href: `/partners/${partner.slug}`,
+    });
+  }
+}
+
+function resolvePerson(name: string): PersonLookup {
+  return personLookup.get(name) ?? { nameAr: name, href: null };
+}
 
 function formatDate(date: Date) {
   return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
@@ -13,6 +40,18 @@ function formatDateAr(date: Date) {
 
 function getAllMedia(event: { data: { photos?: string[]; videos?: string[] } }) {
   return [...(event.data.photos ?? []), ...(event.data.videos ?? [])];
+}
+
+function joinerEn(idx: number, total: number) {
+  if (idx === 0) return "";
+  if (idx === total - 1) return total === 2 ? " & " : ", & ";
+  return ", ";
+}
+
+function joinerAr(idx: number, total: number) {
+  if (idx === 0) return "";
+  if (idx === total - 1) return " و";
+  return "، ";
 }
 ---
 
@@ -117,6 +156,10 @@ function getAllMedia(event: { data: { photos?: string[]; videos?: string[] } }) 
     <!-- Detail Views (one per album, hidden by default) -->
     {albums.map((event) => {
       const media = getAllMedia(event);
+      const photographers = (event.data.photographers ?? []).map((name: string) => ({
+        nameEn: name,
+        ...resolvePerson(name),
+      }));
       return (
         <div class="album-detail hidden" data-detail-id={event.id}>
           <button class="album-back-btn flex items-center gap-2 text-sm text-[#999999] hover:text-white transition-colors mb-8 cursor-pointer" type="button">
@@ -149,6 +192,38 @@ function getAllMedia(event: { data: { photos?: string[]; videos?: string[] } }) 
               <span class="lang-ar">{event.data.descriptionAr || event.data.description}</span>
             </p>
           </div>
+
+          {photographers.length > 0 && (
+            <div class="flex items-center gap-2 text-xs text-[#999999] mb-4">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <span class="lang-en">
+                Photos by{" "}
+                {photographers.map((p, i) => (
+                  <>
+                    {joinerEn(i, photographers.length)}
+                    {p.href ? (
+                      <a href={p.href} class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors">{p.nameEn}</a>
+                    ) : (
+                      <span>{p.nameEn}</span>
+                    )}
+                  </>
+                ))}
+              </span>
+              <span class="lang-ar">
+                تصوير:{" "}
+                {photographers.map((p, i) => (
+                  <>
+                    {joinerAr(i, photographers.length)}
+                    {p.href ? (
+                      <a href={p.href} class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors">{p.nameAr}</a>
+                    ) : (
+                      <span>{p.nameAr}</span>
+                    )}
+                  </>
+                ))}
+              </span>
+            </div>
+          )}
 
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {media.map((filename, idx) => {
@@ -195,21 +270,33 @@ function getAllMedia(event: { data: { photos?: string[]; videos?: string[] } }) 
     })}
   </div>
 
-  <!-- Lightbox -->
-  <div id="album-lightbox" class="fixed inset-0 z-[100] hidden bg-black/90 backdrop-blur-sm flex items-center justify-center">
-    <button id="lightbox-close" class="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer" type="button" aria-label="Close">
+  <!-- Lightbox: scrollable overlay so tall media stays reachable while body overflow is locked -->
+  <div id="album-lightbox" class="fixed inset-0 z-[100] hidden bg-black/90 backdrop-blur-sm overflow-x-hidden overflow-y-auto overscroll-contain">
+    <div id="lightbox-backdrop" class="fixed inset-0 z-0" aria-hidden="true"></div>
+    <div class="relative z-[1] flex min-h-[100dvh] w-full items-center justify-center px-4 py-20 sm:px-6 sm:py-24 box-border pointer-events-none">
+      <img
+        id="lightbox-img"
+        class="relative z-[1] max-h-[min(85dvh,calc(100dvh-8rem))] max-w-[min(90vw,100%)] w-auto h-auto min-h-0 min-w-0 object-contain rounded-lg hidden shadow-2xl pointer-events-auto"
+        src=""
+        alt=""
+      />
+      <video
+        id="lightbox-video"
+        class="relative z-[1] max-h-[min(85dvh,calc(100dvh-8rem))] max-w-[min(90vw,100%)] w-auto h-auto min-h-0 min-w-0 object-contain rounded-lg hidden shadow-2xl pointer-events-auto"
+        controls
+        playsinline
+      ></video>
+    </div>
+    <button id="lightbox-close" class="fixed top-4 end-4 z-[2] w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer" type="button" aria-label="Close">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
-    <button id="lightbox-prev" class="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer" type="button" aria-label="Previous">
+    <button id="lightbox-prev" class="fixed start-4 top-1/2 -translate-y-1/2 z-[2] w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer" type="button" aria-label="Previous">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
-    <button id="lightbox-next" class="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer" type="button" aria-label="Next">
+    <button id="lightbox-next" class="fixed end-4 top-1/2 -translate-y-1/2 z-[2] w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer" type="button" aria-label="Next">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
-    <div id="lightbox-backdrop" class="absolute inset-0 -z-10"></div>
-    <img id="lightbox-img" class="max-w-[90vw] max-h-[85vh] object-contain rounded-lg hidden" src="" alt="" />
-    <video id="lightbox-video" class="max-w-[90vw] max-h-[85vh] object-contain rounded-lg hidden" controls playsinline></video>
-    <div id="lightbox-counter" class="absolute bottom-4 left-1/2 -translate-x-1/2 text-sm text-white/70"></div>
+    <div id="lightbox-counter" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-[2] text-sm text-white/70 pointer-events-none"></div>
   </div>
 </section>
 

@@ -18,6 +18,9 @@ tags:
 
 domain: 
   - cursorsaudi
+photographers:
+  - Hanouf Almogri
+  - Raghad Alshathri
 ---
 
 ## Overview

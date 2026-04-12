@@ -2,7 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
-import { getAllSpeakers } from "@/utils/people";
+import { getAllSpeakers, getAffiliationPartnerDisplay } from "@/utils/people";
 import { getEventIdsWithBlog, eventBlogSlug } from "@/utils/blog";
 
 export async function getStaticPaths() {
@@ -15,6 +15,9 @@ export async function getStaticPaths() {
 
 const { speaker } = Astro.props;
 const blogIds = await getEventIdsWithBlog();
+const affiliation = speaker.affiliationPartnerSlug
+  ? getAffiliationPartnerDisplay(speaker.affiliationPartnerSlug)
+  : undefined;
 
 function formatDate(date: Date) {
   return date.toLocaleDateString("en-US", {
@@ -66,10 +69,28 @@ function formatDate(date: Date) {
               </>
             )}
           </div>
-          <h1 class="text-3xl md:text-4xl font-semibold text-white mb-2">
-            <span class="lang-en">{speaker.name}</span>
-            <span class="lang-ar">{speaker.nameAr ?? speaker.name}</span>
-          </h1>
+          <div class="flex flex-wrap items-center gap-3 mb-2">
+            <h1 class="text-3xl md:text-4xl font-semibold text-white">
+              <span class="lang-en">{speaker.name}</span>
+              <span class="lang-ar">{speaker.nameAr ?? speaker.name}</span>
+            </h1>
+            {affiliation && (
+              <a
+                href={affiliation.href}
+                class="inline-flex items-center rounded-lg border border-[#252525] bg-[#141414] px-2 py-1.5 hover:border-[#444] transition-colors"
+                title={affiliation.name}
+              >
+                <img
+                  src={affiliation.logo}
+                  alt=""
+                  class="h-7 w-auto max-w-[7rem] object-contain object-left"
+                  width="112"
+                  height="28"
+                  loading="eager"
+                />
+              </a>
+            )}
+          </div>
           <div class="text-sm text-[#999999] mb-4">
             <span class="lang-en">
               {speaker.events.length}{" "}
