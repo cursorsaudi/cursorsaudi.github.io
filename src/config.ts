@@ -299,10 +299,9 @@ export const config = {
         {
           name: "Alanoud Alghayth",
           nameAr: "العنود آل غيث",
-          role: "Operations Manager",
-          roleAr: "مديرة عمليات",
+          role: "Project Manager",
+          roleAr: "مديرة مشروع",
           linkedin: "https://www.linkedin.com/in/alanoud-alghayth/",
-          twitterHandle: "1sRaghad",
           photo: "/images/partners/dal/alanoud-alghayth.jpeg",
         },
       ],
