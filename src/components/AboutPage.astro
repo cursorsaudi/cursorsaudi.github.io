@@ -192,7 +192,7 @@ function formatShortDate(date: Date) {
         </h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 items-stretch">
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)_minmax(0,0.9fr)] gap-6 items-stretch">
         <!-- Riyadh Chapter -->
         <div id="riyadh-chapter" class="bg-[#171717] border border-[#252525] rounded-2xl p-8 h-full flex flex-col">
           <div class="flex items-center justify-between mb-6">
@@ -255,16 +255,96 @@ function formatShortDate(date: Date) {
           )}
         </div>
 
-        <!-- Khobar Chapter -->
-        <div id="khobar-chapter" class="bg-[#171717] border border-[#252525] rounded-2xl p-8 h-full flex flex-col">
+        <!-- Jeddah Chapter (center column — same structure as Riyadh) -->
+        <div id="jeddah-chapter" class="bg-[#171717] border border-[#252525] rounded-2xl p-8 h-full flex flex-col">
           <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">
-              <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]"></span>
-              <h3 class="text-xl font-semibold text-white"><span class="lang-en">Khobar Chapter</span><span class="lang-ar">فرع الخبر</span></h3>
+              <span class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]"></span>
+              <h3 class="text-xl font-semibold text-white"><span class="lang-en">Jeddah Chapter</span><span class="lang-ar">فرع جدة</span></h3>
             </div>
-            <span class="text-xs font-mono text-[#999999] border border-[#252525] rounded px-2 py-1">EST. 2025</span>
+            <span class="text-xs font-mono text-[#999999] border border-[#252525] rounded px-2 py-1">EST. 2026</span>
           </div>
-          <p class="text-sm text-[#999999] mb-4"><span class="lang-en">Building the Khobar chapter and connecting engineers across Khobar, Dammam, and Dhahran with a focus on AI-powered development workflows.</span><span class="lang-ar">نبني فرع الخبر ونربط المهندسين في الخبر والدمام والظهران مع التركيز على سير عمل التطوير المدعوم بالذكاء الاصطناعي.</span></p>
+          <p class="text-sm text-[#999999] mb-4"><span class="lang-en">Our chapter on the Red Sea coast — meetups and workshops for Cursor builders in Jeddah and the western region, with the same focus on AI-native workflows, MCP, and shipping real projects.</span><span class="lang-ar">فرعنا على ساحل البحر الأحمر — لقاءات وورش للمبدعين بكيرسر في جدة والمنطقة الغربية، مع نفس التركيز على سير العمل المدعوم بالذكاء الاصطناعي وMCP وشحن مشاريع حقيقية.</span></p>
+          <div class="flex items-center gap-2 text-xs text-[#999999] mb-4">
+            {jeddahAmbassador ? (
+              <>
+                <span class="lang-en">{jeddahAmbassador.role}:</span><span class="lang-ar">{jeddahAmbassador.roleAr}:</span>
+                <div class="flex items-center gap-2">
+                  <span class="lang-en text-white font-medium">{jeddahAmbassador.name}</span>
+                  <span class="lang-ar text-white font-medium">{jeddahAmbassador.nameAr ?? jeddahAmbassador.name}</span>
+                  {jeddahAmbassador.twitter && (
+                    <a href={jeddahAmbassador.twitter} target="_blank" rel="noreferrer" class="text-[#6E6E6E] hover:text-white transition-colors" title="X / Twitter">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                  )}
+                  {jeddahAmbassador.linkedin && (
+                    <a href={jeddahAmbassador.linkedin} target="_blank" rel="noreferrer" class="text-[#6E6E6E] hover:text-white transition-colors" title="LinkedIn">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    </a>
+                  )}
+                </div>
+              </>
+            ) : (
+              <span class="text-white font-medium">
+                <span class="lang-en">To Be Announced</span>
+                <span class="lang-ar">سيتم الإعلان قريباً</span>
+              </span>
+            )}
+          </div>
+          <div class="flex gap-4 mb-6">
+            <div><div class="text-xl font-bold text-white">{jeddahPast}</div><div class="text-[10px] text-[#999999] uppercase tracking-wider"><span class="lang-en">Completed</span><span class="lang-ar">مكتملة</span></div></div>
+            <div><div class="text-xl font-bold text-white">{jeddahUpcoming}</div><div class="text-[10px] text-[#999999] uppercase tracking-wider"><span class="lang-en">Upcoming</span><span class="lang-ar">قادمة</span></div></div>
+          </div>
+          {nextJeddah && (
+            <div class="border-t border-[#252525] pt-4">
+              <div class="text-[9px] text-[#6E6E6E] uppercase tracking-widest mb-1"><span class="lang-en">Next Event</span><span class="lang-ar">الفعالية القادمة</span></div>
+              <div class="text-xs text-white font-medium">{nextJeddah.data.title}</div>
+              <div class="text-[10px] text-[#999999] mt-0.5">{formatShortDate(nextJeddah.data.date)}</div>
+            </div>
+          )}
+          {jeddahPartners.length > 0 && (
+            <div class="border-t border-[#252525] pt-4 mt-4">
+              <div class="text-[10px] uppercase tracking-widest text-[#6E6E6E] font-medium mb-3"><span class="lang-en">Chapter Partners</span><span class="lang-ar">شركاء الفرع</span></div>
+              <div class="grid w-full min-w-0 grid-cols-2 gap-2 sm:grid-cols-3">
+                {jeddahPartners.map((partner) => (
+                  <a
+                    href={partner.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    class="flex min-h-[2.75rem] min-w-0 items-center justify-center rounded-lg border border-[#252525] bg-[#1F1F1F] px-2 py-2 transition-colors hover:border-white/25"
+                  >
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      class="h-7 max-h-7 w-full max-w-[6.5rem] object-contain object-center"
+                      loading="lazy"
+                    />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <!-- Khobar Chapter (side column — red “stopped”, recruiting) -->
+        <div id="khobar-chapter" class="bg-[#171717] border border-red-500/20 rounded-2xl p-8 h-full flex flex-col">
+          <div class="flex items-center justify-between gap-3 mb-6">
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="w-2.5 h-2.5 shrink-0 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.9)] animate-pulse"></span>
+              <h3 class="text-xl font-semibold text-white min-w-0"><span class="lang-en">Khobar Chapter</span><span class="lang-ar">فرع الخبر</span></h3>
+            </div>
+            <div class="flex flex-col items-end gap-1 shrink-0 text-end">
+              <span class="text-[10px] font-mono text-red-300 border border-red-500/35 bg-red-500/10 rounded px-2 py-0.5 leading-tight">
+                <span class="lang-en">Paused</span>
+                <span class="lang-ar">متوقف</span>
+              </span>
+              <span class="text-[10px] font-mono text-red-400/90 leading-tight">
+                <span class="lang-en">Needs ambassador</span>
+                <span class="lang-ar">بحاجة لسفير</span>
+              </span>
+            </div>
+          </div>
+          <p class="text-sm text-[#999999] mb-4"><span class="lang-en">Chapter activity is on hold until a new ambassador steps in. We still want to reconnect engineers across Khobar, Dammam, and Dhahran around AI-powered development — when leadership is back, programming resumes.</span><span class="lang-ar">نشاط الفرع متوقف حتى يتولى سفير جديد القيادة. ما زلنا نرغب بربط المهندسين في الخبر والدمام والظهران حول التطوير بالذكاء الاصطناعي — مع عودة القيادة يستأنف البرنامج.</span></p>
           <div class="space-y-4 mb-4 text-xs text-[#999999]">
             <div>
               <div class="text-[10px] uppercase tracking-widest text-amber-500/90 font-medium mb-1">
@@ -290,18 +370,18 @@ function formatShortDate(date: Date) {
               <div><div class="text-xl font-bold text-white">{khobarPast}</div><div class="text-[10px] text-[#999999] uppercase tracking-wider"><span class="lang-en">Completed</span><span class="lang-ar">مكتملة</span></div></div>
               <div><div class="text-xl font-bold text-white">{khobarUpcoming}</div><div class="text-[10px] text-[#999999] uppercase tracking-wider"><span class="lang-en">Upcoming</span><span class="lang-ar">قادمة</span></div></div>
             </div>
-            <div class="border-t border-[#252525] pt-3">
-              <div class="text-[10px] uppercase tracking-widest text-green-500/90 font-medium mb-2">
+            <div class="border-t border-red-500/15 pt-3">
+              <div class="text-[10px] uppercase tracking-widest text-red-400/95 font-medium mb-2">
                 <span class="lang-en">Looking for</span>
                 <span class="lang-ar">نبحث عن</span>
               </div>
               <p class="text-sm text-[#b0b0b0] leading-relaxed">
                 <span class="lang-en">
-                  We are looking for an ambassador to lead the <strong class="text-white/90 font-medium">Khobar chapter</strong> and grow
+                  We need an ambassador to restart the <strong class="text-white/90 font-medium">Khobar chapter</strong> and grow
                   meetups for builders in Khobar, Dhahran, and Dammam.
                 </span>
                 <span class="lang-ar">
-                  نبحث عن سفير يقود <strong class="text-white/90 font-medium">فرع الخبر</strong> وينمّي اللقاءات للمبدعين في الخبر والظهران والدمام.
+                  نحتاج سفيراً لإعادة تشغيل <strong class="text-white/90 font-medium">فرع الخبر</strong> وتنمية اللقاءات للمبدعين في الخبر والظهران والدمام.
                 </span>
               </p>
               <a href="/ambassadors" class="mt-3 text-xs font-medium text-[#58a6ff] hover:text-[#79c0ff] transition-colors">
@@ -339,84 +419,6 @@ function formatShortDate(date: Date) {
               </div>
             </div>
           )}
-        </div>
-
-        <!-- Jeddah Chapter -->
-        <div id="jeddah-chapter" class="bg-[#171717] border border-[#252525] rounded-2xl p-8 relative overflow-hidden h-full flex flex-col">
-          <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent pointer-events-none"></div>
-          <div class="relative z-10 flex flex-col flex-grow min-h-0">
-            <div class="flex items-center justify-between mb-6">
-              <div class="flex items-center gap-3 min-w-0">
-                <span class="w-2.5 h-2.5 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(192,132,252,0.6)] shrink-0"></span>
-                <h3 class="text-xl font-semibold text-white"><span class="lang-en">Jeddah Chapter</span><span class="lang-ar">فرع جدة</span></h3>
-              </div>
-              <span class="text-xs font-mono text-purple-400 border border-purple-500/30 bg-purple-500/10 rounded px-2 py-1">
-                <span class="lang-en">COMING SOON</span>
-                <span class="lang-ar">قريباً</span>
-              </span>
-            </div>
-            <p class="text-sm text-[#999999] mb-4"><span class="lang-en">Growing our presence on the Red Sea coast to serve developers in Jeddah and the western region. Stay tuned for our first events.</span><span class="lang-ar">نوسّع نشاطنا على الساحل الغربي لخدمة المطورين في جدة والمنطقة الغربية. ترقبوا فعالياتنا الأولى.</span></p>
-            <div class="flex items-center gap-2 text-xs text-[#999999] mb-4">
-              {jeddahAmbassador ? (
-                <>
-                  <span class="lang-en">{jeddahAmbassador.role}:</span><span class="lang-ar">{jeddahAmbassador.roleAr}:</span>
-                  <div class="flex items-center gap-2">
-                    <span class="text-white font-medium">{jeddahAmbassador.name}</span>
-                    {jeddahAmbassador.twitter && (
-                      <a href={jeddahAmbassador.twitter} target="_blank" rel="noreferrer" class="text-[#6E6E6E] hover:text-white transition-colors" title="X / Twitter">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                      </a>
-                    )}
-                    {jeddahAmbassador.linkedin && (
-                      <a href={jeddahAmbassador.linkedin} target="_blank" rel="noreferrer" class="text-[#6E6E6E] hover:text-white transition-colors" title="LinkedIn">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                      </a>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <span class="text-white font-medium">
-                  <span class="lang-en">To Be Announced</span>
-                  <span class="lang-ar">سيتم الإعلان قريباً</span>
-                </span>
-              )}
-            </div>
-            {(jeddahPast > 0 || jeddahUpcoming > 0) && (
-              <div class="flex gap-4 mb-6">
-                <div><div class="text-xl font-bold text-white">{jeddahPast}</div><div class="text-[10px] text-[#999999] uppercase tracking-wider"><span class="lang-en">Completed</span><span class="lang-ar">مكتملة</span></div></div>
-                <div><div class="text-xl font-bold text-white">{jeddahUpcoming}</div><div class="text-[10px] text-[#999999] uppercase tracking-wider"><span class="lang-en">Upcoming</span><span class="lang-ar">قادمة</span></div></div>
-              </div>
-            )}
-            {nextJeddah && (
-              <div class="border-t border-[#252525] pt-4">
-                <div class="text-[9px] text-[#6E6E6E] uppercase tracking-widest mb-1"><span class="lang-en">Next Event</span><span class="lang-ar">الفعالية القادمة</span></div>
-                <div class="text-xs text-white font-medium">{nextJeddah.data.title}</div>
-                <div class="text-[10px] text-[#999999] mt-0.5">{formatShortDate(nextJeddah.data.date)}</div>
-              </div>
-            )}
-            {jeddahPartners.length > 0 && (
-              <div class="border-t border-[#252525] pt-4 mt-4">
-                <div class="text-[10px] uppercase tracking-widest text-[#6E6E6E] font-medium mb-3"><span class="lang-en">Chapter Partners</span><span class="lang-ar">شركاء الفرع</span></div>
-                <div class="grid w-full min-w-0 grid-cols-2 gap-2 sm:grid-cols-3">
-                  {jeddahPartners.map((partner) => (
-                    <a
-                      href={partner.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      class="flex min-h-[2.75rem] min-w-0 items-center justify-center rounded-lg border border-[#252525] bg-[#1F1F1F] px-2 py-2 transition-colors hover:border-white/25"
-                    >
-                      <img
-                        src={partner.logo}
-                        alt={partner.name}
-                        class="h-7 max-h-7 w-full max-w-[6.5rem] object-contain object-center"
-                        loading="lazy"
-                      />
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </div>
