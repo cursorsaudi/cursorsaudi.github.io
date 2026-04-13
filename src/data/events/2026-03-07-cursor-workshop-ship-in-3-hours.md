@@ -27,15 +27,19 @@ tags:
 domain: 
   - cursorsaudi
 photos:
-  - "https://pbs.twimg.com/media/HDc4OQRXQAABlmU?format=jpg&name=large"
-  - "https://pbs.twimg.com/media/HDc4Ms7WAAA-77I?format=jpg&name=large"
-  - "https://pbs.twimg.com/media/HDc4Ms4WQAAYufb?format=jpg&name=large"
-  - "https://pbs.twimg.com/media/HDc4Ms0XkAAQm_o?format=jpg&name=large"
-  - "https://pbs.twimg.com/media/HDc4Ms7XUAAuPno?format=jpg&name=large"
-  - "https://pbs.twimg.com/media/HDc4OO3XsAAIyQy?format=jpg&name=large"
-  - "https://pbs.twimg.com/media/HDc4OQRWQAAqN5P?format=jpg&name=large"
-  - "https://pbs.twimg.com/media/HDc4OPBWYAAr_sQ?format=jpg&name=large"
-coverPhoto: "https://pbs.twimg.com/media/HDc4OQRXQAABlmU?format=jpg&name=large"
+  - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/HDc4OQRXQAABlmU.jpg"
+  - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/HDc4Ms7WAAA-77I.jpg"
+  - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/HDc4Ms4WQAAYufb.jpg"
+  - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/HDc4Ms0XkAAQm_o.jpg"
+  - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/HDc4Ms7XUAAuPno.jpg"
+  - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/HDc4OO3XsAAIyQy.jpg"
+  - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/HDc4OQRWQAAqN5P.jpg"
+  - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/HDc4OPBWYAAr_sQ.jpg"
+  - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/GxIyD30WUAAGUyP.jpg"
+  - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/GxIyNxRXgAQ5vLB.jpg"
+  - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/GxIQGKdWEAABvsz.jpg"
+  - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/GxIQGMmWwAAxJtv.jpg"
+coverPhoto: "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/HDc4OQRXQAABlmU.jpg"
 photographers:
   - Hanouf Almogri
   - Raghad Alshathri
@@ -146,3 +150,13 @@ A 3-hour interactive workshop where participants built and deployed real softwar
 ![](/events/2026-03-07-cursor-workshop-ship-in-3-hours/WhatsApp%20Image%202026-03-09%20at%203.28.26%20PM%20(1).jpeg)
 
 ![](/events/2026-03-07-cursor-workshop-ship-in-3-hours/WhatsApp%20Image%202026-03-09%20at%203.28.26%20PM.jpeg)
+
+### Participant photos
+
+![](/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/GxIyD30WUAAGUyP.jpg)
+
+![](/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/GxIyNxRXgAQ5vLB.jpg)
+
+![](/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/GxIQGKdWEAABvsz.jpg)
+
+![](/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/GxIQGMmWwAAxJtv.jpg)

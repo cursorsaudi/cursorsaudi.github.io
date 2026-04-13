@@ -156,7 +156,7 @@ export const config = {
   ],
   /**
    * Invitations from external organizations for community members to speak or
-   * participate in their events. Rendered in the Thank You page.
+   * participate in their events. Rendered on the Events page.
    */
   invites: [
     {

@@ -61,7 +61,7 @@ const IMAGE_EXTS = new Set([".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"]);
 const VIDEO_EXTS = new Set([".mp4", ".webm", ".mov", ".m4v"]);
 
 /** Schema enums from src/content.config.ts. */
-const VALID_TYPES = new Set(["meetup", "hackathon", "workshop", "build"]);
+const VALID_TYPES = new Set(["meetup", "hackathon", "workshop", "build", "talk", "interview"]);
 const VALID_STATUSES = new Set([
   "backlog",
   "informed",

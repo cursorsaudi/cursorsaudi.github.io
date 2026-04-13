@@ -1,6 +1,6 @@
 ---
 import { config } from "@/config";
-import { getUpcomingEvents, getPastEvents } from "@/utils/events";
+import { getUpcomingEvents, getPastEvents, isHostedCommunityEventType } from "@/utils/events";
 import type { CollectionEntry } from "astro:content";
 import AboutMission from "@/components/about/AboutMission.astro";
 import AboutEventTypes from "@/components/about/AboutEventTypes.astro";
@@ -36,8 +36,8 @@ interface Ambassador {
 
 const ambassadors = config.ambassadors as readonly Ambassador[];
 
-const upcoming = await getUpcomingEvents();
-const past = await getPastEvents();
+const upcoming = (await getUpcomingEvents()).filter((e: EventEntry) => isHostedCommunityEventType(e.data.type));
+const past = (await getPastEvents()).filter((e: EventEntry) => isHostedCommunityEventType(e.data.type));
 
 const riyadhPast = past.filter((e: EventEntry) => e.data.location === "Riyadh").length;
 const riyadhUpcoming = upcoming.filter((e: EventEntry) => e.data.location === "Riyadh").length;

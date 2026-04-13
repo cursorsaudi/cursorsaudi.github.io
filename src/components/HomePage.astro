@@ -1,15 +1,15 @@
 ---
 import { config } from "@/config";
-import { getUpcomingEvents, getPastEvents, getSortedEvents } from "@/utils/events";
+import { getUpcomingEvents, getPastEvents, getSortedEvents, isHostedCommunityEventType } from "@/utils/events";
 import type { CollectionEntry } from "astro:content";
 import PageToc from "@/components/PageToc.astro";
 
 type EventEntry = CollectionEntry<"events">;
 
-const allUpcoming = await getUpcomingEvents();
+const allUpcoming = (await getUpcomingEvents()).filter((e: EventEntry) => isHostedCommunityEventType(e.data.type));
 const upcoming = allUpcoming.filter((e: EventEntry) => e.data.status !== "backlog");
-const past = await getPastEvents();
-const allEvents = await getSortedEvents();
+const past = (await getPastEvents()).filter((e: EventEntry) => isHostedCommunityEventType(e.data.type));
+const allEvents = (await getSortedEvents()).filter((e: EventEntry) => isHostedCommunityEventType(e.data.type));
 const nextEvent = upcoming[0];
 const citiesCount = new Set(allEvents.map((e: EventEntry) => e.data.location)).size;
 
@@ -267,9 +267,9 @@ const externalCollabHosts: ExternalCollabHost[] = (() => {
           ))}
         </div>
         <p class="text-center text-xs text-[#6E6E6E]">
-          <a href="/thankyou#invites" class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors underline-offset-2 hover:underline">
-            <span class="lang-en">See appearances on Thank you</span>
-            <span class="lang-ar">عرض التفاصيل في صفحة الشكر</span>
+          <a href="/events#external-invitations" class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors underline-offset-2 hover:underline">
+            <span class="lang-en">See all external invitations</span>
+            <span class="lang-ar">عرض جميع الدعوات الخارجية</span>
           </a>
         </p>
       </div>

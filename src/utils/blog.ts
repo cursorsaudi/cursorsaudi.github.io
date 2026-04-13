@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from "astro:content";
+import { getEventImageUrl } from "@/utils/events";
 
 export type BlogCollectionEntry = CollectionEntry<"blog">;
 export type EventCollectionEntry = CollectionEntry<"events">;
@@ -15,7 +16,7 @@ export interface BlogPost {
   tags?: string[];
   coverImage?: string;
   // Event-specific fields
-  eventType?: "meetup" | "hackathon" | "workshop" | "build";
+  eventType?: "meetup" | "hackathon" | "workshop" | "build" | "talk" | "interview";
   eventLocation?: string;
   eventLocationAr?: string;
   eventSlides?: string[];
@@ -42,11 +43,11 @@ export async function getEventBlogPosts(): Promise<BlogPost[]> {
       descriptionAr: event.data.descriptionAr,
       author: event.data.speakers?.[0],
       tags: [event.data.type],
-      coverImage: event.data.coverPhoto
-        ? `/events/${event.id}/${event.data.coverPhoto}`
-        : event.data.photos?.[0]
-          ? `/events/${event.id}/${event.data.photos[0]}`
-          : undefined,
+      coverImage: (() => {
+        const ref = event.data.coverPhoto ?? event.data.photos?.[0];
+        if (!ref) return undefined;
+        return getEventImageUrl(event.id, ref);
+      })(),
       eventType: event.data.type,
       eventLocation: event.data.location,
       eventLocationAr: event.data.locationAr,

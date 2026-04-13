@@ -19,17 +19,17 @@ tags:
 domain: 
   - cursorsaudi
 photos:
-  - "https://pbs.twimg.com/media/G-oihMDXIAAXeWW?format=jpg&name=large"
-  - "https://pbs.twimg.com/media/G-oihIVbAAANuY_?format=jpg&name=large"
-  - "https://pbs.twimg.com/media/G-oihISaAAEXdTj?format=jpg&name=large"
-  - "https://pbs.twimg.com/media/G-oihISaoAAkQa0?format=jpg&name=large"
-  - "https://pbs.twimg.com/media/G-okzBrWsAA-nDP?format=jpg&name=large"
-  - "https://pbs.twimg.com/media/G-okzCdaoAEscX_?format=jpg&name=large"
-  - "https://pbs.twimg.com/media/G-okzBpWwAArOpT?format=jpg&name=large"
-  - "https://pbs.twimg.com/media/G9P6wC6XMAAiukF?format=jpg&name=large"
-  - "https://pbs.twimg.com/media/G9P6wEaWkAAWAGv?format=jpg&name=large"
-  - "https://pbs.twimg.com/media/G9P6wEZWYAA-pj5?format=jpg&name=large"
-coverPhoto: "https://pbs.twimg.com/media/G-oihMDXIAAXeWW?format=jpg&name=large"
+  - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G-oihMDXIAAXeWW.jpg"
+  - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G-oihIVbAAANuY_.jpg"
+  - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G-oihISaAAEXdTj.jpg"
+  - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G-oihISaoAAkQa0.jpg"
+  - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G-okzBrWsAA-nDP.jpg"
+  - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G-okzCdaoAEscX_.jpg"
+  - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G-okzBpWwAArOpT.jpg"
+  - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G9P6wC6XMAAiukF.jpg"
+  - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G9P6wEaWkAAWAGv.jpg"
+  - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G9P6wEZWYAA-pj5.jpg"
+coverPhoto: "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G-oihMDXIAAXeWW.jpg"
 photographers:
   - Hanouf Almogri
   - Raghad Alshathri

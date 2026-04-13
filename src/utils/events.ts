@@ -4,6 +4,13 @@ export type EventStatus = "backlog" | "informed" | "venue-pending" | "register-o
 
 export type EventEntry = CollectionEntry<"events">;
 
+/** Formats the community hosts and lists on `/events` (not invited talks or interviews). */
+export const HOSTED_EVENT_TYPES = ["meetup", "hackathon", "workshop", "build"] as const;
+
+export function isHostedCommunityEventType(type: string): boolean {
+  return (HOSTED_EVENT_TYPES as readonly string[]).includes(type);
+}
+
 export async function getSortedEvents(): Promise<EventEntry[]> {
   const events: EventEntry[] = await getCollection("events");
   return [...events].sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
@@ -72,8 +79,32 @@ export function getEventThumbnailUrl(event: { id: string; data: { coverPhoto?: s
   return null;
 }
 
-/** Local filename under `/events/{id}/`, or an absolute image/video URL. */
+/**
+ * Unique image URLs for album-style previews (cover + photos, de-duplicated, skips videos).
+ */
+export function getEventAlbumPreviewUrls(
+  event: { id: string; data: { coverPhoto?: string; photos?: string[] } },
+  limit = 4
+): string[] {
+  const ordered: string[] = [];
+  if (event.data.coverPhoto) ordered.push(event.data.coverPhoto);
+  for (const p of event.data.photos ?? []) ordered.push(p);
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const filename of ordered) {
+    if (isVideo(filename)) continue;
+    const url = getEventImageUrl(event.id, filename);
+    if (seen.has(url)) continue;
+    seen.add(url);
+    out.push(url);
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
+/** Local filename under `/events/{id}/`, `/images/…` site path, or an absolute http(s) URL. */
 export function getEventImageUrl(eventId: string, filename: string) {
   if (filename.startsWith("http://") || filename.startsWith("https://")) return filename;
+  if (filename.startsWith("/")) return filename;
   return `/events/${eventId}/${filename}`;
 }

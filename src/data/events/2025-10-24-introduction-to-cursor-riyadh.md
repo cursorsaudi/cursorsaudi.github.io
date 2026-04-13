@@ -4,9 +4,9 @@ titleAr: مقدمة في كيرسر
 date: 2025-10-24
 location: Riyadh
 locationAr: الرياض
-description: "Introduction to Cursor at the DAL Health Datathon 2025, covering the AI tools landscape and Cursor's capabilities."
-descriptionAr: مقدمة عن كيرسر في داتاثون دال الصحي 2025، تغطي مشهد أدوات الذكاء الاصطناعي وقدرات كيرسر.
-type: meetup
+description: "Invited talk at the DAL Health Datathon 2025 (CODE, Riyadh): intro to Cursor and the AI coding tools landscape for participants—not a standalone Cursor Saudi community meetup."
+descriptionAr: "محاضرة بدعوة ضمن داتاثون دال الصحي 2025 (CODE، الرياض): مقدمة عن كيرسر ومشهد أدوات البرمجة بالذكاء الاصطناعي للمشاركين — وليست لقاءً مستقلاً تنظمه مجتمع كيرسر السعودية."
+type: talk
 status: concluded
 venue: CODE
 speakers: 
@@ -17,15 +17,24 @@ tags:
 
 domain: 
   - cursorsaudi
+photos:
+  - "/images/events/2025-10-24-introduction-to-cursor-riyadh/G3tTPGTXgAAZ-vP.jpg"
+  - "/images/events/2025-10-24-introduction-to-cursor-riyadh/G4S6jVRWIAAi4bq.jpg"
+  - "/images/events/2025-10-24-introduction-to-cursor-riyadh/G4S6jVJXAAEkEFc.jpg"
+  - "/images/events/2025-10-24-introduction-to-cursor-riyadh/G4gRyt2XAAAwpQo.jpg"
+  - "/images/events/2025-10-24-introduction-to-cursor-riyadh/G4gRytzX0AApleI.jpg"
+  - "/images/events/2025-10-24-introduction-to-cursor-riyadh/G4gRyt2XsAE8Aog.jpg"
+  - "/images/events/2025-10-24-introduction-to-cursor-riyadh/G4gRyt3XUAA-MAl.jpg"
+coverPhoto: "/images/events/2025-10-24-introduction-to-cursor-riyadh/G4S6jVRWIAAi4bq.jpg"
 ---
 
 ## Overview
 
-A Cursor introduction talk delivered at the DAL Health Datathon 2025, helping hackathon participants understand the AI tools landscape and how to leverage Cursor for rapid development during the competition.
+An **invited** Cursor introduction delivered as part of the **DAL Health Datathon 2025** program at CODE, Riyadh—hosted by the datathon organizers, not produced as a standalone Cursor Saudi community meetup. The session helped participants understand the AI coding tools landscape and how to use Cursor during the competition.
 
 ## Format
 
-- **Type**: Hackathon talk
+- **Type**: Invited hackathon / datathon talk (external program)
 - **Venue**: CODE, Riyadh
 - **Event**: DAL Health Datathon 2025
 - **Duration**: Presentation session
@@ -65,7 +74,7 @@ A Cursor introduction talk delivered at the DAL Health Datathon 2025, helping ha
 
 ## نظرة عامة
 
-حديث تعريفي عن Cursor في داتاثون دال الصحي 2025، يساعد المشاركين في الهاكاثون على فهم مشهد أدوات الذكاء الاصطناعي وكيفية الاستفادة من Cursor للتطوير السريع خلال المنافسة.
+**محاضرة بدعوة** ضمن برنامج **داتاثون دال الصحي 2025** في CODE بالرياض — من تنظيم الجهة المضيفة للداتاثون، وليست لقاءً مستقلاً تنظمه مجتمع كيرسر السعودية. تناولت مقدمة عن كيرسر ومشهد أدوات البرمجة بالذكاء الاصطناعي وكيفية الاستفادة من كيرسر أثناء المنافسة.
 
 ## أبرز النقاط
 
@@ -87,3 +96,21 @@ A Cursor introduction talk delivered at the DAL Health Datathon 2025, helping ha
 - أدوات AI مضاعفات قوة في الهاكاثونات
 - فهم مشهد الأدوات يساعد في اختيار الأداة المناسبة لكل مهمة
 - Cursor يتفوق في توليد الكود وتحرير ملفات متعددة
+
+---
+
+## Gallery
+
+![](/images/events/2025-10-24-introduction-to-cursor-riyadh/G3tTPGTXgAAZ-vP.jpg)
+
+![](/images/events/2025-10-24-introduction-to-cursor-riyadh/G4S6jVRWIAAi4bq.jpg)
+
+![](/images/events/2025-10-24-introduction-to-cursor-riyadh/G4S6jVJXAAEkEFc.jpg)
+
+![](/images/events/2025-10-24-introduction-to-cursor-riyadh/G4gRyt2XAAAwpQo.jpg)
+
+![](/images/events/2025-10-24-introduction-to-cursor-riyadh/G4gRytzX0AApleI.jpg)
+
+![](/images/events/2025-10-24-introduction-to-cursor-riyadh/G4gRyt2XsAE8Aog.jpg)
+
+![](/images/events/2025-10-24-introduction-to-cursor-riyadh/G4gRyt3XUAA-MAl.jpg)

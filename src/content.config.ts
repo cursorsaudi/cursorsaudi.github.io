@@ -12,7 +12,7 @@ const events = defineCollection({
     lumaUrl: z.string().optional(),
     description: z.string(),
     descriptionAr: z.string().optional(),
-    type: z.enum(["meetup", "hackathon", "workshop", "build"]),
+    type: z.enum(["meetup", "hackathon", "workshop", "build", "talk", "interview"]),
     status: z.enum(["backlog", "informed", "venue-pending", "register-open", "register-closed", "concluded", "canceled"]),
     speakers: z.array(z.string()).optional(),
     slides: z.array(z.string()).optional(),

@@ -1,17 +1,25 @@
 ---
-import { getUpcomingEvents, getPastEvents, getEventThumbnailUrl } from "@/utils/events";
+import {
+  getUpcomingEvents,
+  getPastEvents,
+  getEventThumbnailUrl,
+  getEventAlbumPreviewUrls,
+  isHostedCommunityEventType,
+} from "@/utils/events";
 import { getEventIdsWithBlog, eventBlogSlug } from "@/utils/blog";
+import { config } from "@/config";
 import type { CollectionEntry } from "astro:content";
 import PageToc from "@/components/PageToc.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
 
 type EventEntry = CollectionEntry<"events">;
 
-const allUpcoming = await getUpcomingEvents();
+const allUpcoming = (await getUpcomingEvents()).filter((e: EventEntry) => isHostedCommunityEventType(e.data.type));
 const upcoming = allUpcoming.filter((e: EventEntry) => e.data.status !== "backlog");
 const backlog = allUpcoming.filter((e: EventEntry) => e.data.status === "backlog");
-const past = await getPastEvents();
+const past = (await getPastEvents()).filter((e: EventEntry) => isHostedCommunityEventType(e.data.type));
 const blogEventIds = await getEventIdsWithBlog();
+const invites = config.invites;
 
 /** Shown when an event has no `coverPhoto` / photo assets for the card strip. */
 const eventCardPlaceholder = "/placeholders/event-card.svg";
@@ -20,6 +28,7 @@ const tocItems = [
   ...(backlog.length > 0 ? [{ id: "planned-dates", labelEn: "Planned dates", labelAr: "تواريخ مخطط لها" }] : []),
   { id: "upcoming", labelEn: "Upcoming", labelAr: "القادمة" },
   { id: "past", labelEn: "Past", labelAr: "السابقة" },
+  ...(invites.length > 0 ? [{ id: "external-invitations", labelEn: "External", labelAr: "خارجية" }] : []),
 ];
 
 function formatMonth(date: Date) {
@@ -44,6 +53,8 @@ function typeLabel(type: string): { en: string; ar: string } {
     hackathon: { en: "Hackathon", ar: "هاكاثون" },
     workshop: { en: "Workshop", ar: "ورشة عمل" },
     build: { en: "Build", ar: "بناء" },
+    talk: { en: "Talk", ar: "محاضرة" },
+    interview: { en: "Interview", ar: "مقابلة" },
   };
   return labels[type] ?? { en: type, ar: type };
 }
@@ -58,12 +69,12 @@ function typeLabel(type: string): { en: string; ar: string } {
       </h1>
       <p class="text-[#999999] text-lg w-full max-w-none">
         <span class="lang-en">
-          Meetups, hackathons, and workshops focused on AI-native development with Cursor. Past events include written recaps you can
-          open like blog posts.
+          Meetups, hackathons, workshops, and build sessions we host—focused on AI-native development with Cursor. Invited talks and
+          interviews are not listed here. Past hosted events may include recaps you can open like blog posts.
         </span>
         <span class="lang-ar">
-          لقاءات وهاكاثونات وورش عمل تركز على التطوير بالذكاء الاصطناعي مع Cursor. للفعاليات السابقة ننشر تدوينات ملخصة يمكنك فتحها
-          كمقالات.
+          لقاءات وهاكاثونات وورش عمل وجلسات بناء ننظمها نحن — بتركيز على التطوير بالذكاء الاصطناعي مع Cursor. لا ندرج هنا محاضرات بدعوة
+          أو مقابلات. للفعاليات المستضافة السابقة قد ننشر تدوينات ملخصة كمقالات.
         </span>
       </p>
     </div>
@@ -118,16 +129,44 @@ function typeLabel(type: string): { en: string; ar: string } {
         <div class="grid md:grid-cols-3 gap-6">
           {upcoming.map((event: EventEntry) => {
             const thumbUrl = getEventThumbnailUrl(event);
+            const albumUrls = getEventAlbumPreviewUrls(event, 4);
+            const showAlbumGrid = albumUrls.length >= 2;
             return (
             <div class="event-card bg-[#171717] border border-[#252525] rounded-2xl overflow-hidden hover:border-white/20 transition-all group flex flex-col h-full">
               <div class="relative aspect-[16/10] w-full shrink-0 bg-[#0d1117] border-b border-[#252525]">
-                <img
-                  src={thumbUrl ?? eventCardPlaceholder}
-                  alt={thumbUrl ? event.data.title : ""}
-                  class="absolute inset-0 w-full h-full object-cover"
-                  loading="lazy"
-                  decoding="async"
-                />
+                {showAlbumGrid ? (
+                  <div
+                    class:list={[
+                      "grid h-full w-full gap-0.5",
+                      albumUrls.length === 2 ? "grid-cols-2" : "grid-cols-2 grid-rows-2",
+                    ]}
+                  >
+                    {albumUrls.map((url: string, i: number) => (
+                      <div
+                        class:list={[
+                          "relative min-h-0 overflow-hidden",
+                          albumUrls.length === 3 && i === 2 ? "col-span-2" : "",
+                        ]}
+                      >
+                        <img
+                          src={url}
+                          alt={i === 0 ? event.data.title : ""}
+                          class="absolute inset-0 w-full h-full object-cover"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <img
+                    src={thumbUrl ?? eventCardPlaceholder}
+                    alt={thumbUrl ? event.data.title : ""}
+                    class="absolute inset-0 w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )}
               </div>
               <div class="p-6 flex flex-col flex-grow min-h-0">
               <div class="flex justify-between items-start mb-6">
@@ -205,16 +244,44 @@ function typeLabel(type: string): { en: string; ar: string } {
           {past.map((event: EventEntry) => {
             const hasRecap = blogEventIds.has(event.id);
             const thumbUrl = getEventThumbnailUrl(event);
+            const albumUrls = getEventAlbumPreviewUrls(event, 4);
+            const showAlbumGrid = albumUrls.length >= 2;
             return (
               <div class="event-card bg-[#171717] border border-[#252525] rounded-2xl overflow-hidden hover:border-white/20 transition-all group flex flex-col h-full">
                 <div class="relative aspect-[16/10] w-full shrink-0 bg-[#0d1117] border-b border-[#252525]">
-                  <img
-                    src={thumbUrl ?? eventCardPlaceholder}
-                    alt={thumbUrl ? event.data.title : ""}
-                    class="absolute inset-0 w-full h-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  {showAlbumGrid ? (
+                    <div
+                      class:list={[
+                        "grid h-full w-full gap-0.5",
+                        albumUrls.length === 2 ? "grid-cols-2" : "grid-cols-2 grid-rows-2",
+                      ]}
+                    >
+                      {albumUrls.map((url: string, i: number) => (
+                        <div
+                          class:list={[
+                            "relative min-h-0 overflow-hidden",
+                            albumUrls.length === 3 && i === 2 ? "col-span-2" : "",
+                          ]}
+                        >
+                          <img
+                            src={url}
+                            alt={i === 0 ? event.data.title : ""}
+                            class="absolute inset-0 w-full h-full object-cover"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <img
+                      src={thumbUrl ?? eventCardPlaceholder}
+                      alt={thumbUrl ? event.data.title : ""}
+                      class="absolute inset-0 w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  )}
                 </div>
                 <div class="p-6 flex flex-col flex-grow min-h-0">
                 <div class="flex justify-between items-start mb-6">
@@ -294,6 +361,104 @@ function typeLabel(type: string): { en: string; ar: string } {
           )}
         </div>
       </div>
+
+      {invites.length > 0 && (
+        <div class="mt-14">
+          <SectionHeading id="external-invitations" class="text-xs font-mono text-[#6E6E6E] uppercase tracking-widest mb-2">
+            <span class="lang-en">External Invitations</span>
+            <span class="lang-ar">دعوات خارجية</span>
+          </SectionHeading>
+          <p class="text-sm text-[#6E6E6E] mb-6 max-w-2xl">
+            <span class="lang-en">Talks and interviews our community members were invited to by external organizations — not hosted by Cursor Saudi.</span>
+            <span class="lang-ar">محاضرات ومقابلات دُعي إليها أعضاء المجتمع من جهات خارجية — ولم تنظمها كيرسر السعودية.</span>
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {invites.map((invite) => {
+              const typeLabelEn = invite.type === "interview" ? "Interview" : "Talk";
+              const typeLabelAr = invite.type === "interview" ? "مقابلة" : "محاضرة";
+              return (
+              <div class="bg-[#171717] border border-[#252525] rounded-2xl p-6 flex flex-col hover:border-[#444] transition-all">
+                <div class="flex items-center gap-2 mb-4">
+                  <span class:list={[
+                    "text-[10px] font-mono border rounded px-2 py-0.5 uppercase tracking-wider",
+                    invite.type === "interview"
+                      ? "text-[#c084fc] border-[#c084fc]/25 bg-[#c084fc]/10"
+                      : "text-[#58a6ff] border-[#58a6ff]/25 bg-[#58a6ff]/10",
+                  ]}>
+                    <span class="lang-en">{typeLabelEn}</span>
+                    <span class="lang-ar">{typeLabelAr}</span>
+                  </span>
+                  <span class="text-xs text-[#6E6E6E]">
+                    {new Date(invite.date).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                  </span>
+                </div>
+
+                <h3 class="text-base font-semibold text-white mb-3 leading-snug">
+                  <span class="lang-en">{invite.talkTitle}</span>
+                  <span class="lang-ar">{invite.talkTitleAr}</span>
+                </h3>
+
+                <div class="flex items-center gap-3 mb-4">
+                  {"invitedByLogo" in invite && invite.invitedByLogo && (
+                    <img
+                      src={invite.invitedByLogo}
+                      alt=""
+                      class="w-8 h-8 rounded-full object-cover border border-[#252525] shrink-0"
+                      width="32"
+                      height="32"
+                      loading="lazy"
+                    />
+                  )}
+                  <p class="text-sm text-[#999999]">
+                    <span class="lang-en">
+                      <span class="text-white font-medium">{invite.speaker}</span>
+                      {invite.type === "interview" ? " interviewed by " : " invited by "}
+                      <a href={invite.invitedByUrl} target="_blank" rel="noreferrer" class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors">{invite.invitedBy}</a>
+                    </span>
+                    <span class="lang-ar">
+                      <span class="text-white font-medium">{invite.speakerAr}</span>
+                      {invite.type === "interview" ? " في مقابلة مع " : " دُعي من "}
+                      <a href={invite.invitedByUrl} target="_blank" rel="noreferrer" class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors">{invite.invitedByAr}</a>
+                    </span>
+                  </p>
+                </div>
+
+                <div class="mt-auto pt-3 border-t border-[#252525] flex flex-wrap items-center gap-3">
+                  <a
+                    href={invite.postUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    class="inline-flex items-center gap-1.5 text-xs text-[#999999] hover:text-white transition-colors"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    <span class="lang-en">Post</span>
+                    <span class="lang-ar">المنشور</span>
+                    <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path d="M4 12l8-8m0 0H5m7 0v7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </a>
+                  {"recordingUrl" in invite && invite.recordingUrl && (
+                    <a
+                      href={invite.recordingUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      class="inline-flex items-center gap-1.5 text-xs text-[#999999] hover:text-white transition-colors"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                      <span class="lang-en">Recording</span>
+                      <span class="lang-ar">التسجيل</span>
+                      <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path d="M4 12l8-8m0 0H5m7 0v7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </a>
+                  )}
+                </div>
+              </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   </div>
 </section>
