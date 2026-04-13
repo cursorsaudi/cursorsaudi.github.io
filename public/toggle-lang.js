@@ -32,28 +32,11 @@ function setupLangToggle() {
     return "/" + nextLang + tail;
   }
 
-  function navigateToNextLang() {
+  btn.addEventListener("click", function () {
     var cur = document.documentElement.lang === "en" ? "en" : "ar";
     var next = cur === "ar" ? "en" : "ar";
+    try { localStorage.setItem("lang", next); } catch (e) {}
     window.location.href = withLocale(location.pathname, next) + location.search + location.hash;
-  }
-
-  var shouldIgnoreNextClick = false;
-
-  if ("onpointerup" in window) {
-    btn.addEventListener("pointerup", function (event) {
-      // Keep pointer responsiveness on mobile while preserving click a11y path.
-      shouldIgnoreNextClick = true;
-      navigateToNextLang();
-    });
-  }
-
-  btn.addEventListener("click", function () {
-    if (shouldIgnoreNextClick) {
-      shouldIgnoreNextClick = false;
-      return;
-    }
-    navigateToNextLang();
   });
 }
 

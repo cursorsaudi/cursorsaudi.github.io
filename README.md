@@ -8,13 +8,11 @@ Live at [cursorsaudi.com](https://cursorsaudi.com).
 
 ```bash
 pnpm install        # Install dependencies
-pnpm dev            # Sync events from Obsidian Vault (optional) + dev server on localhost:4321
+pnpm dev            # Dev server on localhost:4321
 pnpm check          # TypeScript + Astro diagnostics
 pnpm build          # Production build → ./dist
 pnpm preview        # Preview production build locally
 ```
-
-Always use `pnpm dev` instead of `npx astro dev` — it triggers the event sync script first.
 
 ## Stack
 
@@ -33,7 +31,6 @@ Always use `pnpm dev` instead of `npx astro dev` — it triggers the event sync 
 - **Dark mode only**: Single dark color scheme, no theme switcher
 - **Content collections**: Events in `src/data/events/` with Zod-validated frontmatter
 - **Per-page table of contents**: Horizontal pill nav linking to page sections
-- **Obsidian Vault sync**: Bidirectional sync between `src/data/events/` and a local Obsidian Vault (optional, local-only)
 
 ## Pages
 
@@ -94,8 +91,6 @@ See `.github/workflows/deploy.yml` for the full workflow.
 - `src/config.ts` is the single source of truth for site metadata, social links, ambassadors, and partners
 - All content collection access goes through utility functions in `src/utils/`
 - Components are stateless: props in, HTML out, no side effects
-- If you have access to the Obsidian Vault, run `pnpm sync-events` before committing event changes
-
 ## License
 
 Community project by [Cursor Saudi](https://x.com/cursorsaudi).

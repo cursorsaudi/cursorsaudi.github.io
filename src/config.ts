@@ -160,6 +160,7 @@ export const config = {
    */
   invites: [
     {
+      slug: "hackathonat-ai-game-jam",
       type: "panel",
       speaker: "Mazen Alotaibi",
       speakerAr: "مازن العتيبي",
@@ -175,6 +176,7 @@ export const config = {
       photos: ["/invites/hackathonat-ai-game-jam.jpg"],
     },
     {
+      slug: "sahel-mahdi-ai-tools",
       type: "interview",
       speaker: "Mazen Alotaibi",
       speakerAr: "مازن العتيبي",
@@ -190,6 +192,7 @@ export const config = {
       photos: ["/invites/sahel-mahdi-interview.png"],
     },
     {
+      slug: "e3-ventures-mvp",
       type: "interview",
       speaker: "Mazen Alotaibi",
       speakerAr: "مازن العتيبي",
@@ -204,6 +207,7 @@ export const config = {
       photos: ["/invites/e3-ventures-mvp-talk.jpg"],
     },
     {
+      slug: "dal-health-datathon",
       type: "talk",
       speaker: "Mazen Alotaibi",
       speakerAr: "مازن العتيبي",
