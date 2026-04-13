@@ -1,6 +1,7 @@
 ---
 import { config } from "@/config";
 import "@/styles/global.css";
+import { localeFromPathname, stripLocalePrefix, pathForLocale } from "@/utils/i18n-path";
 
 interface Props {
   title?: string;
@@ -11,10 +12,19 @@ const { title = config.title, description = config.description } = Astro.props;
 
 const siteOrigin = Astro.site?.origin ?? "https://cursorsaudi.com";
 const canonicalUrl = new URL(Astro.url.pathname, siteOrigin).href;
+const pageLocale = localeFromPathname(Astro.url.pathname);
+const htmlLang = pageLocale;
+const htmlDir = pageLocale === "ar" ? "rtl" : "ltr";
+const ogLocale = pageLocale === "ar" ? "ar_SA" : "en_US";
+
+const stripped = stripLocalePrefix(Astro.url.pathname);
+const pathForAlternates = stripped === "/" ? "/" : stripped.endsWith("/") ? stripped : `${stripped}/`;
+const hreflangAr = new URL(pathForLocale("ar", pathForAlternates), siteOrigin).href;
+const hreflangEn = new URL(pathForLocale("en", pathForAlternates), siteOrigin).href;
 ---
 
 <!doctype html>
-<html lang="ar" dir="rtl" class="dark">
+<html lang={htmlLang} dir={htmlDir} class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -25,7 +35,11 @@ const canonicalUrl = new URL(Astro.url.pathname, siteOrigin).href;
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content={ogLocale} />
     <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang="ar" href={hreflangAr} />
+    <link rel="alternate" hreflang="en" href={hreflangEn} />
+    <link rel="alternate" hreflang="x-default" href={hreflangAr} />
     <meta name="theme-color" content="#0F0F0F" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />

@@ -3,6 +3,9 @@ import { config } from "@/config";
 import { getUpcomingEvents, getPastEvents, getSortedEvents, isHostedCommunityEventType } from "@/utils/events";
 import type { CollectionEntry } from "astro:content";
 import PageToc from "@/components/PageToc.astro";
+import { localizedPath } from "@/utils/i18n-path";
+
+const pagePath = Astro.url.pathname;
 
 type EventEntry = CollectionEntry<"events">;
 
@@ -89,7 +92,7 @@ const externalCollabHosts: ExternalCollabHost[] = (() => {
             <span class="lang-en">Join Community</span>
             <span class="lang-ar">انضم للمجتمع</span>
           </a>
-          <a href="/about" class="w-full sm:w-auto btn-secondary px-8 py-3.5 rounded-full font-medium text-sm">
+          <a href={localizedPath(pagePath, "/about/")} class="w-full sm:w-auto btn-secondary px-8 py-3.5 rounded-full font-medium text-sm">
             <span class="lang-en">About Us</span>
             <span class="lang-ar">عن المجتمع</span>
           </a>
@@ -139,28 +142,40 @@ const externalCollabHosts: ExternalCollabHost[] = (() => {
 
     <!-- Stats Grid -->
     <div id="stats" class="grid grid-cols-2 md:grid-cols-4 gap-px bg-[#2A2A2A] rounded-2xl overflow-hidden border border-[#2A2A2A] mb-16 scroll-mt-24">
-      <div class="bg-[#0F0F0F] p-8 text-center hover:bg-[#161616] transition-colors">
+      <div class="group bg-[#0F0F0F] p-8 text-center hover:bg-[#161616] transition-colors">
+        <div class="flex justify-center mb-3 text-[#5C5C5C] group-hover:text-[#7A7A7A] transition-colors" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
+        </div>
         <div class="text-3xl font-bold text-white mb-1">
           <span class="lang-en">{allEvents.length}</span>
           <span class="lang-ar">{allEvents.length.toLocaleString("ar-SA")}</span>
         </div>
         <div class="text-xs text-[#8A8A8A] uppercase tracking-widest font-medium"><span class="lang-en">Events</span><span class="lang-ar">فعالية</span></div>
       </div>
-      <div class="bg-[#0F0F0F] p-8 text-center hover:bg-[#161616] transition-colors">
+      <div class="group bg-[#0F0F0F] p-8 text-center hover:bg-[#161616] transition-colors">
+        <div class="flex justify-center mb-3 text-[#5C5C5C] group-hover:text-[#7A7A7A] transition-colors" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+        </div>
         <div class="text-3xl font-bold text-white mb-1">
           <span class="lang-en">{past.length}</span>
           <span class="lang-ar">{past.length.toLocaleString("ar-SA")}</span>
         </div>
         <div class="text-xs text-[#8A8A8A] uppercase tracking-widest font-medium"><span class="lang-en">Completed</span><span class="lang-ar">مكتملة</span></div>
       </div>
-      <div class="bg-[#0F0F0F] p-8 text-center hover:bg-[#161616] transition-colors">
+      <div class="group bg-[#0F0F0F] p-8 text-center hover:bg-[#161616] transition-colors">
+        <div class="flex justify-center mb-3 text-[#5C5C5C] group-hover:text-[#7A7A7A] transition-colors" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </div>
         <div class="text-3xl font-bold text-white mb-1">
           <span class="lang-en">{upcoming.length}</span>
           <span class="lang-ar">{upcoming.length.toLocaleString("ar-SA")}</span>
         </div>
         <div class="text-xs text-[#8A8A8A] uppercase tracking-widest font-medium"><span class="lang-en">Upcoming</span><span class="lang-ar">قادمة</span></div>
       </div>
-      <div class="bg-[#0F0F0F] p-8 text-center hover:bg-[#161616] transition-colors">
+      <div class="group bg-[#0F0F0F] p-8 text-center hover:bg-[#161616] transition-colors">
+        <div class="flex justify-center mb-3 text-[#5C5C5C] group-hover:text-[#7A7A7A] transition-colors" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.33-6-10a6 6 0 1 1 12 0c0 4.67-6 10-6 10z"/><circle cx="12" cy="11" r="2.5"/></svg>
+        </div>
         <div class="text-3xl font-bold text-white mb-1">
           <span class="lang-en">{citiesCount}</span>
           <span class="lang-ar">{citiesCount.toLocaleString("ar-SA")}</span>
@@ -172,7 +187,7 @@ const externalCollabHosts: ExternalCollabHost[] = (() => {
     <!-- Featured Cards: Next Event + Latest Completed -->
     <div id="featured" class="grid md:grid-cols-2 gap-6 mb-16 scroll-mt-24">
       {nextEvent && (
-        <a href="/events" class="group relative bg-[#0F0F0F] border border-[#2A2A2A] rounded-2xl p-8 hover:border-[#444] transition-all cursor-pointer overflow-hidden">
+        <a href={localizedPath(pagePath, "/events/")} class="group relative bg-[#0F0F0F] border border-[#2A2A2A] rounded-2xl p-8 hover:border-[#444] transition-all cursor-pointer overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <div class="relative z-10 flex flex-col h-full">
             <div class="flex items-center justify-between mb-8">
@@ -198,7 +213,7 @@ const externalCollabHosts: ExternalCollabHost[] = (() => {
       )}
 
       {past.length > 0 && (
-        <a href="/events" class="group relative bg-[#0F0F0F] border border-[#2A2A2A] rounded-2xl p-8 hover:border-[#444] transition-all cursor-pointer overflow-hidden">
+        <a href={localizedPath(pagePath, "/events/")} class="group relative bg-[#0F0F0F] border border-[#2A2A2A] rounded-2xl p-8 hover:border-[#444] transition-all cursor-pointer overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <div class="relative z-10 flex flex-col h-full">
             <div class="flex items-center justify-between mb-8">
@@ -279,13 +294,13 @@ const externalCollabHosts: ExternalCollabHost[] = (() => {
             </span>
           </p>
         </div>
-        <div class="flex flex-wrap items-start justify-center gap-x-10 gap-y-10 mb-8">
+        <div class="flex flex-wrap items-center justify-center gap-x-16 gap-y-8 mb-8">
           {externalCollabHosts.map((host) => (
             <a
               href={host.url}
               target="_blank"
               rel="noreferrer"
-              class="group flex flex-col items-center gap-3 w-[7.5rem] sm:w-32 text-center"
+              class="group flex flex-col items-center gap-3 w-[7.5rem] sm:w-32 text-center opacity-60 hover:opacity-100 transition-opacity"
               title={host.name}
             >
               <img
@@ -297,7 +312,7 @@ const externalCollabHosts: ExternalCollabHost[] = (() => {
                 loading="lazy"
                 decoding="async"
               />
-              <span class="text-xs sm:text-sm font-medium text-[#8A8A8A] group-hover:text-white transition-colors leading-snug">
+              <span class="text-xs sm:text-sm font-semibold text-white/80 group-hover:text-white transition-colors tracking-tight leading-snug">
                 <span class="lang-en">{host.name}</span>
                 <span class="lang-ar">{host.nameAr}</span>
               </span>
@@ -305,7 +320,7 @@ const externalCollabHosts: ExternalCollabHost[] = (() => {
           ))}
         </div>
         <p class="text-center text-xs text-[#6E6E6E]">
-          <a href="/events#external-invitations" class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors underline-offset-2 hover:underline">
+          <a href={`${localizedPath(pagePath, "/events/")}#external-invitations`} class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors underline-offset-2 hover:underline">
             <span class="lang-en">See all external invitations</span>
             <span class="lang-ar">عرض جميع الدعوات الخارجية</span>
           </a>

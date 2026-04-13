@@ -7,13 +7,36 @@ import {
   isHostedCommunityEventType,
 } from "@/utils/events";
 import { getEventIdsWithBlog, eventBlogSlug } from "@/utils/blog";
-import { getSpeakerNameMap, getAffiliationPartnerDisplay } from "@/utils/people";
+import { getSpeakerNameMap, getAffiliationPartnerDisplay, getEventPartnersMap, getEventPartners, partnerRoleLabels } from "@/utils/people";
+import type { EventPartnerEntry } from "@/utils/people";
 import { config } from "@/config";
 import type { CollectionEntry } from "astro:content";
 import PageToc from "@/components/PageToc.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
+import { localizedPath } from "@/utils/i18n-path";
 
+const pagePath = Astro.url.pathname;
 const speakerMap = getSpeakerNameMap();
+const partnersMap = getEventPartnersMap();
+const siteOrigin = Astro.site?.origin ?? "https://cursorsaudi.com";
+
+function xShareLink(url: string, text: string): string {
+  return `https://x.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+}
+
+function linkedInShareLink(url: string): string {
+  return `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+}
+
+/** Plain text + URL for apps that prefill a message (e.g. WhatsApp). */
+function whatsappShareLink(url: string, text: string): string {
+  return `https://api.whatsapp.com/send?text=${encodeURIComponent(`${text}\n${url}`)}`;
+}
+
+/** Absolute URL for a site path, respecting current `/ar` or `/en` prefix. */
+function absoluteSitePath(path: string): string {
+  return new URL(localizedPath(pagePath, path), siteOrigin).href;
+}
 
 type EventEntry = CollectionEntry<"events">;
 
@@ -23,6 +46,8 @@ const backlog = allUpcoming.filter((e: EventEntry) => e.data.status === "backlog
 const past = (await getPastEvents()).filter((e: EventEntry) => isHostedCommunityEventType(e.data.type));
 const blogEventIds = await getEventIdsWithBlog();
 const invites = [...config.invites].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+const backlogSorted = [...backlog].sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
 
 /** Shown when an event has no `coverPhoto` / photo assets for the card strip. */
 const eventCardPlaceholder = "/placeholders/event-card.svg";
@@ -106,7 +131,7 @@ function typeLabel(type: string): { en: string; ar: string } {
               <span class="lang-ar">مواعيد تقريبية — التفاصيل والتسجيل يُعلَنان لاحقاً.</span>
             </p>
             <div class="flex flex-wrap gap-3">
-              {backlog.map((event: EventEntry) => {
+              {backlogSorted.map((event: EventEntry) => {
                 const mEn = event.data.date.toLocaleDateString("en-US", { month: "short" });
                 const dEn = event.data.date.getDate();
                 const mAr = event.data.date.toLocaleDateString("ar-SA", { month: "short" });
@@ -205,16 +230,20 @@ function typeLabel(type: string): { en: string; ar: string } {
                 <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-[#6E6E6E] mb-3">
                   {event.data.speakers.map((name: string) => {
                     const info = speakerMap.get(name.toLowerCase().trim());
-                    const displayName = info?.name ?? name;
+                    const displayNameEn = info?.name ?? name;
+                    const displayNameAr = info?.nameAr ?? displayNameEn;
                     const partner = info?.affiliationPartnerSlug ? getAffiliationPartnerDisplay(info.affiliationPartnerSlug) : undefined;
                     return (
-                      <a href={info ? `/speakers/${info.slug}/` : "#"} class="flex items-center gap-1.5 hover:text-white transition-colors group/speaker">
+                      <a href={info ? localizedPath(pagePath, `/speakers/${info.slug}/`) : "#"} class="flex items-center gap-1.5 hover:text-white transition-colors group/speaker">
                         {info?.photo ? (
                           <img src={info.photo} alt="" class="w-5 h-5 rounded-full object-cover shrink-0 border border-[#252525]" width="20" height="20" loading="lazy" />
                         ) : (
                           <span class="w-5 h-5 rounded-full bg-[#252525] border border-[#333] shrink-0 flex items-center justify-center text-[7px] font-bold text-[#8A8A8A]">{info?.initials ?? name.slice(0, 2).toUpperCase()}</span>
                         )}
-                        <span class="group-hover/speaker:text-white transition-colors">{displayName}</span>
+                        <span class="group-hover/speaker:text-white transition-colors">
+                          <span class="lang-en">{displayNameEn}</span>
+                          <span class="lang-ar">{displayNameAr}</span>
+                        </span>
                         {partner && (
                           <img src={partner.logo} alt={partner.name} class="w-3.5 h-3.5 object-contain opacity-50 shrink-0" width="14" height="14" loading="lazy" />
                         )}
@@ -227,12 +256,51 @@ function typeLabel(type: string): { en: string; ar: string } {
                 <span class="lang-en">{event.data.description}</span>
                 <span class="lang-ar">{event.data.descriptionAr || event.data.description}</span>
               </p>
+              {(() => {
+                const partners = getEventPartners(event.id, event.data.venue, partnersMap);
+                return partners.length > 0 && (
+                  <div class="flex flex-wrap items-center gap-3 mb-3">
+                    {partners.map((p: EventPartnerEntry) => (
+                      <a href={localizedPath(pagePath, `/partners/${p.slug}/`)} class="flex items-center gap-1.5 rounded-full bg-white/5 border border-[#252525] px-2.5 py-1 hover:border-[#444] transition-colors">
+                        <img src={p.logo} alt={p.name} class="w-5 h-5 object-contain" width="20" height="20" loading="lazy" />
+                        <span class="text-[10px] text-[#8b949e] leading-tight">
+                          <span class="lang-en">{partnerRoleLabels[p.role].en}</span>
+                          <span class="lang-ar">{partnerRoleLabels[p.role].ar}</span>
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+                );
+              })()}
               <div class="flex items-center justify-between pt-4 border-t border-[#252525] mt-auto">
                 <div class="flex items-center gap-2 text-xs text-[#999999]">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                   <span class="lang-en">{event.data.location}{event.data.venue && <span class="text-[#6E6E6E]"> · {event.data.venue}</span>}</span>
                   <span class="lang-ar">{event.data.locationAr || event.data.location}{event.data.venue && <span class="text-[#6E6E6E]"> · {event.data.venue}</span>}</span>
                 </div>
+                {(() => {
+                  const shareUrl = event.data.lumaUrl ?? absoluteSitePath("/events");
+                  const shareText = `${event.data.title} — Cursor Saudi`;
+                  return (
+                    <div class="flex flex-col items-end gap-1 shrink-0" role="group" aria-label="Share with others">
+                      <p class="text-[10px] leading-tight text-[#6E6E6E] text-end max-w-[9rem] sm:max-w-none">
+                        <span class="lang-en">Share with others</span>
+                        <span class="lang-ar">شارِك مع الآخرين</span>
+                      </p>
+                      <div class="flex items-center gap-1">
+                        <a href={xShareLink(shareUrl, shareText)} target="_blank" rel="noreferrer" class="w-7 h-7 flex items-center justify-center rounded-full text-[#6E6E6E] hover:text-white transition-colors" aria-label="Share on X">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </a>
+                        <a href={linkedInShareLink(shareUrl)} target="_blank" rel="noreferrer" class="w-7 h-7 flex items-center justify-center rounded-full text-[#6E6E6E] hover:text-white transition-colors" aria-label="Share on LinkedIn">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                        </a>
+                        <a href={whatsappShareLink(shareUrl, shareText)} target="_blank" rel="noreferrer" class="w-7 h-7 flex items-center justify-center rounded-full text-[#6E6E6E] hover:text-[#25D366] transition-colors" aria-label="Share on WhatsApp">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                        </a>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
               </div>
             </div>
@@ -273,9 +341,18 @@ function typeLabel(type: string): { en: string; ar: string } {
             const thumbUrl = getEventThumbnailUrl(event);
             const albumUrls = getEventAlbumPreviewUrls(event, 4);
             const showAlbumGrid = albumUrls.length >= 2;
+            const recapHref = localizedPath(pagePath, `/blog/${eventBlogSlug(event.id)}/`);
             return (
               <div class="event-card bg-[#171717] border border-[#252525] rounded-2xl overflow-hidden hover:border-white/20 transition-all group flex flex-col h-full">
                 <div class="relative aspect-[16/10] w-full shrink-0 bg-[#0d1117] border-b border-[#252525]">
+                  {hasRecap && (
+                    <a
+                      href={recapHref}
+                      class="absolute inset-0 z-10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#58a6ff]/60"
+                      aria-label="Read full recap — اقرأ الملخص الكامل"
+                      title="Read full recap — اقرأ الملخص الكامل"
+                    />
+                  )}
                   {showAlbumGrid ? (
                     <div
                       class:list={[
@@ -327,24 +404,40 @@ function typeLabel(type: string): { en: string; ar: string } {
                     <span class="lang-ar">{typeLabel(event.data.type).ar}</span>
                   </span>
                 </div>
-                <h3 class="text-xl font-semibold text-[#999999] mb-2">
-                  <span class="lang-en">{event.data.title}</span>
-                  <span class="lang-ar">{event.data.titleAr || event.data.title}</span>
+                <h3 class="text-xl font-semibold mb-2 leading-snug">
+                  {hasRecap ? (
+                    <a
+                      href={recapHref}
+                      class="text-white hover:text-[#79c0ff] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#58a6ff]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#171717] rounded-sm"
+                    >
+                      <span class="lang-en">{event.data.title}</span>
+                      <span class="lang-ar">{event.data.titleAr || event.data.title}</span>
+                    </a>
+                  ) : (
+                    <>
+                      <span class="lang-en text-[#999999]">{event.data.title}</span>
+                      <span class="lang-ar text-[#999999]">{event.data.titleAr || event.data.title}</span>
+                    </>
+                  )}
                 </h3>
                 {event.data.speakers && event.data.speakers.length > 0 && (
                   <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-[#6E6E6E] mb-3">
                     {event.data.speakers.map((name: string) => {
                       const info = speakerMap.get(name.toLowerCase().trim());
-                      const displayName = info?.name ?? name;
+                      const displayNameEn = info?.name ?? name;
+                      const displayNameAr = info?.nameAr ?? displayNameEn;
                       const partner = info?.affiliationPartnerSlug ? getAffiliationPartnerDisplay(info.affiliationPartnerSlug) : undefined;
                       return (
-                        <a href={info ? `/speakers/${info.slug}/` : "#"} class="flex items-center gap-1.5 hover:text-white transition-colors group/speaker">
+                        <a href={info ? localizedPath(pagePath, `/speakers/${info.slug}/`) : "#"} class="flex items-center gap-1.5 hover:text-white transition-colors group/speaker">
                           {info?.photo ? (
                             <img src={info.photo} alt="" class="w-5 h-5 rounded-full object-cover shrink-0 border border-[#252525]" width="20" height="20" loading="lazy" />
                           ) : (
                             <span class="w-5 h-5 rounded-full bg-[#252525] border border-[#333] shrink-0 flex items-center justify-center text-[7px] font-bold text-[#8A8A8A]">{info?.initials ?? name.slice(0, 2).toUpperCase()}</span>
                           )}
-                          <span class="group-hover/speaker:text-white transition-colors">{displayName}</span>
+                          <span class="group-hover/speaker:text-white transition-colors">
+                            <span class="lang-en">{displayNameEn}</span>
+                            <span class="lang-ar">{displayNameAr}</span>
+                          </span>
                           {partner && (
                             <img src={partner.logo} alt={partner.name} class="w-3.5 h-3.5 object-contain opacity-50 shrink-0" width="14" height="14" loading="lazy" />
                           )}
@@ -357,20 +450,70 @@ function typeLabel(type: string): { en: string; ar: string } {
                   <span class="lang-en">{event.data.description}</span>
                   <span class="lang-ar">{event.data.descriptionAr || event.data.description}</span>
                 </p>
+                {(() => {
+                  const partners = getEventPartners(event.id, event.data.venue, partnersMap);
+                  return partners.length > 0 && (
+                    <div class="flex flex-wrap items-center gap-3 mb-3">
+                      {partners.map((p: EventPartnerEntry) => (
+                        <a href={localizedPath(pagePath, `/partners/${p.slug}/`)} class="flex items-center gap-1.5 rounded-full bg-white/5 border border-[#252525] px-2.5 py-1 hover:border-[#444] transition-colors">
+                          <img src={p.logo} alt={p.name} class="w-5 h-5 object-contain" width="20" height="20" loading="lazy" />
+                          <span class="text-[10px] text-[#8b949e] leading-tight">
+                            <span class="lang-en">{partnerRoleLabels[p.role].en}</span>
+                            <span class="lang-ar">{partnerRoleLabels[p.role].ar}</span>
+                          </span>
+                        </a>
+                      ))}
+                    </div>
+                  );
+                })()}
                 <div class="mt-auto flex flex-col gap-3 pt-4 border-t border-[#252525]">
-                  <div class="flex items-center gap-2 text-xs text-[#999999]">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span class="lang-en">{event.data.location}{event.data.venue && <span class="text-[#6E6E6E]"> · {event.data.venue}</span>}</span>
-                    <span class="lang-ar">{event.data.locationAr || event.data.location}{event.data.venue && <span class="text-[#6E6E6E]"> · {event.data.venue}</span>}</span>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-xs text-[#999999]">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                      <span class="lang-en">{event.data.location}{event.data.venue && <span class="text-[#6E6E6E]"> · {event.data.venue}</span>}</span>
+                      <span class="lang-ar">{event.data.locationAr || event.data.location}{event.data.venue && <span class="text-[#6E6E6E]"> · {event.data.venue}</span>}</span>
+                    </div>
+                    {(() => {
+                      const shareUrl = hasRecap ? absoluteSitePath(recapHref) : absoluteSitePath("/events");
+                      const shareText = `${event.data.title} — Cursor Saudi`;
+                      return (
+                        <div class="flex flex-col items-end gap-1 shrink-0" role="group" aria-label="Share with others">
+                          <p class="text-[10px] leading-tight text-[#6E6E6E] text-end max-w-[9rem] sm:max-w-none">
+                            <span class="lang-en">Share with others</span>
+                            <span class="lang-ar">شارِك مع الآخرين</span>
+                          </p>
+                          <div class="flex items-center gap-1">
+                            <a href={xShareLink(shareUrl, shareText)} target="_blank" rel="noreferrer" class="w-7 h-7 flex items-center justify-center rounded-full text-[#6E6E6E] hover:text-white transition-colors" aria-label="Share on X">
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            </a>
+                            <a href={linkedInShareLink(shareUrl)} target="_blank" rel="noreferrer" class="w-7 h-7 flex items-center justify-center rounded-full text-[#6E6E6E] hover:text-white transition-colors" aria-label="Share on LinkedIn">
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                            </a>
+                            <a href={whatsappShareLink(shareUrl, shareText)} target="_blank" rel="noreferrer" class="w-7 h-7 flex items-center justify-center rounded-full text-[#6E6E6E] hover:text-[#25D366] transition-colors" aria-label="Share on WhatsApp">
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                            </a>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                   {hasRecap ? (
                     <a
-                      href={`/blog/${eventBlogSlug(event.id)}`}
-                      class="btn-primary w-full text-center py-2.5 rounded-full text-sm font-medium inline-flex items-center justify-center gap-2"
+                      href={recapHref}
+                      class="w-full group/recap text-center py-3 px-4 rounded-xl text-sm font-semibold inline-flex items-center justify-center gap-2.5
+                        border border-[#58a6ff]/40 bg-[#58a6ff]/[0.08] text-[#c9e1ff] hover:bg-[#58a6ff]/18 hover:border-[#58a6ff]/70 hover:text-white
+                        transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
                     >
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h12M2 8h8M2 12h10"/></svg>
-                      <span class="lang-en">Read recap post</span>
-                      <span class="lang-ar">اقرأ تدوينة الملخص</span>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="text-[#58a6ff] shrink-0 group-hover/recap:text-[#79c0ff] transition-colors" aria-hidden="true">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                        <path d="M8 7h8M8 11h6"/>
+                      </svg>
+                      <span class="lang-en">Read full recap</span>
+                      <span class="lang-ar">اقرأ الملخص الكامل</span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#58a6ff] shrink-0 opacity-80 group-hover/recap:opacity-100 rtl:rotate-180 transition-opacity" aria-hidden="true">
+                        <path d="M5 12h14M13 6l6 6-6 6"/>
+                      </svg>
                     </a>
                   ) : (
                     <p class="text-xs text-[#5c5c5c]">
@@ -451,14 +594,19 @@ function typeLabel(type: string): { en: string; ar: string } {
                 <div class="flex flex-col gap-3 mb-4">
                   {(() => {
                     const speakerInfo = speakerMap.get(invite.speaker.toLowerCase().trim());
+                    const inviteSpeakerEn = speakerInfo?.name ?? invite.speaker;
+                    const inviteSpeakerAr = speakerInfo?.nameAr ?? inviteSpeakerEn;
                     return (
-                      <a href={speakerInfo ? `/speakers/${speakerInfo.slug}/` : "#"} class="flex items-center gap-1.5 text-xs text-[#6E6E6E] hover:text-white transition-colors group/speaker">
+                      <a href={speakerInfo ? localizedPath(pagePath, `/speakers/${speakerInfo.slug}/`) : "#"} class="flex items-center gap-1.5 text-xs text-[#6E6E6E] hover:text-white transition-colors group/speaker">
                         {speakerInfo?.photo ? (
                           <img src={speakerInfo.photo} alt="" class="w-5 h-5 rounded-full object-cover shrink-0 border border-[#252525]" width="20" height="20" loading="lazy" />
                         ) : (
                           <span class="w-5 h-5 rounded-full bg-[#252525] border border-[#333] shrink-0 flex items-center justify-center text-[7px] font-bold text-[#8A8A8A]">{speakerInfo?.initials ?? invite.speaker.slice(0, 2).toUpperCase()}</span>
                         )}
-                        <span class="group-hover/speaker:text-white transition-colors">{speakerInfo?.name ?? invite.speaker}</span>
+                        <span class="group-hover/speaker:text-white transition-colors">
+                          <span class="lang-en">{inviteSpeakerEn}</span>
+                          <span class="lang-ar">{inviteSpeakerAr}</span>
+                        </span>
                       </a>
                     );
                   })()}

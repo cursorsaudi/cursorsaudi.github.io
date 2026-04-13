@@ -6,6 +6,9 @@ import AboutMission from "@/components/about/AboutMission.astro";
 import AboutEventTypes from "@/components/about/AboutEventTypes.astro";
 import PageToc from "@/components/PageToc.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
+import { localizedPath } from "@/utils/i18n-path";
+
+const pagePath = Astro.url.pathname;
 
 const tocItems = [
   { id: "mission", labelEn: "Mission", labelAr: "الرسالة" },
@@ -290,7 +293,7 @@ function formatShortDate(date: Date) {
                   نحتاج سفيراً لإعادة تشغيل <strong class="text-white/90 font-medium">فرع الخبر</strong> وتنمية اللقاءات للمبدعين في الخبر والظهران والدمام.
                 </span>
               </p>
-              <a href="/ambassadors" class="mt-3 text-xs font-medium text-[#58a6ff] hover:text-[#79c0ff] transition-colors">
+              <a href={localizedPath(pagePath, "/ambassadors/")} class="mt-3 text-xs font-medium text-[#58a6ff] hover:text-[#79c0ff] transition-colors">
                 <span class="lang-en">Ambassador program &amp; how to apply →</span>
                 <span class="lang-ar">برنامج السفراء وكيفية التقديم ←</span>
               </a>
@@ -445,7 +448,7 @@ function formatShortDate(date: Date) {
               <span class="lang-ar">قدّم اللقاءات للمبدعين في الخبر والظهران والدمام.</span>
             </p>
             <div class="mt-auto">
-              <a href="/ambassadors" class="text-sm font-medium text-[#58a6ff] hover:text-[#79c0ff] transition-colors">
+              <a href={localizedPath(pagePath, "/ambassadors/")} class="text-sm font-medium text-[#58a6ff] hover:text-[#79c0ff] transition-colors">
                 <span class="lang-en">Apply →</span>
                 <span class="lang-ar">قدّم الآن ←</span>
               </a>
@@ -461,7 +464,7 @@ function formatShortDate(date: Date) {
           <span class="lang-ar">مهتم بقيادة فرع أو تمثيل كيرسر في جامعتك؟</span>
         </p>
         <div class="flex flex-wrap justify-center gap-4">
-          <a href="/ambassadors" class="px-5 py-2.5 rounded-full bg-[#58a6ff] hover:bg-[#79c0ff] text-black text-sm font-medium transition-colors">
+          <a href={localizedPath(pagePath, "/ambassadors/")} class="px-5 py-2.5 rounded-full bg-[#58a6ff] hover:bg-[#79c0ff] text-black text-sm font-medium transition-colors">
             <span class="lang-en">Become an Ambassador →</span>
             <span class="lang-ar">كن سفيراً ←</span>
           </a>

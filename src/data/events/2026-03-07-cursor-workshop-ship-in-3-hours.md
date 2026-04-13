@@ -35,10 +35,6 @@ photos:
   - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/HDc4OO3XsAAIyQy.jpg"
   - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/HDc4OQRWQAAqN5P.jpg"
   - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/HDc4OPBWYAAr_sQ.jpg"
-  - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/GxIyD30WUAAGUyP.jpg"
-  - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/GxIyNxRXgAQ5vLB.jpg"
-  - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/GxIQGKdWEAABvsz.jpg"
-  - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/GxIQGMmWwAAxJtv.jpg"
 coverPhoto: "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/HDc4OQRXQAABlmU.jpg"
 photographers:
   - Hanouf Almogri
@@ -52,7 +48,7 @@ A 3-hour interactive workshop where participants built and deployed real softwar
 ## Format
 
 - **Type**: In-person workshop (with online attendance)
-- **Venue**: Leqaa Hall, Sard Cultural Center, Riyadh
+- **Venue**: Leqaa Hall, Riyadh
 - **Co-organizer**: DAL | دال
 - **Duration**: 11:00 PM – 2:00 AM (3 hours)
 - **Speakers**: 3 ([Mazen Alotaibi](https://x.com/ma7dev), [Nick Miller](https://x.com/nickwm), [Abdullah Moasibah](https://www.linkedin.com/in/abdullah-mosaibah-67814312b/))
@@ -150,13 +146,3 @@ A 3-hour interactive workshop where participants built and deployed real softwar
 ![](/events/2026-03-07-cursor-workshop-ship-in-3-hours/WhatsApp%20Image%202026-03-09%20at%203.28.26%20PM%20(1).jpeg)
 
 ![](/events/2026-03-07-cursor-workshop-ship-in-3-hours/WhatsApp%20Image%202026-03-09%20at%203.28.26%20PM.jpeg)
-
-### Participant photos
-
-![](/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/GxIyD30WUAAGUyP.jpg)
-
-![](/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/GxIyNxRXgAQ5vLB.jpg)
-
-![](/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/GxIQGKdWEAABvsz.jpg)
-
-![](/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/GxIQGMmWwAAxJtv.jpg)

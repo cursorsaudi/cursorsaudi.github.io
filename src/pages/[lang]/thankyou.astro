@@ -3,6 +3,11 @@ import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import ThankYouPage from "@/components/ThankYouPage.astro";
 import Footer from "@/components/Footer.astro";
+import { SITE_LOCALES } from "@/utils/i18n-path";
+
+export function getStaticPaths() {
+  return SITE_LOCALES.map((lang) => ({ params: { lang } }));
+}
 ---
 
 <Layout title="Thank You — Cursor Saudi">

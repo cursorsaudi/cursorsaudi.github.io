@@ -25,6 +25,9 @@ photos:
   - 7 (2).png
   - 4 (2).png
   - 1 (3).png
+  - /event-assets/2025-12-25-contributing-to-open-source-with-cursor/oss-talk-1.jpg
+  - /event-assets/2025-12-25-contributing-to-open-source-with-cursor/oss-talk-2.jpg
+  - /event-assets/2025-12-25-contributing-to-open-source-with-cursor/oss-talk-3.jpg
 coverPhoto: 8 (2).png
 photographers:
   - Hanouf Almogri
@@ -120,3 +123,9 @@ Thanks to Dal for community support, Mozn for hosting, and Ben Lang for support.
 ![](/events/2025-12-25-contributing-to-open-source-with-cursor/4%20(2).png)
 
 ![](/events/2025-12-25-contributing-to-open-source-with-cursor/1%20(3).png)
+
+![](/event-assets/2025-12-25-contributing-to-open-source-with-cursor/oss-talk-1.jpg)
+
+![](/event-assets/2025-12-25-contributing-to-open-source-with-cursor/oss-talk-2.jpg)
+
+![](/event-assets/2025-12-25-contributing-to-open-source-with-cursor/oss-talk-3.jpg)

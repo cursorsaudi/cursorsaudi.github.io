@@ -4,17 +4,41 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import { getAllBlogPosts } from "@/utils/blog";
 import { render } from "astro:content";
+import { getSpeakerNameMap, getAffiliationPartnerDisplay, getEventPartnersMap, getEventPartners, partnerRoleLabels } from "@/utils/people";
+import type { EventPartnerEntry } from "@/utils/people";
+import { SITE_LOCALES, localizedPath } from "@/utils/i18n-path";
 
 export async function getStaticPaths() {
   const posts = await getAllBlogPosts();
-  return posts.map((post) => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
+  const paths: { params: { lang: string; slug: string }; props: { post: (typeof posts)[number] } }[] = [];
+  for (const post of posts) {
+    for (const lang of SITE_LOCALES) {
+      paths.push({ params: { lang, slug: post.slug }, props: { post } });
+    }
+  }
+  return paths;
 }
 
 const { post } = Astro.props;
+const pagePath = Astro.url.pathname;
+const eventsPageHref = localizedPath(pagePath, "/events/");
 const { Content } = await render(post.entry);
+const eventAlbumHref = post.source === "event" ? localizedPath(pagePath, `/albums/${post.entry.id}/`) : null;
+const speakerMap = getSpeakerNameMap();
+const partnersMap = getEventPartnersMap();
+const eventEntry =
+  post.source === "event"
+    ? (post.entry as unknown as { id: string; data: { speakers?: string[]; venue?: string } })
+    : null;
+const eventSpeakerNames = eventEntry?.data.speakers ?? [];
+const eventPartners = eventEntry ? getEventPartners(eventEntry.id, eventEntry.data.venue, partnersMap) : [];
+const normalizedEventType = post.eventType?.trim().toLowerCase();
+const visibleTags = (post.tags ?? []).filter((tag, index, tags) => {
+  const normalizedTag = tag.trim().toLowerCase();
+  if (!normalizedTag) return false;
+  if (normalizedEventType && normalizedTag === normalizedEventType) return false;
+  return tags.findIndex((value) => value.trim().toLowerCase() === normalizedTag) === index;
+});
 
 const dateStr = post.date.toLocaleDateString("en-US", {
   weekday: "long",
@@ -46,7 +70,7 @@ const typeLabels: Record<string, { en: string; ar: string }> = {
   <main class="flex-grow pt-[72px] relative z-10">
     <article class="max-w-4xl mx-auto px-6 md:px-10 py-12 md:py-20">
       <!-- Back link -->
-      <a href="/#events" class="inline-flex items-center gap-2 text-sm text-[#6E6E6E] hover:text-white transition-colors mb-8">
+      <a href={eventsPageHref} class="inline-flex items-center gap-2 text-sm text-[#6E6E6E] hover:text-white transition-colors mb-8">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M10 12L6 8l4-4"/>
         </svg>
@@ -54,10 +78,18 @@ const typeLabels: Record<string, { en: string; ar: string }> = {
         <span class="lang-ar">العودة للفعاليات</span>
       </a>
 
-      <!-- Cover image -->
-      {post.coverImage && (
-        <div class="rounded-2xl overflow-hidden border border-[#252525] mb-8">
-          <img src={post.coverImage} alt={post.title} class="w-full" loading="eager" />
+      {eventAlbumHref && (
+        <div class="mb-6">
+          <a
+            href={eventAlbumHref}
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-[#252525] text-sm text-white hover:bg-white/10 hover:border-[#444] transition-colors"
+          >
+            <span class="lang-en">See album</span>
+            <span class="lang-ar">عرض الألبوم</span>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 12l8-8m0 0H5m7 0v7"/>
+            </svg>
+          </a>
         </div>
       )}
 
@@ -84,6 +116,46 @@ const typeLabels: Record<string, { en: string; ar: string }> = {
           )}
         </div>
 
+        {eventSpeakerNames.length > 0 && (
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-[#6E6E6E] mb-3">
+            {eventSpeakerNames.map((name: string) => {
+              const info = speakerMap.get(name.toLowerCase().trim());
+              const displayNameEn = info?.name ?? name;
+              const displayNameAr = info?.nameAr ?? displayNameEn;
+              const partner = info?.affiliationPartnerSlug ? getAffiliationPartnerDisplay(info.affiliationPartnerSlug) : undefined;
+              return (
+                <a href={info ? localizedPath(pagePath, `/speakers/${info.slug}/`) : "#"} class="flex items-center gap-1.5 hover:text-white transition-colors group/speaker">
+                  {info?.photo ? (
+                    <img src={info.photo} alt="" class="w-5 h-5 rounded-full object-cover shrink-0 border border-[#252525]" width="20" height="20" loading="lazy" />
+                  ) : (
+                    <span class="w-5 h-5 rounded-full bg-[#252525] border border-[#333] shrink-0 flex items-center justify-center text-[7px] font-bold text-[#8A8A8A]">{info?.initials ?? name.slice(0, 2).toUpperCase()}</span>
+                  )}
+                  <span class="group-hover/speaker:text-white transition-colors">
+                    <span class="lang-en">{displayNameEn}</span>
+                    <span class="lang-ar">{displayNameAr}</span>
+                  </span>
+                  {partner && (
+                    <img src={partner.logo} alt={partner.name} class="w-3.5 h-3.5 object-contain opacity-50 shrink-0" width="14" height="14" loading="lazy" />
+                  )}
+                </a>
+              );
+            })}
+          </div>
+        )}
+        {eventPartners.length > 0 && (
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            {eventPartners.map((p: EventPartnerEntry) => (
+              <a href={localizedPath(pagePath, `/partners/${p.slug}/`)} class="flex items-center gap-1.5 rounded-full bg-white/5 border border-[#252525] px-2.5 py-1 hover:border-[#444] transition-colors">
+                <img src={p.logo} alt={p.name} class="w-5 h-5 object-contain" width="20" height="20" loading="lazy" />
+                <span class="text-[10px] text-[#8b949e] leading-tight">
+                  <span class="lang-en">{partnerRoleLabels[p.role].en}</span>
+                  <span class="lang-ar">{partnerRoleLabels[p.role].ar}</span>
+                </span>
+              </a>
+            ))}
+          </div>
+        )}
+
         <!-- Title -->
         <h1 class="text-3xl md:text-4xl font-bold text-white leading-tight mb-4">
           <span class="lang-ar">{post.titleAr ?? post.title}</span>
@@ -96,7 +168,7 @@ const typeLabels: Record<string, { en: string; ar: string }> = {
             <span class="lang-en">{dateStr}</span>
             <span class="lang-ar">{dateStrAr}</span>
           </time>
-          {post.author && (
+          {post.author && eventSpeakerNames.length === 0 && (
             <span>
               <span class="lang-en">by</span>
               <span class="lang-ar">بواسطة</span>
@@ -111,9 +183,9 @@ const typeLabels: Record<string, { en: string; ar: string }> = {
           )}
         </div>
 
-        {post.tags && post.tags.length > 0 && (
+        {visibleTags.length > 0 && (
           <div class="flex flex-wrap gap-2 mt-4">
-            {post.tags.map((tag) => (
+            {visibleTags.map((tag) => (
               <span class="text-xs px-2.5 py-1 rounded-full bg-white/5 text-[#999] border border-[#252525]">
                 {tag}
               </span>
@@ -174,10 +246,34 @@ const typeLabels: Record<string, { en: string; ar: string }> = {
             return imgCount > 0 && textLen < 50;
           }
 
+          function stripImagesFromNode(node) {
+            if (!node) return;
+            if (node.nodeType === 1 && node.tagName === 'IMG') {
+              node.remove();
+              return;
+            }
+            if (node.nodeType !== 1) return;
+            node.querySelectorAll('img').forEach(function (img) { img.remove(); });
+            node.querySelectorAll('picture').forEach(function (el) { if (!el.querySelector('img')) el.remove(); });
+            node.querySelectorAll('figure').forEach(function (el) { if (!el.querySelector('img') && !(el.textContent || '').trim()) el.remove(); });
+            if (node.tagName === 'P' && !node.querySelector('*') && !(node.textContent || '').trim()) node.remove();
+          }
+
           // Clear and rebuild with language wrappers
           container.innerHTML = '';
 
           sections.forEach(function (nodes) {
+            if (isImageSection(nodes)) return;
+
+            nodes.forEach(stripImagesFromNode);
+            nodes = nodes.filter(function (n) {
+              if (!n) return false;
+              if (n.nodeType === 3) return !!(n.textContent || '').trim();
+              if (n.nodeType !== 1) return true;
+              return n.tagName !== 'IMG';
+            });
+            if (nodes.length === 0) return;
+
             var wrapper = document.createElement('div');
             var text = nodes.map(function (n) { return n.textContent || ''; }).join('');
 
@@ -222,9 +318,24 @@ const typeLabels: Record<string, { en: string; ar: string }> = {
         </div>
       )}
 
+      {eventAlbumHref && (
+        <div class="mt-8">
+          <a
+            href={eventAlbumHref}
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-[#252525] text-sm text-white hover:bg-white/10 hover:border-[#444] transition-colors"
+          >
+            <span class="lang-en">See album</span>
+            <span class="lang-ar">عرض الألبوم</span>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 12l8-8m0 0H5m7 0v7"/>
+            </svg>
+          </a>
+        </div>
+      )}
+
       <!-- Back link bottom -->
       <div class="mt-12 pt-6 border-t border-[#252525]">
-        <a href="/#events" class="inline-flex items-center gap-2 text-sm text-[#6E6E6E] hover:text-white transition-colors">
+        <a href={eventsPageHref} class="inline-flex items-center gap-2 text-sm text-[#6E6E6E] hover:text-white transition-colors">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M10 12L6 8l4-4"/>
           </svg>

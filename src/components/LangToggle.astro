@@ -2,13 +2,3 @@
   <span class="lang-ar">EN</span>
   <span class="lang-en">عربي</span>
 </button>
-
-<script>
-  const langToggle = document.getElementById("lang-toggle");
-  langToggle?.addEventListener("click", () => {
-    const current = localStorage.getItem("lang") || "ar";
-    const next = current === "ar" ? "en" : "ar";
-    localStorage.setItem("lang", next);
-    window.location.reload();
-  });
-</script>

@@ -1,5 +1,8 @@
 ---
 import { config } from "@/config";
+import { localizedPath } from "@/utils/i18n-path";
+
+const pagePath = Astro.url.pathname;
 import PageToc from "@/components/PageToc.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
 
@@ -224,7 +227,7 @@ const mail = (subject: string) =>
         <span class="lang-en">Email {email}</span>
         <span class="lang-ar">راسل {email}</span>
       </a>
-      <a href="/about" class="px-5 py-2.5 rounded-full border border-[#333] text-sm text-[#999999] hover:text-white hover:border-white/25 transition-colors">
+      <a href={localizedPath(pagePath, "/about/")} class="px-5 py-2.5 rounded-full border border-[#333] text-sm text-[#999999] hover:text-white hover:border-white/25 transition-colors">
         <span class="lang-en">← About the community</span>
         <span class="lang-ar">عن المجتمع ←</span>
       </a>

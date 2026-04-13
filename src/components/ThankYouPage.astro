@@ -8,6 +8,9 @@ import {
 import { contributorRoleBadgeClass } from "@/utils/contributor-role-badge";
 import PageToc from "@/components/PageToc.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
+import { localizedPath } from "@/utils/i18n-path";
+
+const pagePath = Astro.url.pathname;
 
 const roleOrder = ["official", "community-partner", "venue-host", "past-community-partner"] as const;
 
@@ -121,7 +124,7 @@ const tocItems = [
           const aff = speakerAffiliation.get(speaker.slug);
           return (
           <div class="bg-[#171717] border border-[#252525] rounded-2xl p-6 flex flex-col items-center text-center hover:border-[#444] transition-all">
-            <a href={`/speakers/${speaker.slug}/`} class="group mb-4">
+            <a href={localizedPath(pagePath, `/speakers/${speaker.slug}/`)} class="group mb-4">
               {speaker.photo ? (
                 <img
                   src={speaker.photo}
@@ -136,7 +139,7 @@ const tocItems = [
               )}
             </a>
 
-            <a href={`/speakers/${speaker.slug}/`} class="group">
+            <a href={localizedPath(pagePath, `/speakers/${speaker.slug}/`)} class="group">
               <h3 class="text-lg font-semibold text-white mb-2 group-hover:text-[#79c0ff] transition-colors">
                 <span class="lang-en">{speaker.name}</span>
                 <span class="lang-ar">{speaker.nameAr ?? speaker.name}</span>
@@ -151,7 +154,7 @@ const tocItems = [
             )}
 
             <a
-              href={`/speakers/${speaker.slug}/`}
+              href={localizedPath(pagePath, `/speakers/${speaker.slug}/`)}
               class="inline-flex items-center gap-1.5 text-xs text-[#999999] hover:text-white transition-colors mb-3 border border-[#252525] hover:border-[#444] rounded-full px-3 py-1"
             >
               <span class="lang-en">
@@ -162,7 +165,7 @@ const tocItems = [
 
             {aff && (
               <a
-                href={aff.href}
+                href={localizedPath(pagePath, aff.href)}
                 class="inline-flex items-center gap-2 mb-4 text-xs text-[#999999] hover:text-white transition-colors"
                 title={aff.name}
               >
@@ -255,7 +258,7 @@ const tocItems = [
 
               {aff && (
                 <a
-                  href={aff.href}
+                  href={localizedPath(pagePath, aff.href)}
                   class="inline-flex items-center gap-2 mb-4 text-xs text-[#999999] hover:text-white transition-colors"
                   title={aff.name}
                 >
@@ -352,7 +355,7 @@ const tocItems = [
                     />
                   </div>
                   <div class="flex flex-col gap-1 min-w-0">
-                    <a href={`/partners/${partner.slug}/`} class="text-[1.05rem] font-bold hover:text-[#79c0ff] transition-colors">
+                    <a href={localizedPath(pagePath, `/partners/${partner.slug}/`)} class="text-[1.05rem] font-bold hover:text-[#79c0ff] transition-colors">
                       <span class="lang-ar">{partner.nameAr}</span>
                       <span class="lang-en">{partner.name}</span>
                     </a>
@@ -375,7 +378,7 @@ const tocItems = [
 
                 {partner.contributors && partner.contributors.length > 0 && (
                   <a
-                    href={`/partners/${partner.slug}/`}
+                    href={localizedPath(pagePath, `/partners/${partner.slug}/`)}
                     class="flex items-center gap-2.5 group"
                     title={partner.contributors.map((c) => c.name).join(", ")}
                   >
@@ -422,7 +425,7 @@ const tocItems = [
                 >
                   {!partner.omitEventStats && (
                     <a
-                      href={`/partners/${partner.slug}/`}
+                      href={localizedPath(pagePath, `/partners/${partner.slug}/`)}
                       class="inline-flex items-center gap-1.5 text-xs text-[#999999] hover:text-white transition-colors border border-[#252525] hover:border-[#444] rounded-full px-3 py-1"
                     >
                       <span class="lang-en">

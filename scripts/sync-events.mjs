@@ -8,7 +8,8 @@
  *   Vault markdown : ~/Vault/cursorsaudi/events/<slug>.md
  *   Vault media    : ~/Vault/__media/<filename>          (flat folder)
  *   Repo markdown  : src/data/events/<slug>.md
- *   Repo media     : public/events/<slug>/<filename>     (per-event folder)
+ *   Repo media     : public/events/<slug>/<filename>     (per-event folder; Vault-synced)
+ *   Repo-only media: public/event-assets/<slug>/        (supplemental files; not copied by this script — use site-root paths in markdown/frontmatter, e.g. `/event-assets/...`)
  *
  * For each event slug:
  *   - vault only → vault → repo (transform: wikilinks → md, populate photos)

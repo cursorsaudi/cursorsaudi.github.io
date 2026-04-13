@@ -1,5 +1,8 @@
 ---
 import { config } from "@/config";
+import { localizedPath } from "@/utils/i18n-path";
+
+const pagePath = Astro.url.pathname;
 import PageToc from "@/components/PageToc.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
 
@@ -433,7 +436,7 @@ const cursorAmbassadorProgramEmail = "blang@cursor.com";
     </div>
 
     <div class="flex flex-wrap gap-4">
-      <a href="/about" class="px-5 py-2.5 rounded-full border border-[#333] text-sm text-[#999999] hover:text-white hover:border-white/25 transition-colors">
+      <a href={localizedPath(pagePath, "/about/")} class="px-5 py-2.5 rounded-full border border-[#333] text-sm text-[#999999] hover:text-white hover:border-white/25 transition-colors">
         <span class="lang-en">← Back to About</span>
         <span class="lang-ar">العودة إلى عن المجتمع ←</span>
       </a>

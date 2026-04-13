@@ -3,6 +3,11 @@ import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import PartnershipsPage from "@/components/PartnershipsPage.astro";
 import Footer from "@/components/Footer.astro";
+import { SITE_LOCALES } from "@/utils/i18n-path";
+
+export function getStaticPaths() {
+  return SITE_LOCALES.map((lang) => ({ params: { lang } }));
+}
 ---
 
 <Layout title="Work With Us — Cursor Saudi">

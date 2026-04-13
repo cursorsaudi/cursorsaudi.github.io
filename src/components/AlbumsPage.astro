@@ -1,53 +1,22 @@
 ---
-import { getEventsWithAlbums, getEventCoverUrl, getEventImageUrl, isVideo } from "@/utils/events";
+import { getEventsWithAlbums, getEventCoverUrl } from "@/utils/events";
+import { getEventPartnersMap, getEventPartners, partnerRoleLabels } from "@/utils/people";
+import type { EventPartnerEntry } from "@/utils/people";
 import { config } from "@/config";
 import type { CollectionEntry } from "astro:content";
+import { localizedPath } from "@/utils/i18n-path";
+
+const pagePath = Astro.url.pathname;
 
 type EventEntry = CollectionEntry<"events">;
 
 const albums = await getEventsWithAlbums();
+const partnersMap = getEventPartnersMap();
 
 type InviteWithPhotos = (typeof config.invites)[number] & { photos: string[] };
 const invitesWithPhotos = config.invites
   .filter((i): i is InviteWithPhotos => "photos" in i && Array.isArray((i as any).photos) && (i as any).photos.length > 0)
   .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-type PersonLookup = { nameAr: string; href: string | null };
-/** Photographer row with English display name (frontmatter is usually EN). */
-type PhotoCreditRow = { nameEn: string; nameAr: string; href: string | null };
-const personLookup = new Map<string, PersonLookup>();
-
-/** Narrow `config.speakers` for lookup building (avoids `never` from wide `as const` inference in Astro check). */
-type SpeakerLookupSource = {
-  name: string;
-  nameAr?: string;
-  slug: string;
-  aliases?: readonly string[];
-};
-for (const speaker of config.speakers as unknown as readonly SpeakerLookupSource[]) {
-  const entry: PersonLookup = {
-    nameAr: speaker.nameAr ?? speaker.name,
-    href: `/speakers/${speaker.slug}`,
-  };
-  personLookup.set(speaker.name, entry);
-  for (const alias of speaker.aliases ?? []) personLookup.set(alias, entry);
-}
-
-type PartnerContributorSource = { name: string; nameAr?: string };
-for (const partner of config.partners) {
-  const contributors = "contributors" in partner ? (partner.contributors as readonly PartnerContributorSource[] | undefined) : undefined;
-  for (const c of contributors ?? []) {
-    if (personLookup.has(c.name)) continue;
-    personLookup.set(c.name, {
-      nameAr: c.nameAr ?? c.name,
-      href: `/partners/${partner.slug}`,
-    });
-  }
-}
-
-function resolvePerson(name: string): PersonLookup {
-  return personLookup.get(name) ?? { nameAr: name, href: null };
-}
 
 function formatDate(date: Date) {
   return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
@@ -57,21 +26,6 @@ function formatDateAr(date: Date) {
   return date.toLocaleDateString("ar-SA", { year: "numeric", month: "short", day: "numeric" });
 }
 
-function getAllMedia(event: { data: { photos?: string[]; videos?: string[] } }) {
-  return [...(event.data.photos ?? []), ...(event.data.videos ?? [])];
-}
-
-function joinerEn(idx: number, total: number) {
-  if (idx === 0) return "";
-  if (idx === total - 1) return total === 2 ? " & " : ", & ";
-  return ", ";
-}
-
-function joinerAr(idx: number, total: number) {
-  if (idx === 0) return "";
-  if (idx === total - 1) return " و";
-  return "، ";
-}
 ---
 
 <section id="albums">
@@ -108,11 +62,11 @@ function joinerAr(idx: number, total: number) {
             const coverUrl = getEventCoverUrl(event);
             const photoCount = event.data.photos?.length ?? 0;
             const videoCount = event.data.videos?.length ?? 0;
+            const eventPartners = getEventPartners(event.id, event.data.venue, partnersMap);
             return (
-              <button
-                class="album-card bg-[#171717] border border-[#252525] rounded-2xl overflow-hidden hover:border-white/20 transition-all group text-start cursor-pointer"
-                data-album-id={event.id}
-                type="button"
+              <a
+                href={localizedPath(pagePath, `/albums/${event.id}/`)}
+                class="album-card bg-[#171717] border border-[#252525] rounded-2xl overflow-hidden hover:border-white/20 transition-all group text-start cursor-pointer block"
               >
                 <div class="aspect-[16/10] bg-[#1F1F1F] overflow-hidden">
                   {coverUrl ? (
@@ -164,8 +118,21 @@ function joinerAr(idx: number, total: number) {
                     <span class="lang-en">{event.data.location}{event.data.venue ? ` · ${event.data.venue}` : ''}</span>
                     <span class="lang-ar">{event.data.locationAr || event.data.location}{event.data.venue ? ` · ${event.data.venue}` : ''}</span>
                   </div>
+                  {eventPartners.length > 0 && (
+                    <div class="flex flex-wrap items-center gap-2 mt-2">
+                      {eventPartners.map((p: EventPartnerEntry) => (
+                        <span class="flex items-center gap-1.5 rounded-full bg-white/5 border border-[#252525] px-2 py-0.5">
+                          <img src={p.logo} alt={p.name} class="w-4 h-4 object-contain" width="16" height="16" loading="lazy" />
+                          <span class="text-[10px] text-[#8b949e] leading-tight">
+                            <span class="lang-en">{partnerRoleLabels[p.role].en}</span>
+                            <span class="lang-ar">{partnerRoleLabels[p.role].ar}</span>
+                          </span>
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </button>
+              </a>
             );
           })}
         </div>
@@ -272,121 +239,6 @@ function joinerAr(idx: number, total: number) {
       </div>
     ))}
 
-    <!-- Detail Views (one per album, hidden by default) -->
-    {albums.map((event: EventEntry) => {
-      const media = getAllMedia(event);
-      const photographers: PhotoCreditRow[] = (event.data.photographers ?? []).map((name: string) => ({
-        nameEn: name,
-        ...resolvePerson(name),
-      }));
-      return (
-        <div class="album-detail hidden" data-detail-id={event.id}>
-          <button class="album-back-btn flex items-center gap-2 text-sm text-[#999999] hover:text-white transition-colors mb-8 cursor-pointer" type="button">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <polyline points="15 18 9 12 15 6"/>
-            </svg>
-            <span class="lang-en">Back to Albums</span>
-            <span class="lang-ar">العودة للألبومات</span>
-          </button>
-
-          <div class="mb-10 border-b border-[#252525] pb-8">
-            <h1 class="text-3xl md:text-4xl font-semibold text-white mb-3">
-              <span class="lang-en">{event.data.title}</span>
-              <span class="lang-ar">{event.data.titleAr || event.data.title}</span>
-            </h1>
-            <div class="flex flex-wrap items-center gap-4 text-sm text-[#999999] mb-4">
-              <span class="flex items-center gap-1.5">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                <span class="lang-en">{formatDate(event.data.date)}</span>
-                <span class="lang-ar">{formatDateAr(event.data.date)}</span>
-              </span>
-              <span class="flex items-center gap-1.5">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                <span class="lang-en">{event.data.location}{event.data.venue ? ` · ${event.data.venue}` : ''}</span>
-                <span class="lang-ar">{event.data.locationAr || event.data.location}{event.data.venue ? ` · ${event.data.venue}` : ''}</span>
-              </span>
-            </div>
-            <p class="text-[#999999] max-w-2xl">
-              <span class="lang-en">{event.data.description}</span>
-              <span class="lang-ar">{event.data.descriptionAr || event.data.description}</span>
-            </p>
-          </div>
-
-          {photographers.length > 0 && (
-            <div class="flex items-center gap-2 text-xs text-[#999999] mb-4">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-              <span class="lang-en">
-                Photos by{" "}
-                {photographers.map((p: PhotoCreditRow, i: number) => (
-                  <>
-                    {joinerEn(i, photographers.length)}
-                    {p.href ? (
-                      <a href={p.href} class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors">{p.nameEn}</a>
-                    ) : (
-                      <span>{p.nameEn}</span>
-                    )}
-                  </>
-                ))}
-              </span>
-              <span class="lang-ar">
-                تصوير:{" "}
-                {photographers.map((p: PhotoCreditRow, i: number) => (
-                  <>
-                    {joinerAr(i, photographers.length)}
-                    {p.href ? (
-                      <a href={p.href} class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors">{p.nameAr}</a>
-                    ) : (
-                      <span>{p.nameAr}</span>
-                    )}
-                  </>
-                ))}
-              </span>
-            </div>
-          )}
-
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {media.map((filename, idx) => {
-              const src = getEventImageUrl(event.id, filename);
-              const mediaIsVideo = isVideo(filename);
-              return (
-                <button
-                  class="album-media aspect-square bg-[#1F1F1F] rounded-xl overflow-hidden cursor-pointer border border-[#252525] hover:border-white/20 transition-all group relative"
-                  data-event-id={event.id}
-                  data-media-idx={idx}
-                  data-media-type={mediaIsVideo ? "video" : "image"}
-                  type="button"
-                >
-                  {mediaIsVideo ? (
-                    <>
-                      <video
-                        src={src}
-                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        preload="metadata"
-                        muted
-                      />
-                      <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div class="w-12 h-12 rounded-full bg-black/60 flex items-center justify-center">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="white" aria-hidden="true">
-                            <polygon points="6,3 20,12 6,21"/>
-                          </svg>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <img
-                      src={src}
-                      alt={`${event.data.title} - ${idx + 1}`}
-                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
-                    />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      );
-    })}
   </div>
 
   <!-- Lightbox: scrollable overlay so tall media stays reachable while body overflow is locked -->
@@ -422,28 +274,16 @@ function joinerAr(idx: number, total: number) {
 <script is:inline>
   (function () {
     var listView = document.getElementById('albums-list');
-    var details = document.querySelectorAll('.album-detail');
     var inviteDetails = document.querySelectorAll('.invite-album-detail');
     var lightbox = document.getElementById('album-lightbox');
     var lightboxImg = document.getElementById('lightbox-img');
     var lightboxVideo = document.getElementById('lightbox-video');
     var lightboxCounter = document.getElementById('lightbox-counter');
-    var currentMedia = []; // [{src, type}]
+    var currentMedia = [];
     var currentIdx = 0;
-
-    // --- List / Detail switching ---
-    function showAlbumDetail(eventId) {
-      if (listView) listView.classList.add('hidden');
-      details.forEach(function (d) { d.classList.add('hidden'); });
-      inviteDetails.forEach(function (d) { d.classList.add('hidden'); });
-      var detail = document.querySelector('[data-detail-id="' + eventId + '"]');
-      if (detail) detail.classList.remove('hidden');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
 
     function showInviteDetail(title) {
       if (listView) listView.classList.add('hidden');
-      details.forEach(function (d) { d.classList.add('hidden'); });
       inviteDetails.forEach(function (d) { d.classList.add('hidden'); });
       var detail = document.querySelector('[data-invite-detail="' + title + '"]');
       if (detail) detail.classList.remove('hidden');
@@ -451,21 +291,12 @@ function joinerAr(idx: number, total: number) {
     }
 
     function showAlbumsList() {
-      details.forEach(function (d) { d.classList.add('hidden'); });
       inviteDetails.forEach(function (d) { d.classList.add('hidden'); });
       if (listView) listView.classList.remove('hidden');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Expose for SPA switchPage reset
     window.__albumsResetToList = showAlbumsList;
-
-    document.querySelectorAll('.album-card').forEach(function (card) {
-      card.addEventListener('click', function () {
-        var id = this.getAttribute('data-album-id');
-        if (id) showAlbumDetail(id);
-      });
-    });
 
     document.querySelectorAll('.album-back-btn').forEach(function (btn) {
       btn.addEventListener('click', showAlbumsList);
@@ -495,80 +326,27 @@ function joinerAr(idx: number, total: number) {
       });
     });
 
-    // --- Lightbox ---
-    function openLightbox(eventId, idx) {
-      var items = document.querySelectorAll('.album-media[data-event-id="' + eventId + '"]');
-      currentMedia = [];
-      items.forEach(function (el) {
-        var type = el.getAttribute('data-media-type');
-        var mediaEl = type === 'video' ? el.querySelector('video') : el.querySelector('img');
-        if (mediaEl) {
-          currentMedia.push({ src: mediaEl.getAttribute('src'), type: type });
-        }
-      });
-      currentIdx = idx;
-      updateLightbox();
-      if (lightbox) lightbox.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    }
-
     function closeLightbox() {
       if (lightbox) lightbox.classList.add('hidden');
       document.body.style.overflow = '';
-      // Pause any playing video
-      if (lightboxVideo) {
-        lightboxVideo.pause();
-        lightboxVideo.removeAttribute('src');
-      }
+      if (lightboxVideo) { lightboxVideo.pause(); lightboxVideo.removeAttribute('src'); }
     }
 
     function updateLightbox() {
       var item = currentMedia[currentIdx];
       if (!item) return;
-
       if (item.type === 'video') {
         if (lightboxImg) lightboxImg.classList.add('hidden');
-        if (lightboxVideo) {
-          lightboxVideo.classList.remove('hidden');
-          lightboxVideo.setAttribute('src', item.src);
-          lightboxVideo.load();
-        }
+        if (lightboxVideo) { lightboxVideo.classList.remove('hidden'); lightboxVideo.setAttribute('src', item.src); lightboxVideo.load(); }
       } else {
-        if (lightboxVideo) {
-          lightboxVideo.pause();
-          lightboxVideo.classList.add('hidden');
-        }
-        if (lightboxImg) {
-          lightboxImg.classList.remove('hidden');
-          lightboxImg.setAttribute('src', item.src);
-          lightboxImg.setAttribute('alt', 'Media ' + (currentIdx + 1));
-        }
+        if (lightboxVideo) { lightboxVideo.pause(); lightboxVideo.classList.add('hidden'); }
+        if (lightboxImg) { lightboxImg.classList.remove('hidden'); lightboxImg.setAttribute('src', item.src); lightboxImg.setAttribute('alt', 'Media ' + (currentIdx + 1)); }
       }
-
-      if (lightboxCounter) {
-        lightboxCounter.textContent = (currentIdx + 1) + ' / ' + currentMedia.length;
-      }
+      if (lightboxCounter) lightboxCounter.textContent = (currentIdx + 1) + ' / ' + currentMedia.length;
     }
 
-    function nextMedia() {
-      if (lightboxVideo) lightboxVideo.pause();
-      currentIdx = (currentIdx + 1) % currentMedia.length;
-      updateLightbox();
-    }
-
-    function prevMedia() {
-      if (lightboxVideo) lightboxVideo.pause();
-      currentIdx = (currentIdx - 1 + currentMedia.length) % currentMedia.length;
-      updateLightbox();
-    }
-
-    document.querySelectorAll('.album-media').forEach(function (el) {
-      el.addEventListener('click', function () {
-        var eventId = this.getAttribute('data-event-id');
-        var idx = parseInt(this.getAttribute('data-media-idx'), 10);
-        openLightbox(eventId, idx);
-      });
-    });
+    function nextMedia() { if (lightboxVideo) lightboxVideo.pause(); currentIdx = (currentIdx + 1) % currentMedia.length; updateLightbox(); }
+    function prevMedia() { if (lightboxVideo) lightboxVideo.pause(); currentIdx = (currentIdx - 1 + currentMedia.length) % currentMedia.length; updateLightbox(); }
 
     var closeBtn = document.getElementById('lightbox-close');
     var prevBtn = document.getElementById('lightbox-prev');

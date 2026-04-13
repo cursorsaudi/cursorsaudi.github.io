@@ -460,6 +460,84 @@ export function getAllSupporters(): Supporter[] {
   }));
 }
 
+export type PartnerRole = "official" | "community-partner" | "venue-host" | "past-community-partner";
+
+export const partnerRoleLabels: Record<PartnerRole, { en: string; ar: string }> = {
+  "official": { en: "Official Partner", ar: "شريك رسمي" },
+  "community-partner": { en: "Community Partner", ar: "شريك مجتمعي" },
+  "venue-host": { en: "Venue Host", ar: "مستضيف المكان" },
+  "past-community-partner": { en: "Community Partner", ar: "شريك مجتمعي" },
+};
+
+export type EventPartnerEntry = { logo: string; slug: string; name: string; nameAr: string; role: PartnerRole };
+
+/** Map venue names (from event frontmatter) to the hosting partner's logo and profile link. */
+export function getVenueLogoMap(): Map<string, EventPartnerEntry> {
+  const map = new Map<string, EventPartnerEntry>();
+  for (const p of partnerCfg) {
+    for (const venue of p.eventVenues) {
+      map.set(venue, { logo: p.logo, slug: p.slug, name: p.name, nameAr: p.nameAr, role: p.role as PartnerRole });
+    }
+  }
+  return map;
+}
+
+/**
+ * Build a reverse map: event ID -> all associated partners (venue hosts + community partners).
+ * Merges both `eventVenues` matching and explicit `events[]` ID lists from config.partners.
+ */
+export function getEventPartnersMap(): Map<string, EventPartnerEntry[]> {
+  const map = new Map<string, EventPartnerEntry[]>();
+  const venueToPartner = new Map<string, EventPartnerEntry>();
+
+  for (const p of partnerCfg) {
+    if (p.role === "official") continue;
+    const entry: EventPartnerEntry = { logo: p.logo, slug: p.slug, name: p.name, nameAr: p.nameAr, role: p.role as PartnerRole };
+
+    for (const venue of p.eventVenues) {
+      venueToPartner.set(venue, entry);
+    }
+
+    for (const eventId of p.events) {
+      const list = map.get(eventId) ?? [];
+      if (!list.some((e) => e.slug === p.slug)) list.push(entry);
+      map.set(eventId, list);
+    }
+  }
+
+  return map;
+}
+
+/**
+ * Resolve all partner logos for a specific event, combining venue match + explicit ID match.
+ * De-duplicates by partner slug.
+ */
+export function getEventPartners(
+  eventId: string,
+  venue: string | undefined,
+  partnersMap: Map<string, EventPartnerEntry[]>
+): EventPartnerEntry[] {
+  const seen = new Set<string>();
+  const result: EventPartnerEntry[] = [];
+
+  const venueMap = getVenueLogoMap();
+  if (venue) {
+    const vp = venueMap.get(venue);
+    if (vp) {
+      seen.add(vp.slug);
+      result.push(vp);
+    }
+  }
+
+  for (const p of partnersMap.get(eventId) ?? []) {
+    if (seen.has(p.slug)) continue;
+    seen.add(p.slug);
+    result.push(p);
+  }
+
+  return result;
+}
+
 /** Resolve logo + partner page link for a `config.partners` slug (e.g. speaker employer badge). */
 export function getAffiliationPartnerDisplay(partnerSlug: string):
   | { logo: string; href: string; name: string; nameAr: string }

@@ -26,9 +26,6 @@ photos:
   - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G-okzBrWsAA-nDP.jpg"
   - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G-okzCdaoAEscX_.jpg"
   - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G-okzBpWwAArOpT.jpg"
-  - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G9P6wC6XMAAiukF.jpg"
-  - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G9P6wEaWkAAWAGv.jpg"
-  - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G9P6wEZWYAA-pj5.jpg"
 coverPhoto: "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G-oihMDXIAAXeWW.jpg"
 photographers:
   - Hanouf Almogri
