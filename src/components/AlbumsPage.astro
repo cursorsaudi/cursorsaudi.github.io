@@ -7,6 +7,11 @@ type EventEntry = CollectionEntry<"events">;
 
 const albums = await getEventsWithAlbums();
 
+type InviteWithPhotos = (typeof config.invites)[number] & { photos: string[] };
+const invitesWithPhotos = config.invites
+  .filter((i): i is InviteWithPhotos => "photos" in i && Array.isArray((i as any).photos) && (i as any).photos.length > 0)
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
 type PersonLookup = { nameAr: string; href: string | null };
 /** Photographer row with English display name (frontmatter is usually EN). */
 type PhotoCreditRow = { nameEn: string; nameAr: string; href: string | null };
@@ -165,7 +170,107 @@ function joinerAr(idx: number, total: number) {
           })}
         </div>
       )}
+
+      {invitesWithPhotos.length > 0 && (
+        <div class="mt-14">
+          <h2 class="text-xs font-mono text-[#6E6E6E] uppercase tracking-widest mb-6">
+            <span class="lang-en">External Invitations</span>
+            <span class="lang-ar">دعوات خارجية</span>
+          </h2>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {invitesWithPhotos.map((invite) => {
+              const inviteDate = new Date(invite.date);
+              return (
+                <button
+                  class="invite-album-card bg-[#171717] border border-[#252525] rounded-2xl overflow-hidden hover:border-white/20 transition-all group text-start cursor-pointer"
+                  data-invite-title={invite.talkTitle}
+                  type="button"
+                >
+                  <div class="aspect-[16/10] bg-[#1F1F1F] overflow-hidden">
+                    <img
+                      src={invite.photos[0]}
+                      alt={invite.talkTitle}
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="p-5">
+                    <h3 class="text-lg font-semibold text-white mb-1 group-hover:text-white transition-colors">
+                      <span class="lang-en">{invite.talkTitle}</span>
+                      <span class="lang-ar">{invite.talkTitleAr}</span>
+                    </h3>
+                    <div class="flex items-center gap-3 text-xs text-[#999999]">
+                      <span>
+                        <span class="lang-en">{formatDate(inviteDate)}</span>
+                        <span class="lang-ar">{formatDateAr(inviteDate)}</span>
+                      </span>
+                      <span class="text-[#555]">·</span>
+                      <span>
+                        <span class="lang-en">{invite.photos.length} {invite.photos.length === 1 ? 'photo' : 'photos'}</span>
+                        <span class="lang-ar">{invite.photos.length.toLocaleString("ar-SA")} {invite.photos.length === 1 ? 'صورة' : 'صور'}</span>
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs text-[#6E6E6E] mt-2">
+                      <span class="lang-en">{invite.speaker} · {invite.invitedBy}</span>
+                      <span class="lang-ar">{invite.speakerAr} · {invite.invitedByAr}</span>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
+
+    <!-- Invite Detail Views (one per invite album) -->
+    {invitesWithPhotos.map((invite) => (
+      <div class="invite-album-detail hidden" data-invite-detail={invite.talkTitle}>
+        <button class="album-back-btn flex items-center gap-2 text-sm text-[#999999] hover:text-white transition-colors mb-8 cursor-pointer" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          <span class="lang-en">Back to Albums</span>
+          <span class="lang-ar">العودة للألبومات</span>
+        </button>
+
+        <div class="mb-10 border-b border-[#252525] pb-8">
+          <h1 class="text-3xl md:text-4xl font-semibold text-white mb-3">
+            <span class="lang-en">{invite.talkTitle}</span>
+            <span class="lang-ar">{invite.talkTitleAr}</span>
+          </h1>
+          <div class="flex flex-wrap items-center gap-4 text-sm text-[#999999] mb-4">
+            <span class="flex items-center gap-1.5">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span class="lang-en">{formatDate(new Date(invite.date))}</span>
+              <span class="lang-ar">{formatDateAr(new Date(invite.date))}</span>
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="lang-en">{invite.speaker} · {invite.invitedBy}</span>
+              <span class="lang-ar">{invite.speakerAr} · {invite.invitedByAr}</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+          {invite.photos.map((photo: string, idx: number) => (
+            <button
+              class="invite-album-media aspect-square bg-[#1F1F1F] rounded-xl overflow-hidden cursor-pointer border border-[#252525] hover:border-white/20 transition-all group relative"
+              data-invite-name={invite.talkTitle}
+              data-media-idx={idx}
+              type="button"
+            >
+              <img
+                src={photo}
+                alt={`${invite.talkTitle} - ${idx + 1}`}
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+            </button>
+          ))}
+        </div>
+      </div>
+    ))}
 
     <!-- Detail Views (one per album, hidden by default) -->
     {albums.map((event: EventEntry) => {
@@ -318,6 +423,7 @@ function joinerAr(idx: number, total: number) {
   (function () {
     var listView = document.getElementById('albums-list');
     var details = document.querySelectorAll('.album-detail');
+    var inviteDetails = document.querySelectorAll('.invite-album-detail');
     var lightbox = document.getElementById('album-lightbox');
     var lightboxImg = document.getElementById('lightbox-img');
     var lightboxVideo = document.getElementById('lightbox-video');
@@ -329,13 +435,24 @@ function joinerAr(idx: number, total: number) {
     function showAlbumDetail(eventId) {
       if (listView) listView.classList.add('hidden');
       details.forEach(function (d) { d.classList.add('hidden'); });
+      inviteDetails.forEach(function (d) { d.classList.add('hidden'); });
       var detail = document.querySelector('[data-detail-id="' + eventId + '"]');
+      if (detail) detail.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showInviteDetail(title) {
+      if (listView) listView.classList.add('hidden');
+      details.forEach(function (d) { d.classList.add('hidden'); });
+      inviteDetails.forEach(function (d) { d.classList.add('hidden'); });
+      var detail = document.querySelector('[data-invite-detail="' + title + '"]');
       if (detail) detail.classList.remove('hidden');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function showAlbumsList() {
       details.forEach(function (d) { d.classList.add('hidden'); });
+      inviteDetails.forEach(function (d) { d.classList.add('hidden'); });
       if (listView) listView.classList.remove('hidden');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -352,6 +469,30 @@ function joinerAr(idx: number, total: number) {
 
     document.querySelectorAll('.album-back-btn').forEach(function (btn) {
       btn.addEventListener('click', showAlbumsList);
+    });
+
+    document.querySelectorAll('.invite-album-card').forEach(function (card) {
+      card.addEventListener('click', function () {
+        var title = this.getAttribute('data-invite-title');
+        if (title) showInviteDetail(title);
+      });
+    });
+
+    document.querySelectorAll('.invite-album-media').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var name = this.getAttribute('data-invite-name');
+        var idx = parseInt(this.getAttribute('data-media-idx'), 10);
+        var items = document.querySelectorAll('.invite-album-media[data-invite-name="' + name + '"]');
+        currentMedia = [];
+        items.forEach(function (item) {
+          var img = item.querySelector('img');
+          if (img) currentMedia.push({ src: img.getAttribute('src'), type: 'image' });
+        });
+        currentIdx = idx;
+        updateLightbox();
+        if (lightbox) lightbox.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      });
     });
 
     // --- Lightbox ---

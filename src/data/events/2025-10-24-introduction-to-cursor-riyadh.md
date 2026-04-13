@@ -4,28 +4,18 @@ titleAr: مقدمة في كيرسر
 date: 2025-10-24
 location: Riyadh
 locationAr: الرياض
-description: "Invited talk at the DAL Health Datathon 2025 (CODE, Riyadh): intro to Cursor and the AI coding tools landscape for participants—not a standalone Cursor Saudi community meetup."
-descriptionAr: "محاضرة بدعوة ضمن داتاثون دال الصحي 2025 (CODE، الرياض): مقدمة عن كيرسر ومشهد أدوات البرمجة بالذكاء الاصطناعي للمشاركين — وليست لقاءً مستقلاً تنظمه مجتمع كيرسر السعودية."
+description: 'Invited talk at the DAL Health Datathon 2025 (CODE, Riyadh): intro to Cursor and the AI coding tools landscape for participants—not a standalone Cursor Saudi community meetup.'
+descriptionAr: 'محاضرة بدعوة ضمن داتاثون دال الصحي 2025 (CODE، الرياض): مقدمة عن كيرسر ومشهد أدوات البرمجة بالذكاء الاصطناعي للمشاركين — وليست لقاءً مستقلاً تنظمه مجتمع كيرسر السعودية.'
 type: talk
 status: concluded
 venue: CODE
-speakers: 
+speakers:
   - Mazen Alotaibi
-slides: 
-  - "https://github.com/cursorsaudi/events-slides/blob/main/2025-10-riyadh-hackathon.pdf"
-tags: 
-
-domain: 
+slides:
+  - 'https://github.com/cursorsaudi/events-slides/blob/main/2025-10-riyadh-hackathon.pdf'
+tags: null
+domain:
   - cursorsaudi
-photos:
-  - "/images/events/2025-10-24-introduction-to-cursor-riyadh/G3tTPGTXgAAZ-vP.jpg"
-  - "/images/events/2025-10-24-introduction-to-cursor-riyadh/G4S6jVRWIAAi4bq.jpg"
-  - "/images/events/2025-10-24-introduction-to-cursor-riyadh/G4S6jVJXAAEkEFc.jpg"
-  - "/images/events/2025-10-24-introduction-to-cursor-riyadh/G4gRyt2XAAAwpQo.jpg"
-  - "/images/events/2025-10-24-introduction-to-cursor-riyadh/G4gRytzX0AApleI.jpg"
-  - "/images/events/2025-10-24-introduction-to-cursor-riyadh/G4gRyt2XsAE8Aog.jpg"
-  - "/images/events/2025-10-24-introduction-to-cursor-riyadh/G4gRyt3XUAA-MAl.jpg"
-coverPhoto: "/images/events/2025-10-24-introduction-to-cursor-riyadh/G4S6jVRWIAAi4bq.jpg"
 ---
 
 ## Overview

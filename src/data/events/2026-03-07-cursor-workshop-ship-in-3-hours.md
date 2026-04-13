@@ -6,7 +6,7 @@ location: Riyadh
 locationAr: الرياض
 description: "A 3-hour interactive workshop where participants ship real software using Cursor. Features a shipping loop demo, Choose-Your-Path Build Lab with missions, and Cursor CLI agent exploration."
 descriptionAr: ورشة عمل تفاعلية مدتها 3 ساعات يتعلم فيها المشاركون بناء برمجيات حقيقية باستخدام كيرسر. تتضمن عرض حلقة الشحن ومختبر البناء بالمهام واستكشاف وكيل CLI.
-type: workshop
+type: build
 status: concluded
 venue: Leqaa hall
 speakers: 

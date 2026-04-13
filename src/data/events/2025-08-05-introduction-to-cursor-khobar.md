@@ -15,6 +15,13 @@ tags:
 
 domain: 
   - cursorsaudi
+photos:
+  - 01-evolution-of-ai-in-coding.png
+  - 02-documentation-indexing.png
+  - 03-developer-ai-assistance-journey.png
+  - 04-cursor-swag-stickers.png
+  - 05-cursor-settings-demo.png
+coverPhoto: 01-evolution-of-ai-in-coding.png
 ---
 
 ## Overview

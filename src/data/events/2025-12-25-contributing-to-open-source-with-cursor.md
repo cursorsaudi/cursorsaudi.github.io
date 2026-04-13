@@ -6,7 +6,7 @@ location: Riyadh
 locationAr: الرياض
 description: Workshop on contributing to open source with Cursor — from picking a good first issue to shipping a review-friendly PR.
 descriptionAr: ورشة عمل عن المساهمة في المصادر المفتوحة باستخدام كيرسر — من اختيار أول مشكلة إلى إرسال طلب سحب جاهز للمراجعة.
-type: workshop
+type: meetup
 status: concluded
 venue: Mozn Office
 speakers: 

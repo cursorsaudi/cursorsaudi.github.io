@@ -26,6 +26,12 @@ tags:
 
 domain: 
   - cursorsaudi
+photos:
+  - GxIyD30WUAAGUyP.jpg
+  - GxIyNxRXgAQ5vLB.jpg
+  - GxIQGMmWwAAxJtv.jpg
+  - GxIQGKdWEAABvsz.jpg
+coverPhoto: GxIyD30WUAAGUyP.jpg
 ---
 
 ## Overview

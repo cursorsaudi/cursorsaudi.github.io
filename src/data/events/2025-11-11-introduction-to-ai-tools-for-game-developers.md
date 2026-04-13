@@ -6,7 +6,7 @@ location: Riyadh
 locationAr: الرياض
 description: "Introduction to Cursor at the AI Game Hackathon 2025, covering AI tools for game development workflows."
 descriptionAr: مقدمة عن كيرسر في هاكاثون الألعاب بالذكاء الاصطناعي 2025، تغطي أدوات الذكاء الاصطناعي لتطوير الألعاب.
-type: meetup
+type: talk
 status: concluded
 venue: Virtual
 speakers: 

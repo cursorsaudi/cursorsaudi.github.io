@@ -7,10 +7,13 @@ import {
   isHostedCommunityEventType,
 } from "@/utils/events";
 import { getEventIdsWithBlog, eventBlogSlug } from "@/utils/blog";
+import { getSpeakerNameMap, getAffiliationPartnerDisplay } from "@/utils/people";
 import { config } from "@/config";
 import type { CollectionEntry } from "astro:content";
 import PageToc from "@/components/PageToc.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
+
+const speakerMap = getSpeakerNameMap();
 
 type EventEntry = CollectionEntry<"events">;
 
@@ -19,7 +22,7 @@ const upcoming = allUpcoming.filter((e: EventEntry) => e.data.status !== "backlo
 const backlog = allUpcoming.filter((e: EventEntry) => e.data.status === "backlog");
 const past = (await getPastEvents()).filter((e: EventEntry) => isHostedCommunityEventType(e.data.type));
 const blogEventIds = await getEventIdsWithBlog();
-const invites = config.invites;
+const invites = [...config.invites].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
 /** Shown when an event has no `coverPhoto` / photo assets for the card strip. */
 const eventCardPlaceholder = "/placeholders/event-card.svg";
@@ -45,6 +48,15 @@ function formatDay(date: Date) {
 
 function formatDayAr(date: Date) {
   return date.getDate().toLocaleString("ar-SA");
+}
+
+/** Calendar day for invite `YYYY-MM-DD` strings (no UTC day-shift). */
+function formatInviteFullDate(isoDate: string): { en: string; ar: string } {
+  const d = new Date(`${isoDate}T12:00:00`);
+  return {
+    en: d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+    ar: d.toLocaleDateString("ar-SA", { month: "short", day: "numeric", year: "numeric" }),
+  };
 }
 
 function typeLabel(type: string): { en: string; ar: string } {
@@ -190,10 +202,25 @@ function typeLabel(type: string): { en: string; ar: string } {
                 <span class="lang-ar">{event.data.titleAr || event.data.title}</span>
               </h3>
               {event.data.speakers && event.data.speakers.length > 0 && (
-                <div class="flex items-center gap-2 text-xs text-[#6E6E6E] mb-3">
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke-linecap="round"/></svg>
-                  <span class="lang-en">{event.data.speakers.join(", ")}</span>
-                  <span class="lang-ar">{event.data.speakers.join("، ")}</span>
+                <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-[#6E6E6E] mb-3">
+                  {event.data.speakers.map((name: string) => {
+                    const info = speakerMap.get(name.toLowerCase().trim());
+                    const displayName = info?.name ?? name;
+                    const partner = info?.affiliationPartnerSlug ? getAffiliationPartnerDisplay(info.affiliationPartnerSlug) : undefined;
+                    return (
+                      <a href={info ? `/speakers/${info.slug}/` : "#"} class="flex items-center gap-1.5 hover:text-white transition-colors group/speaker">
+                        {info?.photo ? (
+                          <img src={info.photo} alt="" class="w-5 h-5 rounded-full object-cover shrink-0 border border-[#252525]" width="20" height="20" loading="lazy" />
+                        ) : (
+                          <span class="w-5 h-5 rounded-full bg-[#252525] border border-[#333] shrink-0 flex items-center justify-center text-[7px] font-bold text-[#8A8A8A]">{info?.initials ?? name.slice(0, 2).toUpperCase()}</span>
+                        )}
+                        <span class="group-hover/speaker:text-white transition-colors">{displayName}</span>
+                        {partner && (
+                          <img src={partner.logo} alt={partner.name} class="w-3.5 h-3.5 object-contain opacity-50 shrink-0" width="14" height="14" loading="lazy" />
+                        )}
+                      </a>
+                    );
+                  })}
                 </div>
               )}
               <p class="text-sm text-[#999999] mb-6 flex-grow">
@@ -305,10 +332,25 @@ function typeLabel(type: string): { en: string; ar: string } {
                   <span class="lang-ar">{event.data.titleAr || event.data.title}</span>
                 </h3>
                 {event.data.speakers && event.data.speakers.length > 0 && (
-                  <div class="flex items-center gap-2 text-xs text-[#6E6E6E] mb-3">
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke-linecap="round"/></svg>
-                    <span class="lang-en">{event.data.speakers.join(", ")}</span>
-                    <span class="lang-ar">{event.data.speakers.join("، ")}</span>
+                  <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-[#6E6E6E] mb-3">
+                    {event.data.speakers.map((name: string) => {
+                      const info = speakerMap.get(name.toLowerCase().trim());
+                      const displayName = info?.name ?? name;
+                      const partner = info?.affiliationPartnerSlug ? getAffiliationPartnerDisplay(info.affiliationPartnerSlug) : undefined;
+                      return (
+                        <a href={info ? `/speakers/${info.slug}/` : "#"} class="flex items-center gap-1.5 hover:text-white transition-colors group/speaker">
+                          {info?.photo ? (
+                            <img src={info.photo} alt="" class="w-5 h-5 rounded-full object-cover shrink-0 border border-[#252525]" width="20" height="20" loading="lazy" />
+                          ) : (
+                            <span class="w-5 h-5 rounded-full bg-[#252525] border border-[#333] shrink-0 flex items-center justify-center text-[7px] font-bold text-[#8A8A8A]">{info?.initials ?? name.slice(0, 2).toUpperCase()}</span>
+                          )}
+                          <span class="group-hover/speaker:text-white transition-colors">{displayName}</span>
+                          {partner && (
+                            <img src={partner.logo} alt={partner.name} class="w-3.5 h-3.5 object-contain opacity-50 shrink-0" width="14" height="14" loading="lazy" />
+                          )}
+                        </a>
+                      );
+                    })}
                   </div>
                 )}
                 <p class="text-sm text-[#999999] mb-6 flex-grow">
@@ -335,16 +377,6 @@ function typeLabel(type: string): { en: string; ar: string } {
                       <span class="lang-en">Written recap not published yet.</span>
                       <span class="lang-ar">لم يُنشر ملخص مكتوب بعد.</span>
                     </p>
-                  )}
-                  {event.data.slides && event.data.slides.length > 0 && (
-                    <div class="flex flex-wrap gap-2">
-                      {event.data.slides.map((url: string, i: number) => (
-                        <a href={url} target="_blank" rel="noreferrer" class="text-xs text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">
-                          <span class="lang-en">{event.data.slides.length > 1 ? `Slide ${i + 1}` : "Slides"}</span>
-                          <span class="lang-ar">{event.data.slides.length > 1 ? `عرض ${i + 1}` : "الشرائح"}</span>
-                        </a>
-                      ))}
-                    </div>
                   )}
                 </div>
                 </div>
@@ -374,22 +406,40 @@ function typeLabel(type: string): { en: string; ar: string } {
           </p>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {invites.map((invite) => {
-              const typeLabelEn = invite.type === "interview" ? "Interview" : "Talk";
-              const typeLabelAr = invite.type === "interview" ? "مقابلة" : "محاضرة";
+              const typeLabelEn = invite.type === "interview" ? "Interview" : invite.type === "panel" ? "Panel" : "Talk";
+              const typeLabelAr = invite.type === "interview" ? "مقابلة" : invite.type === "panel" ? "حوار" : "محاضرة";
+              const inviteDate = formatInviteFullDate(invite.date);
+              const inviteSlides = "slides" in invite && invite.slides && invite.slides.length > 0 ? invite.slides : null;
+              const invitePhoto = "photos" in invite && invite.photos && invite.photos.length > 0 ? invite.photos[0] : null;
               return (
-              <div class="bg-[#171717] border border-[#252525] rounded-2xl p-6 flex flex-col hover:border-[#444] transition-all">
+              <div class="bg-[#171717] border border-[#252525] rounded-2xl overflow-hidden flex flex-col hover:border-[#444] transition-all">
+                {invitePhoto && (
+                  <div class="aspect-[16/10] w-full shrink-0 bg-[#0d1117] border-b border-[#252525] overflow-hidden">
+                    <img
+                      src={invitePhoto}
+                      alt={invite.talkTitle}
+                      class="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                )}
+                <div class="p-6 flex flex-col flex-grow">
                 <div class="flex items-center gap-2 mb-4">
                   <span class:list={[
                     "text-[10px] font-mono border rounded px-2 py-0.5 uppercase tracking-wider",
                     invite.type === "interview"
                       ? "text-[#c084fc] border-[#c084fc]/25 bg-[#c084fc]/10"
-                      : "text-[#58a6ff] border-[#58a6ff]/25 bg-[#58a6ff]/10",
+                      : invite.type === "panel"
+                        ? "text-[#f59e0b] border-[#f59e0b]/25 bg-[#f59e0b]/10"
+                        : "text-[#58a6ff] border-[#58a6ff]/25 bg-[#58a6ff]/10",
                   ]}>
                     <span class="lang-en">{typeLabelEn}</span>
                     <span class="lang-ar">{typeLabelAr}</span>
                   </span>
                   <span class="text-xs text-[#6E6E6E]">
-                    {new Date(invite.date).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                    <span class="lang-en">{inviteDate.en}</span>
+                    <span class="lang-ar">{inviteDate.ar}</span>
                   </span>
                 </div>
 
@@ -398,29 +448,40 @@ function typeLabel(type: string): { en: string; ar: string } {
                   <span class="lang-ar">{invite.talkTitleAr}</span>
                 </h3>
 
-                <div class="flex items-center gap-3 mb-4">
-                  {"invitedByLogo" in invite && invite.invitedByLogo && (
-                    <img
-                      src={invite.invitedByLogo}
-                      alt=""
-                      class="w-8 h-8 rounded-full object-cover border border-[#252525] shrink-0"
-                      width="32"
-                      height="32"
-                      loading="lazy"
-                    />
-                  )}
-                  <p class="text-sm text-[#999999]">
+                <div class="flex flex-col gap-3 mb-4">
+                  {(() => {
+                    const speakerInfo = speakerMap.get(invite.speaker.toLowerCase().trim());
+                    return (
+                      <a href={speakerInfo ? `/speakers/${speakerInfo.slug}/` : "#"} class="flex items-center gap-1.5 text-xs text-[#6E6E6E] hover:text-white transition-colors group/speaker">
+                        {speakerInfo?.photo ? (
+                          <img src={speakerInfo.photo} alt="" class="w-5 h-5 rounded-full object-cover shrink-0 border border-[#252525]" width="20" height="20" loading="lazy" />
+                        ) : (
+                          <span class="w-5 h-5 rounded-full bg-[#252525] border border-[#333] shrink-0 flex items-center justify-center text-[7px] font-bold text-[#8A8A8A]">{speakerInfo?.initials ?? invite.speaker.slice(0, 2).toUpperCase()}</span>
+                        )}
+                        <span class="group-hover/speaker:text-white transition-colors">{speakerInfo?.name ?? invite.speaker}</span>
+                      </a>
+                    );
+                  })()}
+                  <div class="flex items-center gap-2 text-xs text-[#999999]">
+                    {"invitedByLogo" in invite && invite.invitedByLogo && (
+                      <img
+                        src={invite.invitedByLogo}
+                        alt=""
+                        class="w-5 h-5 rounded object-contain bg-[#0d0d0d] border border-[#252525] shrink-0 p-0.5"
+                        width="20"
+                        height="20"
+                        loading="lazy"
+                      />
+                    )}
                     <span class="lang-en">
-                      <span class="text-white font-medium">{invite.speaker}</span>
-                      {invite.type === "interview" ? " interviewed by " : " invited by "}
+                      {invite.type === "interview" ? "interviewed by " : "invited by "}
                       <a href={invite.invitedByUrl} target="_blank" rel="noreferrer" class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors">{invite.invitedBy}</a>
                     </span>
                     <span class="lang-ar">
-                      <span class="text-white font-medium">{invite.speakerAr}</span>
-                      {invite.type === "interview" ? " في مقابلة مع " : " دُعي من "}
+                      {invite.type === "interview" ? "في مقابلة مع " : "دُعي من "}
                       <a href={invite.invitedByUrl} target="_blank" rel="noreferrer" class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors">{invite.invitedByAr}</a>
                     </span>
-                  </p>
+                  </div>
                 </div>
 
                 <div class="mt-auto pt-3 border-t border-[#252525] flex flex-wrap items-center gap-3">
@@ -452,6 +513,22 @@ function typeLabel(type: string): { en: string; ar: string } {
                       </svg>
                     </a>
                   )}
+                  {inviteSlides &&
+                    inviteSlides.map((url: string, i: number) => (
+                      <a
+                        href={url}
+                        target="_blank"
+                        rel="noreferrer"
+                        class="inline-flex items-center gap-1.5 text-xs text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2"
+                      >
+                        <span class="lang-en">{inviteSlides.length > 1 ? `Slide ${i + 1}` : "Slides"}</span>
+                        <span class="lang-ar">{inviteSlides.length > 1 ? `عرض ${i + 1}` : "الشرائح"}</span>
+                        <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                          <path d="M4 12l8-8m0 0H5m7 0v7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </a>
+                    ))}
+                </div>
                 </div>
               </div>
               );

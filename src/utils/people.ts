@@ -248,6 +248,49 @@ export async function getAllSpeakers(): Promise<Speaker[]> {
   });
 }
 
+export interface SpeakerLookupEntry {
+  slug: string;
+  name: string;
+  nameAr?: string;
+  initials: string;
+  photo?: string;
+  affiliationPartnerSlug?: string;
+}
+
+/**
+ * Name-keyed map (case-insensitive) for resolving event frontmatter speaker
+ * names to profile data (photo, slug, initials). Includes aliases.
+ */
+export function getSpeakerNameMap(): Map<string, SpeakerLookupEntry> {
+  const map = new Map<string, SpeakerLookupEntry>();
+  for (const s of configSpeakers) {
+    const entry: SpeakerLookupEntry = {
+      slug: s.slug,
+      name: s.name,
+      nameAr: s.nameAr,
+      initials: s.initials || getInitials(s.name),
+      photo: s.photo && publicAssetExists(s.photo) ? s.photo : undefined,
+      affiliationPartnerSlug: s.affiliationPartnerSlug,
+    };
+    map.set(s.name.toLowerCase().trim(), entry);
+    for (const alias of s.aliases ?? []) {
+      map.set(alias.toLowerCase().trim(), entry);
+    }
+  }
+  for (const a of configAmbassadors) {
+    const key = a.name.toLowerCase().trim();
+    if (map.has(key)) continue;
+    map.set(key, {
+      slug: slugify(a.name),
+      name: a.name,
+      nameAr: a.nameAr,
+      initials: getInitials(a.name),
+      photo: a.photo && publicAssetExists(a.photo) ? a.photo : undefined,
+    });
+  }
+  return map;
+}
+
 export async function getSpeakerBySlug(slug: string): Promise<Speaker | undefined> {
   return (await getAllSpeakers()).find((s) => s.slug === slug);
 }

@@ -160,7 +160,7 @@ export const config = {
    */
   invites: [
     {
-      type: "talk",
+      type: "panel",
       speaker: "Mazen Alotaibi",
       speakerAr: "مازن العتيبي",
       talkTitle: "Introduction to AI Tools for Game Developers",
@@ -171,6 +171,8 @@ export const config = {
       invitedByLogo: "/images/invites/hackathonat.jpg",
       postUrl: "https://x.com/hackathonat/status/1987605905630777367",
       date: "2025-07-05",
+      slides: ["https://github.com/cursorsaudi/events-slides/blob/main/2025-11-riyadh-ai-game.pdf"],
+      photos: ["/invites/hackathonat-ai-game-jam.jpg"],
     },
     {
       type: "interview",
@@ -185,9 +187,10 @@ export const config = {
       postUrl: "https://x.com/Sahelmahdi/status/2016528155645804670",
       recordingUrl: "https://www.youtube.com/watch?v=L435AAiRvXY",
       date: "2026-02-15",
+      photos: ["/invites/sahel-mahdi-interview.png"],
     },
     {
-      type: "talk",
+      type: "interview",
       speaker: "Mazen Alotaibi",
       speakerAr: "مازن العتيبي",
       talkTitle: "Build MVP Without Coding",
@@ -198,6 +201,29 @@ export const config = {
       invitedByLogo: "/images/invites/e3-ventures.jpg",
       postUrl: "https://x.com/e3ventures/status/1923421103038341442",
       date: "2025-05-17",
+      photos: ["/invites/e3-ventures-mvp-talk.jpg"],
+    },
+    {
+      type: "talk",
+      speaker: "Mazen Alotaibi",
+      speakerAr: "مازن العتيبي",
+      talkTitle: "Introduction to Cursor at the Health Datathon",
+      talkTitleAr: "مقدمة عن كيرسر في الداتاثون الصحي",
+      invitedBy: "DAL Health Datathon",
+      invitedByAr: "داتاثون دال الصحي",
+      invitedByUrl: "https://x.com/daldata",
+      invitedByLogo: "/logos/dal.png",
+      postUrl: "https://x.com/cursorsaudi/status/1849101987507462406",
+      date: "2025-10-24",
+      slides: ["https://github.com/cursorsaudi/events-slides/blob/main/2025-10-riyadh-hackathon.pdf"],
+      photos: [
+        "/invites/health-datathon/01-mazen-presenting.jpg",
+        "/invites/health-datathon/02-ai-coding-tools-slide.jpg",
+        "/invites/health-datathon/03-participants-chatting.jpg",
+        "/invites/health-datathon/04-participant-working.jpg",
+        "/invites/health-datathon/05-participant-focused.jpg",
+        "/invites/health-datathon/06-venue-entrance.jpg",
+      ],
     },
   ],
   social: {
