@@ -16,10 +16,6 @@ lumaUrl: "https://lu.ma/f41u8pty"
 slides: 
   - "https://github.com/cursorsaudi/events-slides/blob/main/2025-12-riyadh-meetup.pdf"
   - "https://github.com/cursorsaudi/events-slides/blob/main/2025-12-riyadh-meetup-guest-speaker.pdf"
-tags: 
-
-domain: 
-  - cursorsaudi
 photos: 
   - 8 (2).png
   - 7 (2).png

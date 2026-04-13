@@ -14,10 +14,6 @@ speakers:
 lumaUrl: "https://lu.ma/0fjpw44n"
 slides: 
   - "https://github.com/cursorsaudi/events-slides/blob/main/2026-01-riyadh-meetup.pdf"
-tags: 
-
-domain: 
-  - cursorsaudi
 photos:
   - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G-oihMDXIAAXeWW.jpg"
   - "/images/events/2026-01-10-the-ai-dev-stack-with-cursor/G-oihIVbAAANuY_.jpg"

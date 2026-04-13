@@ -61,6 +61,16 @@ const riyadhPartners = config.partners.filter((p) => (p.cities as readonly strin
 const khobarPartners = config.partners.filter((p) => (p.cities as readonly string[]).includes("Khobar"));
 const jeddahPartners = config.partners.filter((p) => (p.cities as readonly string[]).includes("Jeddah"));
 
+const avatarDecorations = ["deco-gradient-spin", "deco-glow-breathe", "deco-orbit", "deco-ripple", "deco-fire", "deco-sparkle"] as const;
+
+const avatarBadges: Record<string, string> = {
+  "Mazen Alotaibi": "🤖",
+  "Ali Almohammed": "🎮",
+  "Faris Hijazi": "🧪",
+  "Abdullah Mosaibah": "🐐",
+  "Abdulaziz AlMushdaq": "📸",
+};
+
 function formatShortDate(date: Date) {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
@@ -73,7 +83,7 @@ function formatShortDate(date: Date) {
     <AboutEventTypes />
 
     <!-- Chapters Section -->
-    <div id="chapters" class="mb-24 scroll-mt-24">
+    <div class="mb-24">
       <div class="text-center mb-12">
         <span class="text-xs font-mono text-[#999999] uppercase tracking-widest">
           <span class="lang-en">Our Chapters</span>
@@ -333,7 +343,7 @@ function formatShortDate(date: Date) {
     </div>
 
     <!-- Team -->
-    <div id="team" class="mb-24 scroll-mt-24">
+    <div class="mb-24">
       <div class="text-center mb-12">
         <span class="text-xs font-mono text-[#999999] uppercase tracking-widest">
           <span class="lang-en">The People</span>
@@ -346,10 +356,10 @@ function formatShortDate(date: Date) {
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
-        {ambassadors.map((ambassador) => (
+        {ambassadors.map((ambassador, idx) => (
           <div
             class:list={[
-              "bg-[#171717] border rounded-2xl overflow-hidden flex flex-col",
+              "bg-[#171717] border rounded-2xl flex flex-col",
               ambassador.status === "retired"
                 ? "border-amber-500/20"
                 : "border-[#252525]",
@@ -357,15 +367,23 @@ function formatShortDate(date: Date) {
           >
             <div class="flex justify-center pt-8 pb-4">
               {ambassador.photo ? (
-                <img
-                  src={ambassador.photo}
-                  alt={ambassador.name}
-                  class:list={[
-                    "w-24 h-24 rounded-full object-cover border-2",
-                    ambassador.status === "retired" ? "border-amber-500/30 opacity-80" : "border-[#252525]",
-                  ]}
-                  loading="lazy"
-                />
+                <div class:list={[
+                  "avatar-deco",
+                  ambassador.name === "Abdullah Mosaibah" ? "deco-goat" : avatarDecorations[idx % avatarDecorations.length],
+                ]}>
+                  <img
+                    src={ambassador.photo}
+                    alt={ambassador.name}
+                    class:list={[
+                      "w-24 h-24 rounded-full object-cover border-2",
+                      ambassador.status === "retired" ? "border-amber-500/30 opacity-80" : "border-[#252525]",
+                    ]}
+                    loading="lazy"
+                  />
+                  {avatarBadges[ambassador.name] && (
+                    <span class="avatar-badge" aria-hidden="true">{avatarBadges[ambassador.name]}</span>
+                  )}
+                </div>
               ) : (
                 <div class="w-24 h-24 rounded-full bg-[#252525] flex items-center justify-center text-2xl font-bold text-white/50">
                   {ambassador.name.split(" ").map(n => n[0]).join("")}
@@ -464,7 +482,7 @@ function formatShortDate(date: Date) {
           <span class="lang-ar">مهتم بقيادة فرع أو تمثيل كيرسر في جامعتك؟</span>
         </p>
         <div class="flex flex-wrap justify-center gap-4">
-          <a href={localizedPath(pagePath, "/ambassadors/")} class="px-5 py-2.5 rounded-full bg-[#58a6ff] hover:bg-[#79c0ff] text-black text-sm font-medium transition-colors">
+          <a href={localizedPath(pagePath, "/ambassadors/")} class="btn-accent px-5 py-2.5 rounded-full text-sm font-medium">
             <span class="lang-en">Become an Ambassador →</span>
             <span class="lang-ar">كن سفيراً ←</span>
           </a>

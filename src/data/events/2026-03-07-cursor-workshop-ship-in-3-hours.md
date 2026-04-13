@@ -22,10 +22,6 @@ communityPosts:
     authorAr: "المشدق"
     label: "Vlog"
     labelAr: "فلوق"
-tags: 
-
-domain: 
-  - cursorsaudi
 photos:
   - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/HDc4OQRXQAABlmU.jpg"
   - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/HDc4Ms7WAAA-77I.jpg"

@@ -13,9 +13,6 @@ speakers:
   - Mazen Alotaibi
 slides:
   - 'https://github.com/cursorsaudi/events-slides/blob/main/2025-10-riyadh-hackathon.pdf'
-tags: null
-domain:
-  - cursorsaudi
 ---
 
 ## Overview

@@ -95,11 +95,14 @@ Event data was imported from a Notion export (`ExportBlock-f616ed77-905b-4068-97
 
 ## Visual Design (Dark Mode Only)
 
-- **Background**: `#0d1117` (deep dark)
-- **Surface/Cards**: `#161b22` with `1px solid #30363d` border
-- **Primary text**: `#e6edf3`
-- **Secondary text**: `#8b949e`
-- **Accent**: `#58a6ff` (links, CTAs)
+- **Background**: `#0F0F0F` (deep dark)
+- **Surface/Cards**: `#171717` with `1px solid #252525` border
+- **Surface highlight**: `#1F1F1F`
+- **Primary text**: `#FFFFFF`
+- **Muted text**: `#999999`
+- **Dim text**: `#6E6E6E`
+- **Primary CTA**: white bg / black text (`.btn-primary`)
+- **Accent CTA**: `#58a6ff` bg (`.btn-accent`)
 - **Accent hover**: `#79c0ff`
 - RTL layout: mirrored padding, alignment, and flow direction
 

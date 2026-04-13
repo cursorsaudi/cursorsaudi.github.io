@@ -22,10 +22,6 @@ communityPosts:
   - url: "https://x.com/theeFaris/status/1950805628332499182"
     author: "Faris Hijazi"
     authorAr: "فارس حجازي"
-tags: 
-
-domain: 
-  - cursorsaudi
 photos:
   - GxIyD30WUAAGUyP.jpg
   - GxIyNxRXgAQ5vLB.jpg

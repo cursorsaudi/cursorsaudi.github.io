@@ -9,8 +9,4 @@ descriptionAr: ""
 type: meetup
 status: backlog
 venue: ""
-tags: 
-
-domain: 
-  - cursorsaudi
 ---

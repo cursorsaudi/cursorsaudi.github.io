@@ -13,10 +13,6 @@ speakers:
   - Mazen Alotaibi
 slides: 
   - "https://github.com/cursorsaudi/events-slides/blob/main/2025-11-riyadh-ai-game.pdf"
-tags: 
-
-domain: 
-  - cursorsaudi
 ---
 
 ## Overview

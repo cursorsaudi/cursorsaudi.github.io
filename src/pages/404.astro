@@ -1,0 +1,27 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+---
+
+<Layout title="404 — Cursor Saudi" description="Page not found">
+  <Header />
+  <main id="main-content" class="flex-grow pt-[72px] flex items-center justify-center">
+    <div class="text-center px-6 py-24">
+      <p class="text-7xl font-bold text-white/10 mb-4 select-none">404</p>
+      <h1 class="text-2xl font-semibold text-white mb-3">
+        <span class="lang-en">Page not found</span>
+        <span class="lang-ar">الصفحة غير موجودة</span>
+      </h1>
+      <p class="text-[#999999] mb-8 max-w-md mx-auto">
+        <span class="lang-en">The page you're looking for doesn't exist or has been moved.</span>
+        <span class="lang-ar">الصفحة التي تبحث عنها غير موجودة أو تم نقلها.</span>
+      </p>
+      <a href="/ar/" class="btn-primary px-6 py-2.5 rounded-full text-sm font-medium">
+        <span class="lang-en">Back to home</span>
+        <span class="lang-ar">العودة للرئيسية</span>
+      </a>
+    </div>
+  </main>
+  <Footer />
+</Layout>

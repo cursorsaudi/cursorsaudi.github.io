@@ -73,6 +73,28 @@ a {
   color: black;
 }
 
+/* ─── Skip Link ─── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  background: #FFFFFF;
+  color: #000000;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: none;
+}
+
 /* ─── Focus Styles ─── */
 :focus-visible {
   outline: 2px solid rgba(255, 255, 255, 0.5);
@@ -109,6 +131,16 @@ a:focus-visible {
 .section-heading:hover .section-heading-hash,
 .section-heading-link:focus-visible .section-heading-hash {
   opacity: 1;
+}
+
+/* ─── Scrollbar Hide ─── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 /* ─── Glass Nav ─── */
@@ -236,6 +268,29 @@ a:focus-visible {
 .btn-secondary:hover {
   background: rgba(255,255,255,0.1);
   border-color: rgba(255,255,255,0.2);
+}
+
+.btn-accent {
+  background: #58a6ff;
+  color: #000000;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+.btn-accent:hover {
+  background: #79c0ff;
+  transform: translateY(-1px);
+}
+
+.btn-accent:focus-visible {
+  outline-color: rgba(88, 166, 255, 0.8);
+  box-shadow: 0 0 0 4px rgba(88, 166, 255, 0.15);
 }
 
 /* ─── Page Content ─── */
@@ -465,13 +520,312 @@ html[lang="ar"] .blog-lang-ar,
   font-size: 0.875rem;
 }
 
+/* ─── Team Avatar Discord Decorations ─── */
+.avatar-deco {
+  position: relative;
+  width: 7rem;
+  height: 7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.avatar-deco img {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease;
+}
+
+.avatar-deco::before,
+.avatar-deco::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.avatar-deco:hover::before,
+.avatar-deco:hover::after {
+  opacity: 1;
+}
+
+.avatar-deco:hover img {
+  transform: scale(1.05);
+}
+
+/* 1 — Spinning gradient ring */
+.deco-gradient-spin::before {
+  inset: -4px;
+  background: conic-gradient(from 0deg, #58a6ff, #a78bfa, #f472b6, #58a6ff);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.deco-gradient-spin::after {
+  inset: -1px;
+  background: #171717;
+  z-index: 0;
+}
+
+.deco-gradient-spin:hover::before {
+  animation: decoSpin 2.5s linear infinite;
+}
+
+@keyframes decoSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* 2 — Breathing glow pulse */
+.deco-glow-breathe::before {
+  inset: -6px;
+  border: 2px solid rgba(167, 139, 250, 0.6);
+  box-shadow: 0 0 16px rgba(167, 139, 250, 0.4), inset 0 0 16px rgba(167, 139, 250, 0.15);
+}
+
+.deco-glow-breathe:hover::before {
+  animation: decoBreathe 2s ease-in-out infinite;
+}
+
+@keyframes decoBreathe {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(167, 139, 250, 0.3), inset 0 0 12px rgba(167, 139, 250, 0.1);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(167, 139, 250, 0.6), inset 0 0 20px rgba(167, 139, 250, 0.25);
+    transform: scale(1.04);
+  }
+}
+
+/* 3 — Dashed orbit ring */
+.deco-orbit::before {
+  inset: -8px;
+  border: 2px dashed rgba(52, 211, 153, 0.5);
+}
+
+.deco-orbit::after {
+  inset: -14px;
+  border: 1px dashed rgba(52, 211, 153, 0.25);
+}
+
+.deco-orbit:hover::before {
+  animation: decoOrbitCW 4s linear infinite;
+}
+
+.deco-orbit:hover::after {
+  animation: decoOrbitCCW 6s linear infinite;
+}
+
+@keyframes decoOrbitCW {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes decoOrbitCCW {
+  to { transform: rotate(-360deg); }
+}
+
+/* 4 — Ripple rings */
+.deco-ripple::before {
+  inset: -4px;
+  border: 2px solid rgba(244, 114, 182, 0.6);
+}
+
+.deco-ripple::after {
+  inset: -4px;
+  border: 2px solid rgba(244, 114, 182, 0.6);
+}
+
+.deco-ripple:hover::before {
+  animation: decoRipple 1.8s ease-out infinite;
+}
+
+.deco-ripple:hover::after {
+  animation: decoRipple 1.8s ease-out 0.6s infinite;
+}
+
+@keyframes decoRipple {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+/* 5 — Fire energy ring */
+.deco-fire::before {
+  inset: -5px;
+  background: conic-gradient(from 0deg, transparent 0%, #fbbf24 25%, #f97316 50%, #ef4444 75%, transparent 100%);
+  border-radius: 50%;
+  z-index: 0;
+  filter: blur(3px);
+}
+
+.deco-fire::after {
+  inset: -1px;
+  background: #171717;
+  z-index: 0;
+}
+
+.deco-fire:hover::before {
+  animation: decoFire 1.5s linear infinite;
+  filter: blur(3px);
+}
+
+@keyframes decoFire {
+  to { transform: rotate(360deg); }
+}
+
+/* 6 — Sparkle shimmer border */
+.deco-sparkle::before {
+  inset: -4px;
+  border: 2px solid transparent;
+  background: linear-gradient(#171717, #171717) padding-box,
+              linear-gradient(90deg, #fb923c, #fbbf24, #34d399, #58a6ff, #a78bfa, #fb923c) border-box;
+  background-size: 100% 100%, 300% 100%;
+}
+
+.deco-sparkle::after {
+  inset: -8px;
+  border: 1px solid transparent;
+  background: linear-gradient(#171717, #171717) padding-box,
+              linear-gradient(90deg, #fb923c44, #fbbf2444, #34d39944, #58a6ff44, #a78bfa44, #fb923c44) border-box;
+  background-size: 100% 100%, 300% 100%;
+}
+
+.deco-sparkle:hover::before {
+  animation: decoShimmer 2s linear infinite;
+}
+
+.deco-sparkle:hover::after {
+  animation: decoShimmer 2s linear infinite reverse;
+}
+
+@keyframes decoShimmer {
+  0%   { background-position: 0 0, 0% 0; }
+  100% { background-position: 0 0, 300% 0; }
+}
+
+/* GOAT — golden multi-layered crown decoration */
+.deco-goat {
+  --goat-gold: #fbbf24;
+  --goat-gold-bright: #fde68a;
+  --goat-amber: #f59e0b;
+}
+
+.deco-goat::before {
+  inset: -5px;
+  background: conic-gradient(
+    from 0deg,
+    var(--goat-gold),
+    var(--goat-gold-bright),
+    var(--goat-amber),
+    #ffffff,
+    var(--goat-amber),
+    var(--goat-gold-bright),
+    var(--goat-gold)
+  );
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.deco-goat::after {
+  inset: -1px;
+  background: #171717;
+  z-index: 0;
+}
+
+.deco-goat:hover::before {
+  animation: decoGoatSpin 2s linear infinite;
+  filter: brightness(1.2);
+  box-shadow:
+    0 0 20px rgba(251, 191, 36, 0.5),
+    0 0 50px rgba(251, 191, 36, 0.2);
+}
+
+.deco-goat:hover img {
+  border-color: var(--goat-gold) !important;
+  box-shadow: 0 0 18px rgba(251, 191, 36, 0.35);
+}
+
+@keyframes decoGoatSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Shared avatar badge (emoji pop-in on hover) */
+.avatar-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  z-index: 2;
+  font-size: 1.15rem;
+  line-height: 1;
+  background: #171717;
+  border-radius: 50%;
+  width: 1.75rem;
+  height: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #444;
+  opacity: 0;
+  transform: scale(0.5) rotate(-20deg);
+  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.avatar-deco:hover .avatar-badge {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.deco-gradient-spin .avatar-badge {
+  border-color: #58a6ff;
+  box-shadow: 0 0 10px rgba(88, 166, 255, 0.4);
+}
+
+.deco-glow-breathe .avatar-badge {
+  border-color: #a78bfa;
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.4);
+}
+
+.deco-orbit .avatar-badge {
+  border-color: #34d399;
+  box-shadow: 0 0 10px rgba(52, 211, 153, 0.4);
+}
+
+.deco-fire .avatar-badge {
+  border-color: #f97316;
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+}
+
+.deco-goat .avatar-badge {
+  border-color: var(--goat-gold);
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.5);
+  font-size: 1.25rem;
+}
+
 /* ─── Reduced Motion ─── */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .animate-on-scroll {
+    opacity: 1;
+    transform: none;
   }
 }

@@ -84,6 +84,17 @@ function formatInviteFullDate(isoDate: string): { en: string; ar: string } {
   };
 }
 
+/** "Invited by" href: locale-prefixed for site paths, unchanged for external URLs. */
+function inviteInviterHref(url: string): string {
+  if (!url.startsWith("/")) return url;
+  const path = url === "/" ? "/" : url.endsWith("/") ? url : `${url}/`;
+  return localizedPath(pagePath, path);
+}
+
+function isSameSiteInviteUrl(url: string): boolean {
+  return url.startsWith("/");
+}
+
 function typeLabel(type: string): { en: string; ar: string } {
   const labels: Record<string, { en: string; ar: string }> = {
     meetup: { en: "Meetup", ar: "لقاء" },
@@ -233,21 +244,22 @@ function typeLabel(type: string): { en: string; ar: string } {
                     const displayNameEn = info?.name ?? name;
                     const displayNameAr = info?.nameAr ?? displayNameEn;
                     const partner = info?.affiliationPartnerSlug ? getAffiliationPartnerDisplay(info.affiliationPartnerSlug) : undefined;
+                    const SpeakerTag = info ? "a" : "span";
                     return (
-                      <a href={info ? localizedPath(pagePath, `/speakers/${info.slug}/`) : "#"} class="flex items-center gap-1.5 hover:text-white transition-colors group/speaker">
+                      <SpeakerTag {...(info ? { href: localizedPath(pagePath, `/speakers/${info.slug}/`) } : {})} class={`flex items-center gap-1.5 ${info ? "hover:text-white cursor-pointer" : ""} transition-colors group/speaker`}>
                         {info?.photo ? (
                           <img src={info.photo} alt="" class="w-5 h-5 rounded-full object-cover shrink-0 border border-[#252525]" width="20" height="20" loading="lazy" />
                         ) : (
                           <span class="w-5 h-5 rounded-full bg-[#252525] border border-[#333] shrink-0 flex items-center justify-center text-[7px] font-bold text-[#8A8A8A]">{info?.initials ?? name.slice(0, 2).toUpperCase()}</span>
                         )}
-                        <span class="group-hover/speaker:text-white transition-colors">
+                        <span class={`${info ? "group-hover/speaker:text-white" : ""} transition-colors`}>
                           <span class="lang-en">{displayNameEn}</span>
                           <span class="lang-ar">{displayNameAr}</span>
                         </span>
                         {partner && (
                           <img src={partner.logo} alt={partner.name} class="w-3.5 h-3.5 object-contain opacity-50 shrink-0" width="14" height="14" loading="lazy" />
                         )}
-                      </a>
+                      </SpeakerTag>
                     );
                   })}
                 </div>
@@ -427,21 +439,22 @@ function typeLabel(type: string): { en: string; ar: string } {
                       const displayNameEn = info?.name ?? name;
                       const displayNameAr = info?.nameAr ?? displayNameEn;
                       const partner = info?.affiliationPartnerSlug ? getAffiliationPartnerDisplay(info.affiliationPartnerSlug) : undefined;
+                      const SpeakerTag = info ? "a" : "span";
                       return (
-                        <a href={info ? localizedPath(pagePath, `/speakers/${info.slug}/`) : "#"} class="flex items-center gap-1.5 hover:text-white transition-colors group/speaker">
+                        <SpeakerTag {...(info ? { href: localizedPath(pagePath, `/speakers/${info.slug}/`) } : {})} class={`flex items-center gap-1.5 ${info ? "hover:text-white cursor-pointer" : ""} transition-colors group/speaker`}>
                           {info?.photo ? (
                             <img src={info.photo} alt="" class="w-5 h-5 rounded-full object-cover shrink-0 border border-[#252525]" width="20" height="20" loading="lazy" />
                           ) : (
                             <span class="w-5 h-5 rounded-full bg-[#252525] border border-[#333] shrink-0 flex items-center justify-center text-[7px] font-bold text-[#8A8A8A]">{info?.initials ?? name.slice(0, 2).toUpperCase()}</span>
                           )}
-                          <span class="group-hover/speaker:text-white transition-colors">
+                          <span class={`${info ? "group-hover/speaker:text-white" : ""} transition-colors`}>
                             <span class="lang-en">{displayNameEn}</span>
                             <span class="lang-ar">{displayNameAr}</span>
                           </span>
                           {partner && (
                             <img src={partner.logo} alt={partner.name} class="w-3.5 h-3.5 object-contain opacity-50 shrink-0" width="14" height="14" loading="lazy" />
                           )}
-                        </a>
+                        </SpeakerTag>
                       );
                     })}
                   </div>
@@ -596,18 +609,19 @@ function typeLabel(type: string): { en: string; ar: string } {
                     const speakerInfo = speakerMap.get(invite.speaker.toLowerCase().trim());
                     const inviteSpeakerEn = speakerInfo?.name ?? invite.speaker;
                     const inviteSpeakerAr = speakerInfo?.nameAr ?? inviteSpeakerEn;
+                    const InviteSpeakerTag = speakerInfo ? "a" : "span";
                     return (
-                      <a href={speakerInfo ? localizedPath(pagePath, `/speakers/${speakerInfo.slug}/`) : "#"} class="flex items-center gap-1.5 text-xs text-[#6E6E6E] hover:text-white transition-colors group/speaker">
+                      <InviteSpeakerTag {...(speakerInfo ? { href: localizedPath(pagePath, `/speakers/${speakerInfo.slug}/`) } : {})} class={`flex items-center gap-1.5 text-xs text-[#6E6E6E] ${speakerInfo ? "hover:text-white cursor-pointer" : ""} transition-colors group/speaker`}>
                         {speakerInfo?.photo ? (
                           <img src={speakerInfo.photo} alt="" class="w-5 h-5 rounded-full object-cover shrink-0 border border-[#252525]" width="20" height="20" loading="lazy" />
                         ) : (
                           <span class="w-5 h-5 rounded-full bg-[#252525] border border-[#333] shrink-0 flex items-center justify-center text-[7px] font-bold text-[#8A8A8A]">{speakerInfo?.initials ?? invite.speaker.slice(0, 2).toUpperCase()}</span>
                         )}
-                        <span class="group-hover/speaker:text-white transition-colors">
+                        <span class={`${speakerInfo ? "group-hover/speaker:text-white" : ""} transition-colors`}>
                           <span class="lang-en">{inviteSpeakerEn}</span>
                           <span class="lang-ar">{inviteSpeakerAr}</span>
                         </span>
-                      </a>
+                      </InviteSpeakerTag>
                     );
                   })()}
                   <div class="flex items-center gap-2 text-xs text-[#999999]">
@@ -623,11 +637,23 @@ function typeLabel(type: string): { en: string; ar: string } {
                     )}
                     <span class="lang-en">
                       {invite.type === "interview" ? "interviewed by " : "invited by "}
-                      <a href={invite.invitedByUrl} target="_blank" rel="noreferrer" class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors">{invite.invitedBy}</a>
+                      <a
+                        href={inviteInviterHref(invite.invitedByUrl)}
+                        class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors"
+                        {...(isSameSiteInviteUrl(invite.invitedByUrl) ? {} : { target: "_blank", rel: "noreferrer" })}
+                      >
+                        {invite.invitedBy}
+                      </a>
                     </span>
                     <span class="lang-ar">
                       {invite.type === "interview" ? "في مقابلة مع " : "دُعي من "}
-                      <a href={invite.invitedByUrl} target="_blank" rel="noreferrer" class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors">{invite.invitedByAr}</a>
+                      <a
+                        href={inviteInviterHref(invite.invitedByUrl)}
+                        class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors"
+                        {...(isSameSiteInviteUrl(invite.invitedByUrl) ? {} : { target: "_blank", rel: "noreferrer" })}
+                      >
+                        {invite.invitedByAr}
+                      </a>
                     </span>
                   </div>
                 </div>

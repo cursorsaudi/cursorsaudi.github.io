@@ -11,10 +11,6 @@ status: concluded
 venue: Khobar Tech Hub
 speakers: 
   - Abdulhakeem Almidan
-tags: 
-
-domain: 
-  - cursorsaudi
 photos:
   - 01-evolution-of-ai-in-coding.png
   - 02-documentation-indexing.png

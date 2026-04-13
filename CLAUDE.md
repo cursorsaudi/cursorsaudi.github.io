@@ -60,9 +60,9 @@ Events live in `src/data/events/` as Markdown files. Schema defined in `src/cont
 
 ## Design Tokens (Dark Only)
 
-- Background: `#0d1117` | Surface: `#161b22` | Border: `#30363d`
-- Primary text: `#e6edf3` | Secondary: `#8b949e`
-- Accent: `#58a6ff` | Accent hover: `#79c0ff`
+- Background: `#0F0F0F` | Surface: `#171717` | Surface highlight: `#1F1F1F` | Border: `#252525`
+- Primary text: `#FFFFFF` | Muted: `#999999` | Dim: `#6E6E6E`
+- Primary CTA: white bg / black text (`.btn-primary`) | Accent CTA: `#58a6ff` bg (`.btn-accent`) | Accent hover: `#79c0ff`
 
 ## Conventions
 

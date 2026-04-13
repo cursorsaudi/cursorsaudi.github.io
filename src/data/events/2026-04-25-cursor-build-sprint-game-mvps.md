@@ -10,10 +10,6 @@ type: build
 status: informed
 venue: ""
 lumaUrl: "https://lu.ma/8571jsfj"
-tags: 
-
-domain: 
-  - cursorsaudi
 ---
 
 Build your favorite game.

@@ -12,6 +12,11 @@
 
   html.lang = lang;
   html.dir = lang === "ar" ? "rtl" : "ltr";
+
+  var toggleBtn = document.getElementById("lang-toggle");
+  if (toggleBtn) {
+    toggleBtn.setAttribute("aria-label", lang === "ar" ? "Switch to English" : "التبديل إلى العربية");
+  }
 })();
 
 function setupLangToggle() {
@@ -36,6 +41,7 @@ function setupLangToggle() {
     var cur = document.documentElement.lang === "en" ? "en" : "ar";
     var next = cur === "ar" ? "en" : "ar";
     try { localStorage.setItem("lang", next); } catch (e) {}
+    btn.setAttribute("aria-label", next === "ar" ? "Switch to English" : "التبديل إلى العربية");
     window.location.href = withLocale(location.pathname, next) + location.search + location.hash;
   });
 }
