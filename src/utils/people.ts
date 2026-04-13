@@ -305,12 +305,12 @@ async function resolvePartnerEvents(
   const all = await getSortedEvents();
   const explicit = new Set(partner.events);
   const venues = new Set(partner.eventVenues);
-  const matched = all.filter((e) => {
+  const matched = all.filter((e: EventEntry) => {
     if (explicit.has(e.id)) return true;
     if (e.data.venue && venues.has(e.data.venue)) return true;
     return false;
   });
-  return matched.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+  return matched.sort((a: EventEntry, b: EventEntry) => b.data.date.getTime() - a.data.date.getTime());
 }
 
 function speakerToContributor(s: ConfigSpeaker): PartnerContributor {

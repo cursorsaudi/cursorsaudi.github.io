@@ -1,4 +1,7 @@
-import { getCollection, render, type CollectionEntry } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
+
+export type BlogCollectionEntry = CollectionEntry<"blog">;
+export type EventCollectionEntry = CollectionEntry<"events">;
 
 export interface BlogPost {
   slug: string;
@@ -16,8 +19,8 @@ export interface BlogPost {
   eventLocation?: string;
   eventLocationAr?: string;
   eventSlides?: string[];
-  // The raw entry for rendering
-  entry: any;
+  /** Raw collection entry for `render()` in blog post pages */
+  entry: EventCollectionEntry | BlogCollectionEntry;
 }
 
 export async function getEventBlogPosts(): Promise<BlogPost[]> {
@@ -26,7 +29,6 @@ export async function getEventBlogPosts(): Promise<BlogPost[]> {
 
   for (const event of events) {
     if (event.data.status !== "concluded") continue;
-    const { Content } = await render(event);
     // Check if body content is substantial
     if (!event.body || event.body.length <= 100) continue;
 
@@ -57,10 +59,10 @@ export async function getEventBlogPosts(): Promise<BlogPost[]> {
 }
 
 export async function getStandaloneBlogPosts(): Promise<BlogPost[]> {
-  const entries = await getCollection("blog");
+  const entries: BlogCollectionEntry[] = await getCollection("blog");
   return entries
-    .filter((entry) => !entry.data.draft)
-    .map((entry) => ({
+    .filter((entry: BlogCollectionEntry) => !entry.data.draft)
+    .map((entry: BlogCollectionEntry) => ({
       slug: entry.id,
       source: "blog" as const,
       title: entry.data.title,

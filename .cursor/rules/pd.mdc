@@ -6,7 +6,7 @@ alwaysApply: true
 
 ## Project Overview
 
-Community website for Cursor Saudi (cursorsaudi.com), inspired by [CursorThailand.com](https://cursorthailand.com). Single-page site with hero, upcoming events, past events, and footer.
+Community website for Cursor Saudi (cursorsaudi.com), inspired by [CursorThailand.com](https://cursorthailand.com). Multi-route static site: home, events, albums, about, ambassadors, partnerships, thank you, blog (event recaps), speakers, and partners.
 
 ## Stack
 
@@ -14,23 +14,22 @@ Community website for Cursor Saudi (cursorsaudi.com), inspired by [CursorThailan
 - **Styling**: Tailwind CSS v4 via `@tailwindcss/vite`
 - **Language**: TypeScript (strict)
 - **Package manager**: pnpm
-- **Deployment**: GitHub Pages via GitHub Actions
+- **Deployment**: Cloudflare Pages via GitHub Actions (`pnpm check`, `pnpm build`, `wrangler pages deploy`)
 - **Domain**: cursorsaudi.com (CNAME in `public/`)
 
 ## Key Constraints
 
 - **Bilingual**: Arabic (default, RTL) + English (LTR) with client-side toggle stored in `localStorage`
 - **Dark mode only**: No theme toggle. Single dark color scheme.
-- **Minimal scope**: Hero, upcoming events, past events, footer. No blog, search, or RSS.
-- **Content collections**: Events managed as Markdown files in `src/data/events/` with Zod-validated frontmatter.
+- **Content collections**: Events in `src/data/events/`; optional blog posts in `src/data/blog/` — Zod-validated in `content.config.ts`.
 - **Community links**: Luma (event registration) + X/Twitter
 
 ## Project Structure
 
 ```
 cursorsaudi.com/
-├── .github/workflows/deploy.yml    # GitHub Pages deployment
-├── astro.config.ts                  # site: "https://cursorsaudi.com", Tailwind v4, sitemap
+├── .github/workflows/deploy.yml    # CI: check → build → Cloudflare Pages deploy
+├── astro.config.ts                  # site, Tailwind v4, sitemap, config asset validation
 ├── package.json
 ├── tsconfig.json                    # base: astro/tsconfigs/strict, paths: @/* -> ./src/*
 ├── public/
@@ -40,29 +39,25 @@ cursorsaudi.com/
 │   └── toggle-lang.js              # Language toggle script (runs before hydration)
 └── src/
     ├── components/
-    │   ├── Header.astro             # Logo + LangToggle
-    │   ├── Hero.astro               # Tagline, description, CTA
-    │   ├── EventCard.astro          # Reusable card for upcoming/past events
-    │   ├── UpcomingEvents.astro     # Future events list
-    │   ├── PastEvents.astro         # Past events with speakers, slides
+    │   ├── Header.astro             # Logo + nav + LangToggle
+    │   ├── HomePage.astro           # Home hero, stats, featured events, partners strip
+    │   ├── EventsPage.astro         # Full events listing
     │   ├── Footer.astro             # Social links (Luma, X), copyright
     │   └── LangToggle.astro         # AR/EN switcher
     ├── config.ts                    # Site-wide constants (title, description, socials, ambassadors)
     ├── content.config.ts            # Event collection schema (Zod)
     ├── data/
     │   └── events/                  # Markdown event files
-    ├── i18n/
-    │   ├── ar.json                  # Arabic UI strings
-    │   ├── en.json                  # English UI strings
-    │   └── index.ts                 # getTranslation(lang, key) utility
     ├── layouts/
     │   └── Layout.astro             # Base HTML: dark mode, RTL/LTR dir, meta, OG
     ├── pages/
-    │   └── index.astro              # Homepage assembling all sections
+    │   ├── index.astro              # Home
+    │   ├── events.astro, about.astro, …  # Other routes
     ├── styles/
     │   └── global.css               # Tailwind imports, dark theme CSS variables
     └── utils/
-        └── events.ts               # getSortedEvents, getUpcoming, getPast (computed from date)
+        ├── events.ts                # getSortedEvents, getUpcoming, getPast, …
+        └── validate-site-config.ts # Public asset paths referenced from config
 ```
 
 ## Event Content Collection Schema
@@ -93,9 +88,8 @@ Event data was imported from a Notion export (`ExportBlock-f616ed77-905b-4068-97
 
 ## i18n Approach
 
-- JSON files (`ar.json`, `en.json`) hold UI string translations (hero text, section headings, button labels, footer text).
-- `toggle-lang.js` in `public/` reads `localStorage` before page render to set `<html dir="rtl" lang="ar">` or `<html dir="ltr" lang="en">`, preventing layout flash.
-- Components use `getTranslation(lang, key)` to resolve strings.
+- Bilingual UI uses paired `<span class="lang-ar">` / `<span class="lang-en">` blocks (CSS shows one language at a time).
+- `public/toggle-lang.js` is loaded from `Layout.astro` so `<html dir>` and `lang` match `localStorage` early, preventing layout flash.
 - Arabic font stack: `"Noto Kufi Arabic", "IBM Plex Arabic", system-ui`
 - English font stack: `Inter, system-ui, sans-serif`
 
@@ -111,7 +105,7 @@ Event data was imported from a Notion export (`ExportBlock-f616ed77-905b-4068-97
 
 ## GitHub Actions Deployment
 
-Trigger on push to `main`. Steps: checkout → setup pnpm v9 → setup Node 20 → `pnpm install --frozen-lockfile` → `pnpm run build` → upload pages artifact → deploy pages.
+Trigger on push to `main`. Steps: checkout → pnpm v9 → Node 20 → `pnpm install --frozen-lockfile` → `pnpm check` → `pnpm build` → Cloudflare Pages deploy (`wrangler pages deploy ./dist`).
 
 ## Site Configuration (`src/config.ts`)
 

@@ -154,6 +154,52 @@ export const config = {
       affiliation: "cursor",
     },
   ],
+  /**
+   * Invitations from external organizations for community members to speak or
+   * participate in their events. Rendered in the Thank You page.
+   */
+  invites: [
+    {
+      type: "talk",
+      speaker: "Mazen Alotaibi",
+      speakerAr: "مازن العتيبي",
+      talkTitle: "Introduction to AI Tools for Game Developers",
+      talkTitleAr: "مقدمة في أدوات الذكاء الاصطناعي لمطوري الألعاب",
+      invitedBy: "Hackathonat",
+      invitedByAr: "هاكاثونات",
+      invitedByUrl: "https://x.com/hackathonat",
+      invitedByLogo: "/images/invites/hackathonat.jpg",
+      postUrl: "https://x.com/hackathonat/status/1987605905630777367",
+      date: "2025-07-05",
+    },
+    {
+      type: "interview",
+      speaker: "Mazen Alotaibi",
+      speakerAr: "مازن العتيبي",
+      talkTitle: "AI Tools and Cursor",
+      talkTitleAr: "أدوات الذكاء الاصطناعي وكيرسر",
+      invitedBy: "Sahel Mahdi",
+      invitedByAr: "سهل مهدي",
+      invitedByUrl: "https://x.com/Sahelmahdi",
+      invitedByLogo: "/images/invites/sahel-mahdi.jpg",
+      postUrl: "https://x.com/Sahelmahdi/status/2016528155645804670",
+      recordingUrl: "https://www.youtube.com/watch?v=L435AAiRvXY",
+      date: "2026-02-15",
+    },
+    {
+      type: "talk",
+      speaker: "Mazen Alotaibi",
+      speakerAr: "مازن العتيبي",
+      talkTitle: "Build MVP Without Coding",
+      talkTitleAr: "ابنِ نموذجك الأولي بدون برمجة",
+      invitedBy: "E3 Ventures",
+      invitedByAr: "E3 Ventures",
+      invitedByUrl: "https://x.com/e3ventures",
+      invitedByLogo: "/images/invites/e3-ventures.jpg",
+      postUrl: "https://x.com/e3ventures/status/1923421103038341442",
+      date: "2025-05-17",
+    },
+  ],
   social: {
     luma: "https://lu.ma/cursor-saudi",
     discord: "https://discord.gg/KpsKtegvz4",
@@ -365,6 +411,17 @@ export const config = {
       cities: ["Riyadh"],
       eventVenues: [],
       events: ["2025-05-28-kickoff"],
+      contributors: [
+        {
+          name: "Reda Banjar",
+          nameAr: "رضا بنجر",
+          role: "Founder & CEO",
+          roleAr: "مؤسس ورئيس تنفيذي",
+          twitter: "https://x.com/RedaBanjar",
+          twitterHandle: "RedaBanjar",
+          photo: "/images/partners/nauatech/reda-banjar.jpg",
+        },
+      ],
     },
   ],
 } as const;

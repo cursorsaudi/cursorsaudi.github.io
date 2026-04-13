@@ -16,18 +16,26 @@ speakers:
 lumaUrl: "https://lu.ma/cwbemd5n"
 slides: 
   - "https://github.com/cursorsaudi/events-slides/blob/main/2026-03-07-cursor-workshop-ship-in-3-hours.pdf"
+communityPosts:
+  - url: "https://x.com/Al_Mushdaq/status/2030625772734439789"
+    author: "Al Mushdaq"
+    authorAr: "المشدق"
+    label: "Vlog"
+    labelAr: "فلوق"
 tags: 
 
 domain: 
   - cursorsaudi
-photos: 
-  - WhatsApp Image 2026-03-09 at 3.28.27 PM (2).jpeg
-  - WhatsApp Image 2026-03-09 at 3.28.27 PM (1).jpeg
-  - WhatsApp Image 2026-03-09 at 3.28.27 PM.jpeg
-  - WhatsApp Image 2026-03-09 at 3.28.26 PM (2).jpeg
-  - WhatsApp Image 2026-03-09 at 3.28.26 PM (1).jpeg
-  - WhatsApp Image 2026-03-09 at 3.28.26 PM.jpeg
-coverPhoto: WhatsApp Image 2026-03-09 at 3.28.27 PM (2).jpeg
+photos:
+  - "https://pbs.twimg.com/media/HDc4OQRXQAABlmU?format=jpg&name=large"
+  - "https://pbs.twimg.com/media/HDc4Ms7WAAA-77I?format=jpg&name=large"
+  - "https://pbs.twimg.com/media/HDc4Ms4WQAAYufb?format=jpg&name=large"
+  - "https://pbs.twimg.com/media/HDc4Ms0XkAAQm_o?format=jpg&name=large"
+  - "https://pbs.twimg.com/media/HDc4Ms7XUAAuPno?format=jpg&name=large"
+  - "https://pbs.twimg.com/media/HDc4OO3XsAAIyQy?format=jpg&name=large"
+  - "https://pbs.twimg.com/media/HDc4OQRWQAAqN5P?format=jpg&name=large"
+  - "https://pbs.twimg.com/media/HDc4OPBWYAAr_sQ?format=jpg&name=large"
+coverPhoto: "https://pbs.twimg.com/media/HDc4OQRXQAABlmU?format=jpg&name=large"
 photographers:
   - Hanouf Almogri
   - Raghad Alshathri

@@ -1,15 +1,26 @@
 ---
 import { getUpcomingEvents, getPastEvents, getEventThumbnailUrl } from "@/utils/events";
 import { getEventIdsWithBlog, eventBlogSlug } from "@/utils/blog";
+import type { CollectionEntry } from "astro:content";
+import PageToc from "@/components/PageToc.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+
+type EventEntry = CollectionEntry<"events">;
 
 const allUpcoming = await getUpcomingEvents();
-const upcoming = allUpcoming.filter((e) => e.data.status !== "backlog");
-const backlog = allUpcoming.filter((e) => e.data.status === "backlog");
+const upcoming = allUpcoming.filter((e: EventEntry) => e.data.status !== "backlog");
+const backlog = allUpcoming.filter((e: EventEntry) => e.data.status === "backlog");
 const past = await getPastEvents();
 const blogEventIds = await getEventIdsWithBlog();
 
 /** Shown when an event has no `coverPhoto` / photo assets for the card strip. */
 const eventCardPlaceholder = "/placeholders/event-card.svg";
+
+const tocItems = [
+  ...(backlog.length > 0 ? [{ id: "planned-dates", labelEn: "Planned dates", labelAr: "تواريخ مخطط لها" }] : []),
+  { id: "upcoming", labelEn: "Upcoming", labelAr: "القادمة" },
+  { id: "past", labelEn: "Past", labelAr: "السابقة" },
+];
 
 function formatMonth(date: Date) {
   return date.toLocaleDateString("en-US", { month: "short" });
@@ -57,20 +68,22 @@ function typeLabel(type: string): { en: string; ar: string } {
       </p>
     </div>
 
+    <PageToc items={tocItems} />
+
     <div id="events-sections">
       {backlog.length > 0 && (
         <div class="mb-14">
-          <h2 class="text-xs font-mono text-[#6E6E6E] uppercase tracking-widest mb-4">
+          <SectionHeading id="planned-dates" class="text-xs font-mono text-[#6E6E6E] uppercase tracking-widest mb-4">
             <span class="lang-en">Planned dates</span>
             <span class="lang-ar">تواريخ مخطط لها</span>
-          </h2>
+          </SectionHeading>
           <div class="border border-dashed border-[#252525] rounded-2xl p-6">
             <p class="text-sm text-[#6E6E6E] mb-4">
               <span class="lang-en">Tentative slots — details and registration will be announced later.</span>
               <span class="lang-ar">مواعيد تقريبية — التفاصيل والتسجيل يُعلَنان لاحقاً.</span>
             </p>
             <div class="flex flex-wrap gap-3">
-              {backlog.map((event) => {
+              {backlog.map((event: EventEntry) => {
                 const mEn = event.data.date.toLocaleDateString("en-US", { month: "short" });
                 const dEn = event.data.date.getDate();
                 const mAr = event.data.date.toLocaleDateString("ar-SA", { month: "short" });
@@ -98,12 +111,12 @@ function typeLabel(type: string): { en: string; ar: string } {
       )}
 
       <div class="mb-14">
-        <h2 class="text-xs font-mono text-[#6E6E6E] uppercase tracking-widest mb-4">
+        <SectionHeading id="upcoming" class="text-xs font-mono text-[#6E6E6E] uppercase tracking-widest mb-4">
           <span class="lang-en">Upcoming</span>
           <span class="lang-ar">القادمة</span>
-        </h2>
+        </SectionHeading>
         <div class="grid md:grid-cols-3 gap-6">
-          {upcoming.map((event) => {
+          {upcoming.map((event: EventEntry) => {
             const thumbUrl = getEventThumbnailUrl(event);
             return (
             <div class="event-card bg-[#171717] border border-[#252525] rounded-2xl overflow-hidden hover:border-white/20 transition-all group flex flex-col h-full">
@@ -180,16 +193,16 @@ function typeLabel(type: string): { en: string; ar: string } {
       </div>
 
       <div>
-        <h2 class="text-xs font-mono text-[#6E6E6E] uppercase tracking-widest mb-2">
+        <SectionHeading id="past" class="text-xs font-mono text-[#6E6E6E] uppercase tracking-widest mb-2">
           <span class="lang-en">Past</span>
           <span class="lang-ar">السابقة</span>
-        </h2>
+        </SectionHeading>
         <p class="text-sm text-[#6E6E6E] mb-6 max-w-2xl">
           <span class="lang-en">Each recap is a full post with photos, takeaways, and links. Open “Read recap” to view it.</span>
           <span class="lang-ar">كل ملخص تدوينة كاملة مع صور ونقاط وروابط. اضغط «اقرأ الملخص» لعرضها.</span>
         </p>
         <div class="grid md:grid-cols-3 gap-6">
-          {past.map((event) => {
+          {past.map((event: EventEntry) => {
             const hasRecap = blogEventIds.has(event.id);
             const thumbUrl = getEventThumbnailUrl(event);
             return (
@@ -258,7 +271,7 @@ function typeLabel(type: string): { en: string; ar: string } {
                   )}
                   {event.data.slides && event.data.slides.length > 0 && (
                     <div class="flex flex-wrap gap-2">
-                      {event.data.slides.map((url, i) => (
+                      {event.data.slides.map((url: string, i: number) => (
                         <a href={url} target="_blank" rel="noreferrer" class="text-xs text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">
                           <span class="lang-en">{event.data.slides.length > 1 ? `Slide ${i + 1}` : "Slides"}</span>
                           <span class="lang-ar">{event.data.slides.length > 1 ? `عرض ${i + 1}` : "الشرائح"}</span>

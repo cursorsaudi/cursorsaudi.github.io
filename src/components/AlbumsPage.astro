@@ -1,13 +1,25 @@
 ---
 import { getEventsWithAlbums, getEventCoverUrl, getEventImageUrl, isVideo } from "@/utils/events";
 import { config } from "@/config";
+import type { CollectionEntry } from "astro:content";
+
+type EventEntry = CollectionEntry<"events">;
 
 const albums = await getEventsWithAlbums();
 
 type PersonLookup = { nameAr: string; href: string | null };
+/** Photographer row with English display name (frontmatter is usually EN). */
+type PhotoCreditRow = { nameEn: string; nameAr: string; href: string | null };
 const personLookup = new Map<string, PersonLookup>();
 
-for (const speaker of (config as { speakers?: { slug: string; name: string; nameAr?: string; aliases?: string[] }[] }).speakers ?? []) {
+/** Narrow `config.speakers` for lookup building (avoids `never` from wide `as const` inference in Astro check). */
+type SpeakerLookupSource = {
+  name: string;
+  nameAr?: string;
+  slug: string;
+  aliases?: readonly string[];
+};
+for (const speaker of config.speakers as unknown as readonly SpeakerLookupSource[]) {
   const entry: PersonLookup = {
     nameAr: speaker.nameAr ?? speaker.name,
     href: `/speakers/${speaker.slug}`,
@@ -16,8 +28,10 @@ for (const speaker of (config as { speakers?: { slug: string; name: string; name
   for (const alias of speaker.aliases ?? []) personLookup.set(alias, entry);
 }
 
-for (const partner of config.partners as { slug: string; contributors?: { name: string; nameAr?: string }[] }[]) {
-  for (const c of partner.contributors ?? []) {
+type PartnerContributorSource = { name: string; nameAr?: string };
+for (const partner of config.partners) {
+  const contributors = "contributors" in partner ? (partner.contributors as readonly PartnerContributorSource[] | undefined) : undefined;
+  for (const c of contributors ?? []) {
     if (personLookup.has(c.name)) continue;
     personLookup.set(c.name, {
       nameAr: c.nameAr ?? c.name,
@@ -85,7 +99,7 @@ function joinerAr(idx: number, total: number) {
         </div>
       ) : (
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {albums.map((event) => {
+          {albums.map((event: EventEntry) => {
             const coverUrl = getEventCoverUrl(event);
             const photoCount = event.data.photos?.length ?? 0;
             const videoCount = event.data.videos?.length ?? 0;
@@ -154,9 +168,9 @@ function joinerAr(idx: number, total: number) {
     </div>
 
     <!-- Detail Views (one per album, hidden by default) -->
-    {albums.map((event) => {
+    {albums.map((event: EventEntry) => {
       const media = getAllMedia(event);
-      const photographers = (event.data.photographers ?? []).map((name: string) => ({
+      const photographers: PhotoCreditRow[] = (event.data.photographers ?? []).map((name: string) => ({
         nameEn: name,
         ...resolvePerson(name),
       }));
@@ -198,7 +212,7 @@ function joinerAr(idx: number, total: number) {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
               <span class="lang-en">
                 Photos by{" "}
-                {photographers.map((p, i) => (
+                {photographers.map((p: PhotoCreditRow, i: number) => (
                   <>
                     {joinerEn(i, photographers.length)}
                     {p.href ? (
@@ -211,7 +225,7 @@ function joinerAr(idx: number, total: number) {
               </span>
               <span class="lang-ar">
                 تصوير:{" "}
-                {photographers.map((p, i) => (
+                {photographers.map((p: PhotoCreditRow, i: number) => (
                   <>
                     {joinerAr(i, photographers.length)}
                     {p.href ? (
@@ -310,15 +324,6 @@ function joinerAr(idx: number, total: number) {
     var lightboxCounter = document.getElementById('lightbox-counter');
     var currentMedia = []; // [{src, type}]
     var currentIdx = 0;
-
-    var VIDEO_EXTS = ['.mp4', '.webm', '.mov', '.ogg'];
-    function isVideoSrc(src) {
-      var lower = src.toLowerCase();
-      for (var i = 0; i < VIDEO_EXTS.length; i++) {
-        if (lower.indexOf(VIDEO_EXTS[i]) !== -1) return true;
-      }
-      return false;
-    }
 
     // --- List / Detail switching ---
     function showAlbumDetail(eventId) {

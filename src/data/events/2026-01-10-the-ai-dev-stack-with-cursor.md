@@ -18,6 +18,18 @@ tags:
 
 domain: 
   - cursorsaudi
+photos:
+  - "https://pbs.twimg.com/media/G-oihMDXIAAXeWW?format=jpg&name=large"
+  - "https://pbs.twimg.com/media/G-oihIVbAAANuY_?format=jpg&name=large"
+  - "https://pbs.twimg.com/media/G-oihISaAAEXdTj?format=jpg&name=large"
+  - "https://pbs.twimg.com/media/G-oihISaoAAkQa0?format=jpg&name=large"
+  - "https://pbs.twimg.com/media/G-okzBrWsAA-nDP?format=jpg&name=large"
+  - "https://pbs.twimg.com/media/G-okzCdaoAEscX_?format=jpg&name=large"
+  - "https://pbs.twimg.com/media/G-okzBpWwAArOpT?format=jpg&name=large"
+  - "https://pbs.twimg.com/media/G9P6wC6XMAAiukF?format=jpg&name=large"
+  - "https://pbs.twimg.com/media/G9P6wEaWkAAWAGv?format=jpg&name=large"
+  - "https://pbs.twimg.com/media/G9P6wEZWYAA-pj5?format=jpg&name=large"
+coverPhoto: "https://pbs.twimg.com/media/G-oihMDXIAAXeWW?format=jpg&name=large"
 photographers:
   - Hanouf Almogri
   - Raghad Alshathri

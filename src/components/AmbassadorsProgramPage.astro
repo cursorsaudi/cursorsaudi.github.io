@@ -1,21 +1,37 @@
 ---
 import { config } from "@/config";
+import PageToc from "@/components/PageToc.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
 
-const leader = config.ambassadors.find((a) => a.city === "Riyadh")!;
-const leaderX = leader.twitter ?? config.social.twitter;
+const tocItems = [
+  { id: "how-ambassadors-contribute", labelEn: "How ambassadors contribute", labelAr: "كيف يساهم السفراء" },
+  { id: "program-benefits", labelEn: "Program benefits", labelAr: "مزايا البرنامج" },
+  { id: "process", labelEn: "How the process works", labelAr: "كيف تسير العملية" },
+  { id: "faq", labelEn: "Q&A", labelAr: "أسئلة وأجوبة" },
+  { id: "campus", labelEn: "Cursor on Campus", labelAr: "كيرسر في الجامعات" },
+];
+
+/** Prefer Riyadh chapter lead; otherwise first ambassador; links fall back to community socials. */
+const leader =
+  config.ambassadors.find((a) => a.city === "Riyadh") ?? config.ambassadors[0];
+const leaderX = leader?.twitter ?? config.social.twitter;
 /** Lead direct contact (falls back to community inbox if unset). */
 const leadEmail =
-  "email" in leader && typeof (leader as { email?: string }).email === "string"
+  leader &&
+  "email" in leader &&
+  typeof (leader as { email?: string }).email === "string"
     ? (leader as { email: string }).email
     : config.social.email;
 const leadXHandle =
-  "twitterHandle" in leader && typeof (leader as { twitterHandle?: string }).twitterHandle === "string"
+  leader &&
+  "twitterHandle" in leader &&
+  typeof (leader as { twitterHandle?: string }).twitterHandle === "string"
     ? (leader as { twitterHandle: string }).twitterHandle
-    : "ma7dev";
+    : config.social.twitterHandle;
 /** Official Cursor ambassador application (same flow Cursor documents globally). */
 const cursorAmbassadorsUrl = "https://cursor.com/ambassadors";
-/** Community inbox for ambassador program questions (same as site contact). */
-const cursorAmbassadorProgramEmail = config.social.email;
+/** Global Cursor ambassador program contact (from Cursor team). */
+const cursorAmbassadorProgramEmail = "blang@cursor.com";
 ---
 
 <section id="ambassadors">
@@ -43,6 +59,8 @@ const cursorAmbassadorProgramEmail = config.social.email;
       </span>
     </p>
 
+    <PageToc items={tocItems} />
+
     <div class="bg-[#171717] border border-[#58a6ff]/25 rounded-2xl p-6 md:p-8 mb-12">
       <p class="text-[#b0b0b0] text-sm md:text-base leading-relaxed mb-4">
         <span class="lang-en">
@@ -67,10 +85,10 @@ const cursorAmbassadorProgramEmail = config.social.email;
 
     <!-- How ambassadors contribute (aligned with cursor.com/ambassadors) -->
     <div class="mb-12">
-      <h2 class="text-xl font-semibold text-white mb-4">
+      <SectionHeading id="how-ambassadors-contribute" class="text-xl font-semibold text-white mb-4">
         <span class="lang-en">How ambassadors contribute</span>
         <span class="lang-ar">كيف يساهم السفراء</span>
-      </h2>
+      </SectionHeading>
       <p class="text-sm text-[#8b949e] mb-5 leading-relaxed">
         <span class="lang-en">Ways Cursor highlights for ambassadors worldwide — a good fit for how we work in the Kingdom too.</span>
         <span class="lang-ar">طرق يذكرها كيرسر للسفراء عالمياً — وتلائم عملنا في المملكة أيضاً.</span>
@@ -123,10 +141,10 @@ const cursorAmbassadorProgramEmail = config.social.email;
 
     <!-- Program benefits (from official Cursor page; may evolve) -->
     <div class="mb-12">
-      <h2 class="text-xl font-semibold text-white mb-4">
+      <SectionHeading id="program-benefits" class="text-xl font-semibold text-white mb-4">
         <span class="lang-en">Program benefits</span>
         <span class="lang-ar">مزايا البرنامج</span>
-      </h2>
+      </SectionHeading>
       <p class="text-sm text-[#8b949e] mb-5 leading-relaxed">
         <span class="lang-en">
           Cursor lists these for the global program on <a href={cursorAmbassadorsUrl} target="_blank" rel="noopener noreferrer" class="text-[#58a6ff] hover:text-[#79c0ff] underline underline-offset-2">cursor.com/ambassadors</a>
@@ -189,10 +207,10 @@ const cursorAmbassadorProgramEmail = config.social.email;
     </div>
 
     <div class="bg-[#171717] border border-[#252525] rounded-2xl p-6 md:p-8 mb-10">
-      <h2 class="text-lg font-semibold text-white mb-6">
+      <SectionHeading id="process" class="text-lg font-semibold text-white mb-6">
         <span class="lang-en">How the process works (Saudi Arabia)</span>
         <span class="lang-ar">كيف تسير العملية (السعودية)</span>
-      </h2>
+      </SectionHeading>
       <ol class="space-y-6 text-[#b0b0b0] text-sm md:text-base leading-relaxed list-decimal list-inside marker:text-[#58a6ff]">
         <li class="pl-1">
           <span class="lang-en">
@@ -248,10 +266,10 @@ const cursorAmbassadorProgramEmail = config.social.email;
 
     <!-- FAQ (summarized from cursor.com/ambassadors) -->
     <div class="mb-12">
-      <h2 class="text-xl font-semibold text-white mb-4">
+      <SectionHeading id="faq" class="text-xl font-semibold text-white mb-4">
         <span class="lang-en">Questions &amp; answers</span>
         <span class="lang-ar">أسئلة وأجوبة</span>
-      </h2>
+      </SectionHeading>
       <p class="text-sm text-[#8b949e] mb-5 leading-relaxed">
         <span class="lang-en">
           Summarized from Cursor&apos;s official ambassadors FAQ — for the latest wording, see
@@ -269,14 +287,14 @@ const cursorAmbassadorProgramEmail = config.social.email;
             <span class="lang-ar">ما معايير القبول؟</span>
           </summary>
           <div class="px-4 pb-4 text-sm text-[#b0b0b0] leading-relaxed border-t border-[#252525] pt-3">
-            <span class="lang-en">
-              You must be at least 18, complete Cursor&apos;s application (including their Code of Conduct), and be able to commit to contributing
+      <span class="lang-en">
+            You must be at least 18, complete Cursor&apos;s application (including their Code of Conduct), and be able to commit to contributing
               through things like forum moderation and hosting meetups or hackathons — Cursor looks for people who want the community to stay vibrant,
-              welcoming, and collaborative.
+              welcoming, and collaborative. For Cursor Saudi specifically, you need to be <strong class="text-white/90 font-medium">fluent in both Arabic and English</strong>.
             </span>
             <span class="lang-ar">
               يجب أن يكون عمرك 18 عاماً فأكثر، وأن تكمل طلب كيرسر (بما في ذلك مدونة السلوك)، وأن تلتزم بالمساهمة عبر الإشراف على المنتدى واستضافة اللقاءات
-              أو الهاكاثونات وغيرها — كيرسر يبحث عن من يريدون مجتمعاً حيوياً ومرحّباً وتعاونياً.
+              أو الهاكاثونات وغيرها — كيرسر يبحث عن من يريدون مجتمعاً حيوياً ومرحّباً وتعاونياً. لكيرسر السعودية تحديداً، يجب أن تكون <strong class="text-white/90 font-medium">متقناً للعربية والإنجليزية</strong>.
             </span>
           </div>
         </details>
@@ -341,12 +359,16 @@ const cursorAmbassadorProgramEmail = config.social.email;
         </details>
         <details class="group border border-[#252525] rounded-xl bg-[#171717] overflow-hidden">
           <summary class="cursor-pointer list-none p-4 text-sm font-medium text-white hover:bg-white/[0.03] [&::-webkit-details-marker]:hidden flex flex-col gap-1">
-            <span class="lang-en">Do I need fluent English?</span>
-            <span class="lang-ar">هل أحتاج إتقاناً كاملاً للإنجليزية؟</span>
+            <span class="lang-en">What are the language requirements for Cursor Saudi?</span>
+            <span class="lang-ar">ما متطلبات اللغة لكيرسر السعودية؟</span>
           </summary>
           <div class="px-4 pb-4 text-sm text-[#b0b0b0] leading-relaxed border-t border-[#252525] pt-3">
-            <span class="lang-en">No — Cursor welcomes ambassadors who speak different languages.</span>
-            <span class="lang-ar">لا — كيرسر يرحّب بسفراء يتحدثون لغات مختلفة.</span>
+            <span class="lang-en">
+              <strong class="text-white/90 font-medium">Cursor Saudi ambassadors</strong> need to be fluent in both Arabic and English. Slides can be in either language, but ambassadors present in Arabic using normal, everyday language. <strong class="text-white/90 font-medium">Guest speakers</strong> can be English-only — we welcome international speakers who don&apos;t speak Arabic.
+            </span>
+            <span class="lang-ar">
+              <strong class="text-white/90 font-medium">سفراء كيرسر السعودية</strong> يجب أن يكونوا متقنين للعربية والإنجليزية. يمكن إعداد الشرائح بأي من اللغتين، لكن السفراء يقدّمون بالعربية بلغة عادية وطبيعية. <strong class="text-white/90 font-medium">المتحدثون الضيوف</strong> يمكنهم التحدث بالإنجليزية فقط — نرحّب بالمتحدثين الدوليين الذين لا يتحدثون العربية.
+            </span>
           </div>
         </details>
         <details class="group border border-[#252525] rounded-xl bg-[#171717] overflow-hidden">
@@ -381,10 +403,10 @@ const cursorAmbassadorProgramEmail = config.social.email;
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
         </div>
         <div>
-          <h2 class="text-xl font-semibold text-white mb-2">
+          <SectionHeading id="campus" class="text-xl font-semibold text-white mb-2">
             <span class="lang-en">Cursor on Campus</span>
             <span class="lang-ar">كيرسر في الجامعات</span>
-          </h2>
+          </SectionHeading>
           <p class="text-sm text-[#b0b0b0] leading-relaxed mb-4">
             <span class="lang-en">
               Are you a student? Cursor&apos;s <strong class="text-white/90 font-medium">Campus Leads</strong> program lets you represent Cursor at your

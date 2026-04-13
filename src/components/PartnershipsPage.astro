@@ -1,5 +1,13 @@
 ---
 import { config } from "@/config";
+import PageToc from "@/components/PageToc.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+
+const tocItems = [
+  { id: "support-community", labelEn: "Support the community", labelAr: "ادعم المجتمع" },
+  { id: "part-of-community", labelEn: "Be part of the community", labelAr: "كن جزءاً من المجتمع" },
+  { id: "we-offer", labelEn: "We offer", labelAr: "ما نقدمه" },
+];
 
 const email = config.social.email;
 const { luma, discord, twitter } = config.social;
@@ -26,12 +34,14 @@ const mail = (subject: string) =>
       </span>
     </p>
 
+    <PageToc items={tocItems} />
+
     <!-- Support the community -->
-    <div id="support-community" class="mb-16 scroll-mt-24">
-      <h2 class="text-xl font-semibold text-white mb-2">
+    <div class="mb-16">
+      <SectionHeading id="support-community" class="text-xl font-semibold text-white mb-2">
         <span class="lang-en">Support the community</span>
         <span class="lang-ar">ادعم المجتمع</span>
-      </h2>
+      </SectionHeading>
       <p class="text-sm text-[#8b949e] mb-6 leading-relaxed">
         <span class="lang-en">Help us run meetups, workshops, and hackathons across Saudi Arabia.</span>
         <span class="lang-ar">ساعدنا على تنظيم اللقاءات والورش وهاكاثونات البناء في أنحاء المملكة.</span>
@@ -85,11 +95,11 @@ const mail = (subject: string) =>
     </div>
 
     <!-- Be part of the community -->
-    <div id="part-of-community" class="mb-16 scroll-mt-24">
-      <h2 class="text-xl font-semibold text-white mb-2">
+    <div class="mb-16">
+      <SectionHeading id="part-of-community" class="text-xl font-semibold text-white mb-2">
         <span class="lang-en">Be part of the community</span>
         <span class="lang-ar">كن جزءاً من المجتمع</span>
-      </h2>
+      </SectionHeading>
       <p class="text-sm text-[#8b949e] mb-6 leading-relaxed">
         <span class="lang-en">Share your voice and ideas with builders in the Kingdom.</span>
         <span class="lang-ar">شارك صوتك وأفكارك مع المبدعين في المملكة.</span>
@@ -100,8 +110,8 @@ const mail = (subject: string) =>
           <span class="lang-ar">طلبات المتحدثين</span>
         </h3>
         <p class="text-sm text-[#999999] leading-relaxed mb-4">
-          <span class="lang-en">Do you have a topic you care about that you think people will find interesting? Propose a talk, panel idea, or hands-on session — we prioritize inclusive, practical formats.</span>
-          <span class="lang-ar">هل لديك موضوع تهتم به وتظن أن الآخرين سيجدونه مفيداً؟ اقترح محاضرة أو جلسة نقاش أو ورشة عملية — نفضّل الصيغ الشاملة والعملية.</span>
+          <span class="lang-en">Do you have a topic you care about that you think people will find interesting? Propose a talk, panel idea, or hands-on session — we prioritize inclusive, practical formats. <strong class="text-white font-medium">Guest speakers can present in English or Arabic</strong> — we welcome international speakers. Slides can be in either language.</span>
+          <span class="lang-ar">هل لديك موضوع تهتم به وتظن أن الآخرين سيجدونه مفيداً؟ اقترح محاضرة أو جلسة نقاش أو ورشة عملية — نفضّل الصيغ الشاملة والعملية. <strong class="text-white font-medium">يمكن للمتحدثين الضيوف التقديم بالعربية أو الإنجليزية</strong> — نرحّب بالمتحدثين الدوليين. يمكن إعداد الشرائح بأي من اللغتين.</span>
         </p>
         <a
           href={mail("Cursor Saudi — speaker / topic proposal")}
@@ -128,11 +138,11 @@ const mail = (subject: string) =>
     </div>
 
     <!-- We offer -->
-    <div id="we-offer" class="mb-10 scroll-mt-24">
-      <h2 class="text-xl font-semibold text-white mb-2">
+    <div class="mb-10">
+      <SectionHeading id="we-offer" class="text-xl font-semibold text-white mb-2">
         <span class="lang-en">We offer</span>
         <span class="lang-ar">ما نقدمه</span>
-      </h2>
+      </SectionHeading>
       <p class="text-sm text-[#8b949e] mb-6 leading-relaxed">
         <span class="lang-en">Commercial and media engagements outside of free community meetups.</span>
         <span class="lang-ar">خدمات تجارية وإعلامية خارج اللقاءات المجتمعية المجانية.</span>

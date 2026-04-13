@@ -6,6 +6,7 @@
   "scripts": {
     "sync-events": "node scripts/sync-events.mjs",
     "dev": "node scripts/sync-events.mjs --soft && astro dev",
+    "check": "astro check",
     "build": "astro build",
     "preview": "astro preview",
     "fetch-dal-photos": "node scripts/fetch-dal-contributor-photos.mjs"

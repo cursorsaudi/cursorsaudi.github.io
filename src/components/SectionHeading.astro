@@ -1,0 +1,16 @@
+---
+interface Props {
+  id: string;
+  tag?: "h1" | "h2" | "h3";
+  class?: string;
+}
+
+const { id, tag: Tag = "h2", class: className = "" } = Astro.props;
+---
+
+<Tag id={id} class:list={["section-heading scroll-mt-24", className]}>
+  <a href={`#${id}`} class="section-heading-link">
+    <slot />
+    <span class="section-heading-hash" aria-hidden="true">#</span>
+  </a>
+</Tag>

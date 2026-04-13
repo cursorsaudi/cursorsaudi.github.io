@@ -8,6 +8,9 @@ interface Props {
 }
 
 const { title = config.title, description = config.description } = Astro.props;
+
+const siteOrigin = Astro.site?.origin ?? "https://cursorsaudi.com";
+const canonicalUrl = new URL(Astro.url.pathname, siteOrigin).href;
 ---
 
 <!doctype html>
@@ -21,7 +24,8 @@ const { title = config.title, description = config.description } = Astro.props;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={config.social.luma} />
+    <meta property="og:url" content={canonicalUrl} />
+    <link rel="canonical" href={canonicalUrl} />
     <meta name="theme-color" content="#0F0F0F" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -30,16 +34,8 @@ const { title = config.title, description = config.description } = Astro.props;
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <!-- Prevent FOUC: set language before render -->
-    <script is:inline>
-      (function () {
-        var lang = localStorage.getItem("lang") || "ar";
-        var html = document.documentElement;
-        html.lang = lang;
-        html.dir = lang === "ar" ? "rtl" : "ltr";
-        html.classList.add("dark");
-      })();
-    </script>
+    <!-- Prevent FOUC: set language before render (single source: public/toggle-lang.js) -->
+    <script is:inline src="/toggle-lang.js"></script>
   </head>
   <body class="min-h-screen flex flex-col relative">
     <!-- Grid background -->

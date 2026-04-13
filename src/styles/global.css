@@ -91,6 +91,26 @@ a:focus-visible {
   box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.15);
 }
 
+/* ─── Linkable Section Headings ─── */
+.section-heading-link {
+  color: inherit;
+  text-decoration: none;
+  display: inline;
+}
+
+.section-heading-hash {
+  opacity: 0;
+  margin-inline-start: 0.35em;
+  color: #6E6E6E;
+  font-weight: 400;
+  transition: opacity 0.15s ease;
+}
+
+.section-heading:hover .section-heading-hash,
+.section-heading-link:focus-visible .section-heading-hash {
+  opacity: 1;
+}
+
 /* ─── Glass Nav ─── */
 .glass-nav {
   background: rgba(15, 15, 15, 0.75);

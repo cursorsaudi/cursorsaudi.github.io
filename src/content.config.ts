@@ -21,6 +21,17 @@ const events = defineCollection({
     videos: z.array(z.string()).optional(),
     coverPhoto: z.string().optional(),
     photographers: z.array(z.string()).optional(),
+    communityPosts: z
+      .array(
+        z.object({
+          url: z.string(),
+          author: z.string(),
+          authorAr: z.string().optional(),
+          label: z.string().optional(),
+          labelAr: z.string().optional(),
+        })
+      )
+      .optional(),
   }),
 });
 

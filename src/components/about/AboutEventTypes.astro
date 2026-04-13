@@ -1,0 +1,132 @@
+---
+/** Static grid describing event formats (meetup, build session, cafe, hackathon). */
+import SectionHeading from "@/components/SectionHeading.astro";
+---
+
+<div class="mb-24">
+  <div class="text-center mb-12">
+    <span class="text-xs font-mono text-[#999999] uppercase tracking-widest">
+      <span class="lang-en">What We Do</span>
+      <span class="lang-ar">ماذا نقدم</span>
+    </span>
+    <SectionHeading id="event-types" class="text-3xl font-semibold text-white mt-3">
+      <span class="lang-en">Our Events</span>
+      <span class="lang-ar">فعالياتنا</span>
+    </SectionHeading>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+    <!-- Cursor Meetup -->
+    <div class="bg-[#171717] border border-[#252525] rounded-2xl overflow-hidden flex flex-col">
+      <img src="/images/event-types/hackathon-riyadh.jpg" alt="Cursor meetups and community in Riyadh" class="w-full h-40 object-cover" loading="lazy" />
+      <div class="p-6 flex flex-col flex-grow">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-[10px] font-mono text-[#58a6ff] border border-[#58a6ff]/25 bg-[#58a6ff]/10 rounded px-2 py-1">
+            <span class="lang-en">~2 hours</span>
+            <span class="lang-ar">~ساعتين</span>
+          </span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">
+          <span class="lang-en">Cursor Meetup</span>
+          <span class="lang-ar">لقاء كيرسر</span>
+        </h3>
+        <p class="text-sm text-[#999999] leading-relaxed">
+          <span class="lang-en"
+            >Knowledge-sharing meetups and workshops — talks, demos, and hands-on sessions covering Cursor workflows, MCP servers, prompt engineering, and AI-native development.</span
+          >
+          <span class="lang-ar"
+            >لقاءات لنشر المعرفة — عروض تقديمية وجلسات عملية تغطي سير عمل Cursor وخوادم MCP وهندسة البرومبت والتطوير بالذكاء الاصطناعي.</span
+          >
+        </p>
+      </div>
+    </div>
+
+    <!-- Cursor Building Session -->
+    <div class="bg-[#171717] border border-[#252525] rounded-2xl overflow-hidden flex flex-col">
+      <img src="/images/event-types/building-session-riyadh.jpeg" alt="Cursor Building Session in Riyadh" class="w-full h-40 object-cover" loading="lazy" />
+      <div class="p-6 flex flex-col flex-grow">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-[10px] font-mono text-green-400 border border-green-400/25 bg-green-400/10 rounded px-2 py-1">
+            <span class="lang-en">4–6 hours</span>
+            <span class="lang-ar">٤-٦ ساعات</span>
+          </span>
+          <span class="text-[10px] font-mono text-amber-400 border border-amber-400/25 bg-amber-400/10 rounded px-2 py-1">
+            <span class="lang-en">Free Credits</span>
+            <span class="lang-ar">كريدتس مجانية</span>
+          </span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">
+          <span class="lang-en">Cursor Building Session</span>
+          <span class="lang-ar">جلسة بناء كيرسر</span>
+        </h3>
+        <p class="text-sm text-[#999999] leading-relaxed">
+          <span class="lang-en"
+            >Hands-on building sessions where attendees ship real products using AI tools. Cursor provides free credits for all participants.</span
+          >
+          <span class="lang-ar"
+            >جلسات بناء عملية يبني فيها الحضور منتجات حقيقية باستخدام أدوات الذكاء الاصطناعي. كيرسر يوفر كريدتس مجانية لجميع الحضور.</span
+          >
+        </p>
+      </div>
+    </div>
+
+    <!-- Cafe Cursor -->
+    <div class="bg-[#171717] border border-[#252525] rounded-2xl overflow-hidden flex flex-col">
+      <img
+        src="/images/event-types/cafe-cursor-sf.png"
+        alt="Cafe Cursor, San Francisco"
+        class="w-full h-40 object-cover"
+        loading="lazy"
+      />
+      <div class="p-6 flex flex-col flex-grow">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-[10px] font-mono text-purple-400 border border-purple-400/25 bg-purple-400/10 rounded px-2 py-1">
+            <span class="lang-en">6–12 hours</span>
+            <span class="lang-ar">٦-١٢ ساعة</span>
+          </span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">
+          <span class="lang-en">Cafe Cursor</span>
+          <span class="lang-ar">مقهى كيرسر</span>
+        </h3>
+        <p class="text-sm text-[#999999] leading-relaxed">
+          <span class="lang-en"
+            >Casual co-working at a local cafe — the same format Cursor runs globally (for example New York and San Francisco). We gather to work, network, and connect in a relaxed setting.</span
+          >
+          <span class="lang-ar"
+            >عمل مشترك في مقهى محلي — نفس الأسلوب الذي تنظمه كيرسر عالمياً (مثل نيويورك وسان فرانسيسكو). نجتمع للعمل والتعارف والتواصل بأجواء مريحة.</span
+          >
+        </p>
+      </div>
+    </div>
+
+    <!-- Hackathon -->
+    <div class="bg-[#171717] border border-[#252525] rounded-2xl overflow-hidden flex flex-col">
+      <img src="/placeholders/event-card.svg" alt="" class="w-full h-40 object-cover bg-[#0d1117]" loading="lazy" />
+      <div class="p-6 flex flex-col flex-grow">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-[10px] font-mono text-red-400/80 border border-red-400/20 bg-red-400/5 rounded px-2 py-1">
+            <span class="lang-en">~12 hours</span>
+            <span class="lang-ar">~١٢ ساعة</span>
+          </span>
+          <span class="text-[10px] font-mono text-amber-400 border border-amber-400/25 bg-amber-400/10 rounded px-2 py-1">
+            <span class="lang-en">Free Credits</span>
+            <span class="lang-ar">كريدتس مجانية</span>
+          </span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">
+          <span class="lang-en">Cursor Hackathon</span>
+          <span class="lang-ar">هاكاثون كيرسر</span>
+        </h3>
+        <p class="text-sm text-[#999999] leading-relaxed">
+          <span class="lang-en"
+            >Large-scale hackathons in partnership with local organizations — often a full ~12-hour day, with Cursor free credits for participants — building, competing, and shipping together.</span
+          >
+          <span class="lang-ar"
+            >هاكاثونات كبيرة بشراكة مع جهات محلية — غالباً يوم كامل حوالي ١٢ ساعة، مع كريدتس مجانية من كيرسر للمشاركين — نبني ونتنافس وننجز معاً.</span
+          >
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

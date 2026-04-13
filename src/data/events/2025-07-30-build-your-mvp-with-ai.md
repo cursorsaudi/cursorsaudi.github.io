@@ -15,6 +15,13 @@ speakers:
 lumaUrl: "https://lu.ma/4w52ko64"
 slides: 
   - "https://github.com/cursorsaudi/events-slides/blob/main/2025-07-riyadh-workshop.pdf"
+communityPosts:
+  - url: "https://x.com/Al_Mushdaq/status/1950639301680886220"
+    author: "Al Mushdaq"
+    authorAr: "المشدق"
+  - url: "https://x.com/theeFaris/status/1950805628332499182"
+    author: "Faris Hijazi"
+    authorAr: "فارس حجازي"
 tags: 
 
 domain: 
