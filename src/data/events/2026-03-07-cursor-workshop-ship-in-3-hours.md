@@ -16,12 +16,6 @@ speakers:
 lumaUrl: "https://lu.ma/cwbemd5n"
 slides: 
   - "https://github.com/cursorsaudi/events-slides/blob/main/2026-03-07-cursor-workshop-ship-in-3-hours.pdf"
-communityPosts:
-  - url: "https://x.com/Al_Mushdaq/status/2030625772734439789"
-    author: "Al Mushdaq"
-    authorAr: "المشدق"
-    label: "Vlog"
-    labelAr: "فلوق"
 photos:
   - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/HDc4OQRXQAABlmU.jpg"
   - "/images/events/2026-03-07-cursor-workshop-ship-in-3-hours/HDc4Ms7WAAA-77I.jpg"
@@ -47,7 +41,7 @@ A 3-hour interactive workshop where participants built and deployed real softwar
 - **Venue**: Leqaa Hall, Riyadh
 - **Co-organizer**: DAL | دال
 - **Duration**: 11:00 PM – 2:00 AM (3 hours)
-- **Speakers**: 3 ([Mazen Alotaibi](https://x.com/ma7dev), [Nick Miller](https://x.com/nickwm), [Abdullah Moasibah](https://www.linkedin.com/in/abdullah-mosaibah-67814312b/))
+- **Speakers**: 3 (Mazen Alotaibi, Nick Miller, [Abdullah Moasibah](https://www.linkedin.com/in/abdullah-mosaibah-67814312b/))
 - **Structure**: Introduction → Guest speaker (Nick Miller) → Tricks & Tips → Build Time (1 hour)
 - **Audience**: 70 in-person + 10 online (out of 110 accepted, 320+ registrations)
 

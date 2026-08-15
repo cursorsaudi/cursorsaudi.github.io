@@ -1,6 +1,5 @@
 ---
 import {
-  getUpcomingEvents,
   getPastEvents,
   getEventThumbnailUrl,
   getEventAlbumPreviewUrls,
@@ -20,10 +19,6 @@ const speakerMap = getSpeakerNameMap();
 const partnersMap = getEventPartnersMap();
 const siteOrigin = Astro.site?.origin ?? "https://cursorsaudi.com";
 
-function xShareLink(url: string, text: string): string {
-  return `https://x.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
-}
-
 function linkedInShareLink(url: string): string {
   return `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
 }
@@ -40,20 +35,15 @@ function absoluteSitePath(path: string): string {
 
 type EventEntry = CollectionEntry<"events">;
 
-const allUpcoming = (await getUpcomingEvents()).filter((e: EventEntry) => isHostedCommunityEventType(e.data.type));
-const upcoming = allUpcoming.filter((e: EventEntry) => e.data.status !== "backlog");
-const backlog = allUpcoming.filter((e: EventEntry) => e.data.status === "backlog");
+const upcoming: EventEntry[] = [];
 const past = (await getPastEvents()).filter((e: EventEntry) => isHostedCommunityEventType(e.data.type));
 const blogEventIds = await getEventIdsWithBlog();
 const invites = [...config.invites].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-const backlogSorted = [...backlog].sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
 
 /** Shown when an event has no `coverPhoto` / photo assets for the card strip. */
 const eventCardPlaceholder = "/placeholders/event-card.svg";
 
 const tocItems = [
-  ...(backlog.length > 0 ? [{ id: "planned-dates", labelEn: "Planned dates", labelAr: "تواريخ مخطط لها" }] : []),
   { id: "upcoming", labelEn: "Upcoming", labelAr: "القادمة" },
   { id: "past", labelEn: "Past", labelAr: "السابقة" },
   ...(invites.length > 0 ? [{ id: "external-invitations", labelEn: "External", labelAr: "خارجية" }] : []),
@@ -125,50 +115,15 @@ function typeLabel(type: string): { en: string; ar: string } {
           أو مقابلات. للفعاليات المستضافة السابقة قد ننشر تدوينات ملخصة كمقالات.
         </span>
       </p>
+      <div class="mt-6 rounded-xl border border-red-500/25 bg-red-500/10 px-5 py-4 text-sm text-red-100" role="status">
+        <span class="lang-en">Cursor Saudi and all chapters are offline indefinitely. No upcoming events or registrations are available; the past events below remain as a historical archive.</span>
+        <span class="lang-ar">كيرسر السعودية وجميع الفروع غير متصلة إلى أجل غير مسمى. لا توجد فعاليات أو تسجيلات قادمة؛ وتبقى الفعاليات السابقة أدناه كأرشيف تاريخي.</span>
+      </div>
     </div>
 
     <PageToc items={tocItems} />
 
     <div id="events-sections">
-      {backlog.length > 0 && (
-        <div class="mb-14">
-          <SectionHeading id="planned-dates" class="text-xs font-mono text-[#6E6E6E] uppercase tracking-widest mb-4">
-            <span class="lang-en">Planned dates</span>
-            <span class="lang-ar">تواريخ مخطط لها</span>
-          </SectionHeading>
-          <div class="border border-dashed border-[#252525] rounded-2xl p-6">
-            <p class="text-sm text-[#6E6E6E] mb-4">
-              <span class="lang-en">Tentative slots — details and registration will be announced later.</span>
-              <span class="lang-ar">مواعيد تقريبية — التفاصيل والتسجيل يُعلَنان لاحقاً.</span>
-            </p>
-            <div class="flex flex-wrap gap-3">
-              {backlogSorted.map((event: EventEntry) => {
-                const mEn = event.data.date.toLocaleDateString("en-US", { month: "short" });
-                const dEn = event.data.date.getDate();
-                const mAr = event.data.date.toLocaleDateString("ar-SA", { month: "short" });
-                const dAr = event.data.date.getDate().toLocaleString("ar-SA");
-                return (
-                  <div class="bg-[#1F1F1F] rounded-lg px-4 py-2.5 border border-[#252525] text-center min-w-[72px] max-w-[140px]">
-                    <div class="text-[10px] text-[#6E6E6E] uppercase font-bold">
-                      <span class="lang-en">{mEn}</span>
-                      <span class="lang-ar">{mAr}</span>
-                    </div>
-                    <div class="text-lg font-bold text-[#6E6E6E] leading-tight">
-                      <span class="lang-en">{dEn}</span>
-                      <span class="lang-ar">{dAr}</span>
-                    </div>
-                    <div class="text-[10px] text-[#8b949e] mt-1.5 leading-snug border-t border-[#252525]/80 pt-1.5">
-                      <span class="lang-en">{event.data.location}</span>
-                      <span class="lang-ar">{event.data.locationAr || event.data.location}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-
       <div class="mb-14">
         <SectionHeading id="upcoming" class="text-xs font-mono text-[#6E6E6E] uppercase tracking-widest mb-4">
           <span class="lang-en">Upcoming</span>
@@ -300,9 +255,6 @@ function typeLabel(type: string): { en: string; ar: string } {
                         <span class="lang-ar">شارِك مع الآخرين</span>
                       </p>
                       <div class="flex items-center gap-1">
-                        <a href={xShareLink(shareUrl, shareText)} target="_blank" rel="noreferrer" class="w-7 h-7 flex items-center justify-center rounded-full text-[#6E6E6E] hover:text-white transition-colors" aria-label="Share on X">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                        </a>
                         <a href={linkedInShareLink(shareUrl)} target="_blank" rel="noreferrer" class="w-7 h-7 flex items-center justify-center rounded-full text-[#6E6E6E] hover:text-white transition-colors" aria-label="Share on LinkedIn">
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
                         </a>
@@ -321,17 +273,8 @@ function typeLabel(type: string): { en: string; ar: string } {
           {upcoming.length === 0 && (
             <div class="col-span-full py-12 text-center">
               <p class="text-[#999999] text-lg">
-                {backlog.length > 0 ? (
-                  <>
-                    <span class="lang-en">No confirmed upcoming events with full details yet — see planned dates above.</span>
-                    <span class="lang-ar">لا توجد فعاليات قادمة مؤكدة بالتفاصيل بعد — راجع التواريخ المخطط لها أعلاه.</span>
-                  </>
-                ) : (
-                  <>
-                    <span class="lang-en">No upcoming events listed yet.</span>
-                    <span class="lang-ar">لا توجد فعاليات قادمة مدرجة بعد.</span>
-                  </>
-                )}
+                <span class="lang-en">The community is offline and has no upcoming events.</span>
+                <span class="lang-ar">المجتمع غير متصل ولا توجد فعاليات قادمة.</span>
               </p>
             </div>
           )}
@@ -496,9 +439,6 @@ function typeLabel(type: string): { en: string; ar: string } {
                             <span class="lang-ar">شارِك مع الآخرين</span>
                           </p>
                           <div class="flex items-center gap-1">
-                            <a href={xShareLink(shareUrl, shareText)} target="_blank" rel="noreferrer" class="w-7 h-7 flex items-center justify-center rounded-full text-[#6E6E6E] hover:text-white transition-colors" aria-label="Share on X">
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                            </a>
                             <a href={linkedInShareLink(shareUrl)} target="_blank" rel="noreferrer" class="w-7 h-7 flex items-center justify-center rounded-full text-[#6E6E6E] hover:text-white transition-colors" aria-label="Share on LinkedIn">
                               <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
                             </a>
@@ -637,41 +577,16 @@ function typeLabel(type: string): { en: string; ar: string } {
                     )}
                     <span class="lang-en">
                       {invite.type === "interview" ? "interviewed by " : "invited by "}
-                      <a
-                        href={inviteInviterHref(invite.invitedByUrl)}
-                        class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors"
-                        {...(isSameSiteInviteUrl(invite.invitedByUrl) ? {} : { target: "_blank", rel: "noreferrer" })}
-                      >
-                        {invite.invitedBy}
-                      </a>
+                      {isSameSiteInviteUrl(invite.invitedByUrl) ? <a href={inviteInviterHref(invite.invitedByUrl)} class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors">{invite.invitedBy}</a> : <span class="text-[#b0b0b0]">{invite.invitedBy}</span>}
                     </span>
                     <span class="lang-ar">
                       {invite.type === "interview" ? "في مقابلة مع " : "دُعي من "}
-                      <a
-                        href={inviteInviterHref(invite.invitedByUrl)}
-                        class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors"
-                        {...(isSameSiteInviteUrl(invite.invitedByUrl) ? {} : { target: "_blank", rel: "noreferrer" })}
-                      >
-                        {invite.invitedByAr}
-                      </a>
+                      {isSameSiteInviteUrl(invite.invitedByUrl) ? <a href={inviteInviterHref(invite.invitedByUrl)} class="text-[#58a6ff] hover:text-[#79c0ff] transition-colors">{invite.invitedByAr}</a> : <span class="text-[#b0b0b0]">{invite.invitedByAr}</span>}
                     </span>
                   </div>
                 </div>
 
                 <div class="mt-auto pt-3 border-t border-[#252525] flex flex-wrap items-center gap-3">
-                  <a
-                    href={invite.postUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    class="inline-flex items-center gap-1.5 text-xs text-[#999999] hover:text-white transition-colors"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                    <span class="lang-en">Post</span>
-                    <span class="lang-ar">المنشور</span>
-                    <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                      <path d="M4 12l8-8m0 0H5m7 0v7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </a>
                   {"recordingUrl" in invite && invite.recordingUrl && (
                     <a
                       href={invite.recordingUrl}
